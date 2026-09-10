@@ -5,130 +5,175 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>普朗克长度有多小 · 费曼学习法</title>
 <style>
+  /* ===== 主题变量 =====
+     默认「演算纸」（亮色），html[data-theme="dark"] 切「黑板」 */
   :root{
-    --board:#1d302a;
-    --board-2:#24382f;
-    --chalk:#f2eee3;
-    --chalk-dim:#a9b8ae;
-    --chalk-yellow:#f4d35e;
-    --chalk-blue:#8fc9e2;
-    --chalk-pink:#e9a2a0;
-    --wood:#6b4a32;
-    --wood-dark:#3d2a1c;
-    --line:rgba(242,238,227,.22);
+    --bgPage:#e7eeea;
+    --paper:#fbfcfa;
+    --paper2:#eff4f1;
+    --ink:#1d2b36;
+    --ink-dim:#586875;
+    --pen:#1668a8;
+    --pen2:#0e7a63;
+    --penRed:#c23a30;
+    --frame:#dde5e1;
+    --frame2:#c8d4ce;
+    --frameW:1px;
+    --ruleSolid:#1d2b36;
+    --rule:color-mix(in srgb, var(--ruleSolid) 16%, transparent);
+    --cardBg:rgba(255,255,255,.78);
+    --inputBg:#ffffff;
+    --mark:rgba(255,224,102,.9);
+    --grid:rgba(22,104,168,.055);
+    --boardInner:inset 0 1px 0 rgba(255,255,255,.9);
+    --boardShadow:0 14px 40px rgba(29,43,54,.13), 0 2px 6px rgba(29,43,54,.06);
+    --grain:rgba(29,43,54,.05);
+    --grainSize:6px;
+    --titleFont:system-ui,-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  html[data-theme="dark"]{
+    --bgPage:#101a16;
+    --paper:#1d302a;
+    --paper2:#24382f;
+    --ink:#f2eee3;
+    --ink-dim:#a9b8ae;
+    --pen:#f4d35e;
+    --pen2:#8fc9e2;
+    --penRed:#e9a2a0;
+    --frame:#6b4a32;
+    --frame2:#3d2a1c;
+    --frameW:14px;
+    --ruleSolid:#f2eee3;
+    --rule:color-mix(in srgb, var(--ruleSolid) 22%, transparent);
+    --cardBg:rgba(255,255,255,.02);
+    --inputBg:rgba(0,0,0,.28);
+    --mark:rgba(244,211,94,.22);
+    --grid:rgba(255,255,255,.028);
+    --boardInner:inset 0 0 90px rgba(0,0,0,.45);
+    --boardShadow:0 24px 60px rgba(0,0,0,.55);
+    --grain:rgba(255,255,255,.05);
+    --grainSize:7px;
+    --titleFont:"Kaiti SC","STKaiti","KaiTi","Songti SC",serif;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
-    background:#101a16;
-    color:var(--chalk);
+    background:var(--bgPage);
+    color:var(--ink);
     font-family:system-ui,-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
     line-height:1.75;
     font-size:17px;
     padding:18px 12px 60px;
+    -webkit-text-size-adjust:100%;
   }
-  /* 黑板外框 */
+  /* 纸张 / 黑板 外层 */
   .board{
     max-width:920px;margin:0 auto;
     background:
-      radial-gradient(ellipse at 20% 0%, rgba(255,255,255,.045), transparent 55%),
-      radial-gradient(ellipse at 85% 100%, rgba(255,255,255,.03), transparent 50%),
-      linear-gradient(160deg,var(--board-2),var(--board) 55%,#182a24);
-    border:14px solid var(--wood);
-    border-radius:10px;
-    box-shadow:
-      0 0 0 2px var(--wood-dark),
-      inset 0 0 90px rgba(0,0,0,.45),
-      0 24px 60px rgba(0,0,0,.55);
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/100% 29px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/29px 100%,
+      linear-gradient(160deg,var(--paper2),var(--paper) 55%,var(--paper2));
+    border:var(--frameW) solid var(--frame);
+    border-radius:12px;
+    box-shadow:0 0 0 2px var(--frame2), var(--boardInner), var(--boardShadow);
     padding:34px 26px 44px;
     position:relative;
     overflow:hidden;
   }
-  .board::after{ /* 粉笔灰 */
-    content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
-    background-image:radial-gradient(rgba(255,255,255,.05) 1px, transparent 1px);
-    background-size:7px 7px;
+  .board::after{ /* 纸纹 / 粉笔灰 */
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.6;
+    background-image:radial-gradient(var(--grain) 1px, transparent 1px);
+    background-size:var(--grainSize) var(--grainSize);
   }
   .board > *{position:relative;z-index:1;}
 
   /* 顶部导航 */
   .nav{
     display:flex;flex-wrap:wrap;gap:8px;margin-bottom:26px;
-    padding-bottom:16px;border-bottom:1px dashed var(--line);
+    padding-bottom:16px;border-bottom:1px dashed var(--rule);
   }
   .nav a{
-    color:var(--chalk-dim);text-decoration:none;font-size:13.5px;
-    border:1px solid var(--line);border-radius:999px;padding:4px 12px;
+    color:var(--ink-dim);text-decoration:none;font-size:13.5px;
+    border:1px solid var(--rule);border-radius:999px;padding:4px 12px;
     transition:.25s;
   }
-  .nav a:hover,.nav a.on{color:var(--chalk-yellow);border-color:rgba(244,211,94,.55);}
+  .nav a:hover,.nav a.on{color:var(--pen);border-color:color-mix(in srgb, var(--pen) 55%, transparent);}
 
   h1{
-    font-family:"Kaiti SC","STKaiti","KaiTi","Songti SC",serif;
+    font-family:var(--titleFont);
     font-size:clamp(28px,6vw,44px);
     margin:0 0 6px;font-weight:600;letter-spacing:.5px;
-    text-shadow:0 0 14px rgba(255,255,255,.16);
+    text-shadow:0 0 14px color-mix(in srgb, var(--ink) 22%, transparent);
   }
-  .sub{color:var(--chalk-dim);font-size:15.5px;margin-bottom:10px;}
+  .sub{color:var(--ink-dim);font-size:15.5px;margin-bottom:10px;}
   .claim{
-    font-size:clamp(19px,4.4vw,25px);color:var(--chalk-yellow);
-    font-family:"Kaiti SC","STKaiti","KaiTi",serif;margin:16px 0 6px;
+    font-size:clamp(19px,4.4vw,25px);color:var(--pen);
+    font-family:var(--titleFont);margin:16px 0 6px;
   }
   .big{
     font-family:"SF Mono",Menlo,Consolas,monospace;
-    font-size:clamp(20px,5vw,30px);color:#fff;
+    font-size:clamp(20px,5vw,30px);color:var(--ink);
     letter-spacing:.5px;word-break:break-all;
   }
-  .big.small-num{font-size:clamp(13px,3.4vw,17px);color:var(--chalk-dim);word-break:break-all;}
+  /* 荧光笔划重点：演算纸主题的语义色，只用在最关键的数字上 */
+  .big-mark{
+    display:inline-block;
+    background-image:linear-gradient(var(--mark),var(--mark));
+    background-repeat:no-repeat;
+    background-size:100% .4em;
+    background-position:0 .74em;
+    padding:0 .14em;
+  }
+  .big.small-num{font-size:clamp(11px,3vw,16px);color:var(--ink-dim);word-break:break-all;line-height:1.65;letter-spacing:.2px;}
 
   section{margin:52px 0 0;scroll-margin-top:16px;}
   h2{
-    font-family:"Kaiti SC","STKaiti","KaiTi",serif;
+    font-family:var(--titleFont);
     font-size:clamp(21px,4.8vw,27px);margin:0 0 4px;font-weight:600;
-    border-bottom:2px solid rgba(244,211,94,.4);display:inline-block;
+    border-bottom:2px solid color-mix(in srgb, var(--pen) 40%, transparent);display:inline-block;
     padding-bottom:6px;
   }
   .step-tag{
     display:inline-block;font-family:"SF Mono",Menlo,monospace;font-size:12.5px;
-    color:var(--chalk-yellow);border:1px solid rgba(244,211,94,.5);
+    color:var(--pen);border:1px solid color-mix(in srgb, var(--pen) 50%, transparent);
     border-radius:4px;padding:1px 8px;margin-bottom:10px;letter-spacing:1px;
   }
   p{margin:12px 0;}
-  .dim{color:var(--chalk-dim);font-size:15px;}
-  .hl{color:var(--chalk-yellow);}
-  .hl-b{color:var(--chalk-blue);}
+  .dim{color:var(--ink-dim);font-size:15px;}
+  .hl{color:var(--pen);}
+  .hl-b{color:var(--pen2);}
   .mono{font-family:"SF Mono",Menlo,Consolas,monospace;word-break:break-word;overflow-wrap:anywhere;}
 
   /* 对照卡 */
   .compare{display:grid;gap:16px;grid-template-columns:1fr;margin-top:18px;}
   @media(min-width:720px){ .compare{grid-template-columns:1fr 1fr;} }
   .card{
-    border:1px solid var(--line);border-radius:8px;padding:16px 18px;
-    background:rgba(255,255,255,.02);
+    border:1px solid var(--rule);border-radius:8px;padding:16px 18px;
+    background:var(--cardBg);
   }
-  .card.bad{border-color:rgba(233,162,160,.4);}
-  .card.good{border-color:rgba(143,201,226,.45);background:rgba(143,201,226,.05);}
+  .card.bad{border-color:color-mix(in srgb, var(--penRed) 40%, transparent);}
+  .card.good{border-color:color-mix(in srgb, var(--pen2) 45%, transparent);background:color-mix(in srgb, var(--pen2) 5%, transparent);}
   .card .tag{
     display:inline-block;font-size:12.5px;padding:2px 9px;border-radius:4px;
     margin-bottom:10px;letter-spacing:.5px;
   }
-  .card.bad .tag{background:rgba(233,162,160,.15);color:var(--chalk-pink);}
-  .card.good .tag{background:rgba(143,201,226,.16);color:var(--chalk-blue);}
+  .card.bad .tag{background:color-mix(in srgb, var(--penRed) 15%, transparent);color:var(--penRed);}
+  .card.good .tag{background:color-mix(in srgb, var(--pen2) 16%, transparent);color:var(--pen2);}
   .card p{margin:8px 0;}
-  .card .why{color:var(--chalk-dim);font-size:14.5px;}
+  .card .why{color:var(--ink-dim);font-size:14.5px;}
 
   /* 铁律条 */
   .rule{
-    margin-top:20px;padding:14px 18px;border-left:4px solid var(--chalk-yellow);
-    background:rgba(244,211,94,.07);border-radius:0 8px 8px 0;font-size:16px;
+    margin-top:20px;padding:14px 18px;border-left:4px solid var(--pen);
+    background:color-mix(in srgb, var(--pen) 7%, transparent);border-radius:0 8px 8px 0;font-size:16px;
   }
-  .prompt{font-size:16.5px;color:var(--chalk);}
-  h3{font-family:"Kaiti SC","STKaiti","KaiTi",serif;}
+  .prompt{font-size:16.5px;color:var(--ink);}
+  h3{font-family:var(--titleFont);}
 
   /* 卡壳点 */
   details.q{
-    border:1px solid var(--line);border-radius:8px;margin:12px 0;
-    background:rgba(255,255,255,.02);overflow:hidden;
+    border:1px solid var(--rule);border-radius:8px;margin:12px 0;
+    background:var(--cardBg);overflow:hidden;
   }
   details.q summary{
     cursor:pointer;padding:14px 18px;font-size:17px;list-style:none;
@@ -136,146 +181,214 @@
   }
   details.q summary::-webkit-details-marker{display:none;}
   details.q summary::before{
-    content:"+";font-family:"SF Mono",monospace;color:var(--chalk-yellow);
+    content:"+";font-family:"SF Mono",monospace;color:var(--pen);
     font-size:20px;line-height:1;width:16px;flex:none;
   }
   details.q[open] summary::before{content:"−";}
-  details.q[open] summary{border-bottom:1px dashed var(--line);}
+  details.q[open] summary{border-bottom:1px dashed var(--rule);}
   .q .body{padding:14px 18px 18px;font-size:16px;}
   .q .body p:first-child{margin-top:0;}
 
   /* 尺度阶梯 */
   .ladder{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 6px;}
   .rung{
-    cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--chalk);
+    cursor:pointer;border:1px solid var(--rule);background:transparent;color:var(--ink);
     border-radius:999px;padding:7px 14px;font-size:14.5px;transition:.22s;
     font-family:inherit;
   }
-  .rung:hover{border-color:rgba(244,211,94,.6);transform:translateY(-1px);}
-  .rung.on{background:rgba(244,211,94,.16);border-color:var(--chalk-yellow);color:#fff;}
-  .rung .r-unit{color:var(--chalk-dim);font-size:12.5px;margin-left:6px;}
-  .rung.on .r-unit{color:rgba(255,255,255,.75);}
+  .rung:hover{border-color:color-mix(in srgb, var(--pen) 60%, transparent);transform:translateY(-1px);}
+  .rung.on{background:color-mix(in srgb, var(--pen) 16%, transparent);border-color:var(--pen);color:var(--ink);}
+  .rung .r-unit{color:var(--ink-dim);font-size:12.5px;margin-left:6px;}
+  .rung.on .r-unit{color:color-mix(in srgb, var(--ink) 72%, transparent);}
   .ladder-out{
-    border:1px dashed var(--line);border-radius:8px;padding:16px 18px;margin-top:14px;
+    border:1px dashed var(--rule);border-radius:8px;padding:16px 18px;margin-top:14px;
     min-height:104px;
   }
-  .ladder-out .lo-name{font-size:20px;font-family:"Kaiti SC",serif;color:#fff;}
-  .ladder-out .lo-size{font-family:"SF Mono",monospace;color:var(--chalk-yellow);font-size:17px;margin:6px 0;}
-  .ladder-out .lo-step{color:var(--chalk-blue);font-size:15px;margin-top:8px;}
-  .ladder-out .lo-note{color:var(--chalk-dim);font-size:14.5px;margin-top:8px;}
+  .ladder-out .lo-name{font-size:20px;font-family:var(--titleFont);color:var(--ink);}
+  .ladder-out .lo-size{font-family:"SF Mono",monospace;color:var(--pen);font-size:17px;margin:6px 0;}
+  .ladder-out .lo-step{color:var(--pen2);font-size:15px;margin-top:8px;}
+  .ladder-out .lo-note{color:var(--ink-dim);font-size:14.5px;margin-top:8px;}
 
   /* 计算器 */
   .calc{margin-top:22px;}
   .calc-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
   .calc input[type=number]{
     font-family:"SF Mono",monospace;font-size:17px;padding:10px 12px;width:150px;
-    background:rgba(0,0,0,.28);border:1px solid var(--line);border-radius:6px;color:#fff;
+    background:var(--inputBg);border:1px solid var(--rule);border-radius:6px;color:var(--ink);
   }
   .calc select{
     font-family:inherit;font-size:15px;padding:11px 10px;border-radius:6px;
-    background:rgba(0,0,0,.28);border:1px solid var(--line);color:#fff;
+    background:var(--inputBg);border:1px solid var(--rule);color:var(--ink);
   }
   .calc button{
     font-family:inherit;font-size:15px;padding:10px 18px;border-radius:6px;cursor:pointer;
-    background:rgba(244,211,94,.16);border:1px solid rgba(244,211,94,.6);color:var(--chalk-yellow);
+    background:color-mix(in srgb, var(--pen) 16%, transparent);border:1px solid color-mix(in srgb, var(--pen) 60%, transparent);color:var(--pen);
     transition:.2s;
   }
-  .calc button:hover{background:rgba(244,211,94,.28);}
+  .calc button:hover{background:color-mix(in srgb, var(--pen) 28%, transparent);}
   .presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
   .presets button{
     font-size:13.5px;padding:6px 12px;border-radius:999px;
-    background:transparent;border:1px solid var(--line);color:var(--chalk-dim);
+    background:transparent;border:1px solid var(--rule);color:var(--ink-dim);
   }
-  .presets button:hover{color:var(--chalk);border-color:var(--chalk-blue);}
+  .presets button:hover{color:var(--ink);border-color:var(--pen2);}
   .calc-out{
     margin-top:16px;padding:16px 18px;border-radius:8px;
-    background:rgba(143,201,226,.06);border:1px solid rgba(143,201,226,.3);
+    background:color-mix(in srgb, var(--pen2) 6%, transparent);border:1px solid color-mix(in srgb, var(--pen2) 30%, transparent);
     font-size:16px;min-height:76px;
     overflow-wrap:anywhere;word-break:break-word;max-width:100%;
   }
-  .calc-out .n{font-family:"SF Mono",monospace;color:#fff;font-size:19px;word-break:break-all;}
+  .calc-out .n{font-family:"SF Mono",monospace;color:var(--ink);font-size:19px;word-break:break-all;}
 
   /* 拼图 */
   .puzzle{display:flex;flex-wrap:wrap;gap:12px;margin:18px 0 14px;}
   .pc{
-    flex:1 1 190px;border:1px solid var(--line);border-radius:8px;padding:14px 16px;
-    background:rgba(255,255,255,.02);cursor:pointer;transition:.25s;
+    flex:1 1 190px;border:1px solid var(--rule);border-radius:8px;padding:14px 16px;
+    background:var(--cardBg);cursor:pointer;transition:.25s;
   }
-  .pc:hover{border-color:var(--chalk-blue);}
-  .pc.on{border-color:var(--chalk-yellow);background:rgba(244,211,94,.1);transform:translateY(-2px);}
-  .pc .pc-sym{font-family:"SF Mono",monospace;font-size:22px;color:var(--chalk-yellow);}
+  .pc:hover{border-color:var(--pen2);}
+  .pc.on{border-color:var(--pen);background:color-mix(in srgb, var(--pen) 10%, transparent);transform:translateY(-2px);}
+  .pc .pc-sym{font-family:"SF Mono",monospace;font-size:22px;color:var(--pen);}
   .pc .pc-name{font-size:14.5px;margin-top:6px;}
-  .pc .pc-val{font-family:"SF Mono",monospace;font-size:13px;color:var(--chalk-dim);margin-top:4px;word-break:break-all;}
-  .pc .pc-role{font-size:13.5px;color:var(--chalk-blue);margin-top:8px;}
+  .pc .pc-val{font-family:"SF Mono",monospace;font-size:13px;color:var(--ink-dim);margin-top:4px;word-break:break-all;}
+  .pc .pc-role{font-size:13.5px;color:var(--pen2);margin-top:8px;}
   .formula{
-    text-align:center;padding:20px 14px;border:1px dashed var(--line);border-radius:8px;
+    text-align:center;padding:20px 14px;border:1px dashed var(--rule);border-radius:8px;
     font-family:"SF Mono",Menlo,monospace;font-size:clamp(15px,3.6vw,21px);
-    color:var(--chalk-dim);transition:.35s;
+    color:var(--ink-dim);transition:.35s;
   }
-  .formula.live{color:#fff;border-color:rgba(244,211,94,.55);background:rgba(244,211,94,.06);}
-  .formula .res{display:block;margin-top:12px;color:var(--chalk-yellow);font-size:clamp(16px,4vw,23px);}
+  .formula.live{color:var(--ink);border-color:color-mix(in srgb, var(--pen) 55%, transparent);background:color-mix(in srgb, var(--pen) 6%, transparent);}
+  .formula .res{display:block;margin-top:12px;color:var(--pen);font-size:clamp(16px,4vw,23px);}
 
   /* 类比纠错 */
   .analogy{display:grid;gap:14px;margin-top:16px;}
-  .ana{border:1px solid var(--line);border-radius:8px;padding:14px 18px;}
-  .ana.wrong{border-color:rgba(233,162,160,.45);}
-  .ana.right{border-color:rgba(143,201,226,.5);background:rgba(143,201,226,.05);}
+  .ana{border:1px solid var(--rule);border-radius:8px;padding:14px 18px;}
+  .ana.wrong{border-color:color-mix(in srgb, var(--penRed) 45%, transparent);}
+  .ana.right{border-color:color-mix(in srgb, var(--pen2) 50%, transparent);background:color-mix(in srgb, var(--pen2) 5%, transparent);}
   .ana h4{margin:0 0 8px;font-size:16.5px;font-weight:600;}
-  .ana.wrong h4{color:var(--chalk-pink);}
-  .ana.right h4{color:var(--chalk-blue);}
+  .ana.wrong h4{color:var(--penRed);}
+  .ana.right h4{color:var(--pen2);}
   .ana p{margin:6px 0;font-size:15.5px;}
 
   /* 第四步 */
   .final{
-    border:1px solid rgba(244,211,94,.45);border-radius:10px;padding:22px 22px 26px;
-    background:rgba(244,211,94,.06);margin-top:18px;
+    border:1px solid color-mix(in srgb, var(--pen) 45%, transparent);border-radius:10px;padding:22px 22px 26px;
+    background:color-mix(in srgb, var(--pen) 6%, transparent);margin-top:18px;
   }
   .final .one-shot{
-    font-family:"Kaiti SC","STKaiti","KaiTi",serif;
-    font-size:clamp(18px,4.3vw,23px);line-height:1.9;color:#fff;margin:10px 0 0;
+    font-family:var(--titleFont);
+    font-size:clamp(18px,4.3vw,23px);line-height:1.9;color:var(--ink);margin:10px 0 0;
   }
   .checklist{margin-top:20px;padding-left:0;list-style:none;}
   .checklist li{
-    padding:9px 0 9px 30px;position:relative;font-size:15.5px;border-bottom:1px dashed var(--line);
+    padding:9px 0 9px 30px;position:relative;font-size:15.5px;border-bottom:1px dashed var(--rule);
   }
   .checklist li:last-child{border-bottom:none;}
   .checklist li::before{
-    content:"□";position:absolute;left:6px;color:var(--chalk-yellow);font-size:17px;
+    content:"□";position:absolute;left:6px;color:var(--pen);font-size:17px;
   }
-  .egg{margin-top:26px;border:1px dashed var(--line);border-radius:8px;padding:16px 18px;}
-  .egg h4{margin:0 0 8px;font-size:16.5px;color:var(--chalk-yellow);font-weight:600;}
+  .egg{margin-top:26px;border:1px dashed var(--rule);border-radius:8px;padding:16px 18px;}
+  .egg h4{margin:0 0 8px;font-size:16.5px;color:var(--pen);font-weight:600;}
   .guess{margin:10px 0;font-size:15.5px;}
-  .guess b{color:var(--chalk-blue);}
+  .guess b{color:var(--pen2);}
 
   /* E · 自己写 */
   textarea#mySpeech{
     width:100%;min-height:130px;margin-top:10px;padding:14px;border-radius:8px;
-    background:rgba(0,0,0,.28);border:1px solid var(--line);color:#fff;
+    background:var(--inputBg);border:1px solid var(--rule);color:var(--ink);
     font-family:inherit;font-size:16px;line-height:1.7;resize:vertical;
   }
-  textarea#mySpeech:focus{outline:none;border-color:rgba(244,211,94,.6);}
+  textarea#mySpeech:focus{outline:none;border-color:color-mix(in srgb, var(--pen) 60%, transparent);}
   .writebar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:10px;}
   .writebar button{
     font-family:inherit;font-size:15px;padding:10px 18px;border-radius:6px;cursor:pointer;
-    background:rgba(244,211,94,.16);border:1px solid rgba(244,211,94,.6);color:var(--chalk-yellow);
+    background:color-mix(in srgb, var(--pen) 16%, transparent);border:1px solid color-mix(in srgb, var(--pen) 60%, transparent);color:var(--pen);
   }
-  .writebar button:hover{background:rgba(244,211,94,.28);}
-  .writebar span{color:var(--chalk-dim);font-size:14.5px;}
+  .writebar button:hover{background:color-mix(in srgb, var(--pen) 28%, transparent);}
+  .writebar span{color:var(--ink-dim);font-size:14.5px;}
 
   footer{
-    margin-top:56px;padding-top:20px;border-top:1px dashed var(--line);
-    color:var(--chalk-dim);font-size:14px;
+    margin-top:56px;padding-top:20px;border-top:1px dashed var(--rule);
+    color:var(--ink-dim);font-size:14px;
   }
   .quote{
-    font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:17px;color:var(--chalk);
-    border-left:3px solid rgba(244,211,94,.5);padding-left:14px;margin:20px 0 8px;
+    font-family:var(--titleFont);font-size:17px;color:var(--ink);
+    border-left:3px solid color-mix(in srgb, var(--pen) 50%, transparent);padding-left:14px;margin:20px 0 8px;
   }
   .fadein{opacity:0;transform:translateY(14px);transition:opacity .8s ease,transform .8s ease;}
   .fadein.in{opacity:1;transform:none;}
+
+  /* 附录图 */
+  .chart-wrap{margin:18px 0 0;}
+  .chart-wrap a{
+    display:block;border:1px solid var(--rule);border-radius:10px;overflow:hidden;
+    background:var(--cardBg);transition:.25s;
+  }
+  .chart-wrap a:hover{border-color:var(--pen);}
+  .chart-wrap img{display:block;width:100%;height:auto;}
+  .chart-wrap figcaption{margin-top:10px;color:var(--ink-dim);font-size:14px;text-align:center;}
+  .chart-note{
+    margin-top:12px;padding:12px 16px;border-radius:8px;
+    background:color-mix(in srgb, var(--pen) 8%, transparent);
+    border-left:3px solid var(--pen);font-size:15px;
+  }
+
+  /* 主题切换按钮 */
+  .theme-btn{
+    margin-left:auto;flex:none;cursor:pointer;
+    width:38px;height:34px;border-radius:999px;font-size:16px;line-height:1;
+    background:transparent;border:1px solid var(--rule);color:var(--ink-dim);
+    transition:.25s;font-family:inherit;
+  }
+  .theme-btn:hover{color:var(--pen);border-color:var(--pen);}
+
+  /* ===== 多端适配 ===== */
+  @media (max-width:400px){
+    body{font-size:16.5px;padding:10px 8px 48px;}
+    .board{padding:24px 15px 34px;border-radius:10px;}
+    h1{font-size:25px;}
+    .big{font-size:19px;}
+    section{margin-top:40px;}
+    .card,.ladder-out,.calc-out,.ana,.egg,.final{padding:13px 14px;}
+  }
+  @media (max-width:640px){
+    .calc input[type=number]{width:100%;}
+    .calc select{flex:1 1 auto;}
+    .calc-row{gap:8px;}
+    .compare{gap:12px;}
+  }
+  @media (min-width:1024px){
+    body{font-size:17.5px;padding:26px 20px 70px;}
+    .board{padding:44px 46px 54px;}
+  }
+  @media (min-width:1440px){
+    .board{max-width:960px;}
+  }
+  /* 触控设备：放大可点区域到 44px 以上 */
+  @media (pointer:coarse){
+    .nav a{padding:8px 14px;}
+    .rung{padding:10px 16px;}
+    .pc{padding:16px 18px;}
+    .presets button{padding:9px 14px;}
+    .calc button,.writebar button{padding:12px 20px;}
+    details.q summary{padding:16px 18px;}
+    .theme-btn{width:44px;height:42px;}
+  }
   @media(prefers-reduced-motion:reduce){
     .fadein{opacity:1;transform:none;transition:none;}
   }
 </style>
+<script>
+/* 主题在首帧前定好，避免闪烁（FOUC） */
+(function(){
+  var t = null;
+  try{ t = localStorage.getItem('planck-theme'); }catch(e){}
+  if(t !== 'dark' && t !== 'light'){
+    t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+  }
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
 </head>
 <body>
 <div class="board">
@@ -286,13 +399,15 @@
     <a href="#step2">② 找卡壳点</a>
     <a href="#step3">③ 回源头补漏</a>
     <a href="#step4">④ 讲成一段话</a>
+    <a href="#chart">速查图</a>
+    <button class="theme-btn" id="themeBtn" type="button" aria-label="切换明暗主题" title="切换明暗主题">🌙</button>
   </nav>
 
   <header id="step0">
     <h1>普朗克长度有多小？</h1>
     <div class="sub">用费曼学习法，四步把一个"听起来很吓人"的概念讲到别人懂</div>
     <div class="claim">先把结论放这儿：</div>
-    <div class="big">1.616 × 10⁻³⁵ 米</div>
+    <div class="big big-mark">1.616 × 10⁻³⁵ 米</div>
     <div class="big small-num">0.000000000000000000000000000000000016 米</div>
     <p class="dim">但这个数字本身没什么用。往下走四步，你会得到一个能讲给同学听的说法。</p>
     <div class="quote">"What I cannot create, I do not understand."<br>
@@ -359,14 +474,14 @@
     <h2>回到源头，把漏的地方补上</h2>
     <p>刚才哪里支支吾吾，就回来重读。这一步不丢人，是必经之路。</p>
 
-    <h3 style="font-size:18px;margin:26px 0 6px;color:var(--chalk-blue);">A · 尺度阶梯（点一点）</h3>
+    <h3 style="font-size:18px;margin:26px 0 6px;color:var(--pen2);">A · 尺度阶梯（点一点）</h3>
     <p class="dim">从人到普朗克长度，一共 35 个数量级。点每一级，看看它比上一级小多少倍。</p>
     <div class="ladder" id="ladder"></div>
     <div class="ladder-out" id="ladderOut">
       <div class="lo-note">点上面任意一格开始。</div>
     </div>
 
-    <h3 style="font-size:18px;margin:34px 0 6px;color:var(--chalk-blue);">B · 自己算一遍（别信我，信你自己）</h3>
+    <h3 style="font-size:18px;margin:34px 0 6px;color:var(--pen2);">B · 自己算一遍（别信我，信你自己）</h3>
     <p class="dim">输入任意一个东西的大小，算算要切成多少份才是普朗克长度。</p>
     <div class="calc">
       <div class="calc-row">
@@ -392,7 +507,7 @@
       </div>
     </div>
 
-    <h3 style="font-size:18px;margin:34px 0 6px;color:var(--chalk-blue);">C · 三个常数拼出一把尺子</h3>
+    <h3 style="font-size:18px;margin:34px 0 6px;color:var(--pen2);">C · 三个常数拼出一把尺子</h3>
     <p class="dim">点中间这三块牌子，看看宇宙的"最小长度"是怎么拼出来的。</p>
     <div class="puzzle" id="puzzle">
       <div class="pc" data-k="c">
@@ -419,7 +534,7 @@
       <div class="dim" style="margin-top:8px;font-size:14px;">三块牌子全点亮，尺子就出来了。</div>
     </div>
 
-    <h3 style="font-size:18px;margin:34px 0 6px;color:var(--chalk-blue);">D · 一个流传很广的错类比</h3>
+    <h3 style="font-size:18px;margin:34px 0 6px;color:var(--pen2);">D · 一个流传很广的错类比</h3>
     <p class="dim">很多科普图会用这句话让你"有感觉"，但它算错了。你自己看：</p>
     <div class="analogy">
       <div class="ana wrong">
@@ -470,6 +585,26 @@
       <div class="guess"><b>圈量子引力</b>：空间不是连续的，而是由一个个离散的"空间原子"编成的网，像台阶一样只能一格一格走。"里面"没有东西，它本身就是最小的那一格。</div>
       <div class="guess"><b>量子泡沫</b>：时空在这个尺度像一锅沸腾的水，不断冒出又破掉小小的时空泡，甚至微型虫洞。空间不是安静背景，而是一直在生灭。</div>
       <p class="dim" style="margin-top:14px;">也有另一派认为时空到这里依然是连续的，那些只是别的问题在捣乱。两种观点都还活着，谁对谁错，要等未来的实验。</p>
+    </div>
+  </section>
+
+  <section id="chart">
+    <div class="step-tag">速查图</div>
+    <h2>一张图看完整尺度</h2>
+    <p class="dim">走完四步之后，这张图可以把整条链路一眼看完。点图可放大。</p>
+    <figure class="chart-wrap">
+      <a href="assets/planck-scale-final.jpg" target="_blank" rel="noopener">
+        <picture>
+          <source srcset="assets/planck-scale-final.webp" type="image/webp">
+          <img src="assets/planck-scale-final.jpg"
+               alt="从日常到普朗克尺度的完整尺度图：人、手指宽度、头发丝、细胞、细菌、病毒、原子、原子核、普朗克长度九级阶梯，附公式与三个常数"
+               width="1400" height="933" loading="lazy" decoding="async">
+        </picture>
+      </a>
+      <figcaption>从日常到普朗克尺度 · 九级阶梯 + 公式 + 三个常数</figcaption>
+    </figure>
+    <div class="chart-note">
+      这张图的每个数字都逐项验算过，还修了网上版本常见的两个错：<b>原子核</b>那级不是 1 飞米（那是质子），而是 1.6 到 15 飞米；传说中「质子放大到宇宙、普朗克长度就像个篮球」的类比也算了，实际是 <b>16,904 公里</b>，比地球直径还长。
     </div>
   </section>
 
@@ -600,7 +735,7 @@
       if(n===3){
         formula.classList.add('live');
         formula.innerHTML = '√( ħ · G / c³ ) ≈ <span class="res">1.616 × 10⁻³⁵ 米</span>' +
-          '<div style="margin-top:10px;font-size:14.5px;color:#fff;">三个常数凑在一起，量纲相消，只剩「米」这一个单位。' +
+          '<div style="margin-top:10px;font-size:14.5px;color:var(--ink);">三个常数凑在一起，量纲相消，只剩「米」这一个单位。' +
           '普朗克长度不是谁规定的，是宇宙自己长出来的。</div>' +
           '<div style="margin-top:8px;font-size:14px;" class="dim">配套的还有普朗克时间：光走过这段距离只要 5.39 × 10⁻⁴⁴ 秒。</div>';
       } else if(n===0){
@@ -637,6 +772,22 @@
     }catch(e){
       info.textContent = '这台设备不允许本地保存，写完可以截图留给你自己。';
     }
+  });
+
+  // ---------- 主题切换 ----------
+  var htmlEl = document.documentElement;
+  var themeBtn = document.getElementById('themeBtn');
+  function paintBtn(){
+    var dark = htmlEl.getAttribute('data-theme') === 'dark';
+    themeBtn.textContent = dark ? '☀️' : '🌙';
+    themeBtn.setAttribute('aria-label', dark ? '切换到亮色主题' : '切换到暗色主题');
+  }
+  paintBtn();
+  themeBtn.addEventListener('click', function(){
+    var next = htmlEl.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    htmlEl.setAttribute('data-theme', next);
+    try{ window.localStorage.setItem('planck-theme', next); }catch(e){}
+    paintBtn();
   });
 
   // ---------- 入场动画（只给关键块） ----------
