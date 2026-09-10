@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>普朗克长度有多小 · 费曼学习法</title>
+<style>
+  :root{
+    --board:#1d302a;
+    --board-2:#24382f;
+    --chalk:#f2eee3;
+    --chalk-dim:#a9b8ae;
+    --chalk-yellow:#f4d35e;
+    --chalk-blue:#8fc9e2;
+    --chalk-pink:#e9a2a0;
+    --wood:#6b4a32;
+    --wood-dark:#3d2a1c;
+    --line:rgba(242,238,227,.22);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:#101a16;
+    color:var(--chalk);
+    font-family:system-ui,-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.75;
+    font-size:17px;
+    padding:18px 12px 60px;
+  }
+  /* 黑板外框 */
+  .board{
+    max-width:920px;margin:0 auto;
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(255,255,255,.045), transparent 55%),
+      radial-gradient(ellipse at 85% 100%, rgba(255,255,255,.03), transparent 50%),
+      linear-gradient(160deg,var(--board-2),var(--board) 55%,#182a24);
+    border:14px solid var(--wood);
+    border-radius:10px;
+    box-shadow:
+      0 0 0 2px var(--wood-dark),
+      inset 0 0 90px rgba(0,0,0,.45),
+      0 24px 60px rgba(0,0,0,.55);
+    padding:34px 26px 44px;
+    position:relative;
+    overflow:hidden;
+  }
+  .board::after{ /* 粉笔灰 */
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+    background-image:radial-gradient(rgba(255,255,255,.05) 1px, transparent 1px);
+    background-size:7px 7px;
+  }
+  .board > *{position:relative;z-index:1;}
+
+  /* 顶部导航 */
+  .nav{
+    display:flex;flex-wrap:wrap;gap:8px;margin-bottom:26px;
+    padding-bottom:16px;border-bottom:1px dashed var(--line);
+  }
+  .nav a{
+    color:var(--chalk-dim);text-decoration:none;font-size:13.5px;
+    border:1px solid var(--line);border-radius:999px;padding:4px 12px;
+    transition:.25s;
+  }
+  .nav a:hover,.nav a.on{color:var(--chalk-yellow);border-color:rgba(244,211,94,.55);}
+
+  h1{
+    font-family:"Kaiti SC","STKaiti","KaiTi","Songti SC",serif;
+    font-size:clamp(28px,6vw,44px);
+    margin:0 0 6px;font-weight:600;letter-spacing:.5px;
+    text-shadow:0 0 14px rgba(255,255,255,.16);
+  }
+  .sub{color:var(--chalk-dim);font-size:15.5px;margin-bottom:10px;}
+  .claim{
+    font-size:clamp(19px,4.4vw,25px);color:var(--chalk-yellow);
+    font-family:"Kaiti SC","STKaiti","KaiTi",serif;margin:16px 0 6px;
+  }
+  .big{
+    font-family:"SF Mono",Menlo,Consolas,monospace;
+    font-size:clamp(20px,5vw,30px);color:#fff;
+    letter-spacing:.5px;word-break:break-all;
+  }
+  .big.small-num{font-size:clamp(13px,3.4vw,17px);color:var(--chalk-dim);word-break:break-all;}
+
+  section{margin:52px 0 0;scroll-margin-top:16px;}
+  h2{
+    font-family:"Kaiti SC","STKaiti","KaiTi",serif;
+    font-size:clamp(21px,4.8vw,27px);margin:0 0 4px;font-weight:600;
+    border-bottom:2px solid rgba(244,211,94,.4);display:inline-block;
+    padding-bottom:6px;
+  }
+  .step-tag{
+    display:inline-block;font-family:"SF Mono",Menlo,monospace;font-size:12.5px;
+    color:var(--chalk-yellow);border:1px solid rgba(244,211,94,.5);
+    border-radius:4px;padding:1px 8px;margin-bottom:10px;letter-spacing:1px;
+  }
+  p{margin:12px 0;}
+  .dim{color:var(--chalk-dim);font-size:15px;}
+  .hl{color:var(--chalk-yellow);}
+  .hl-b{color:var(--chalk-blue);}
+  .mono{font-family:"SF Mono",Menlo,Consolas,monospace;word-break:break-word;overflow-wrap:anywhere;}
+
+  /* 对照卡 */
+  .compare{display:grid;gap:16px;grid-template-columns:1fr;margin-top:18px;}
+  @media(min-width:720px){ .compare{grid-template-columns:1fr 1fr;} }
+  .card{
+    border:1px solid var(--line);border-radius:8px;padding:16px 18px;
+    background:rgba(255,255,255,.02);
+  }
+  .card.bad{border-color:rgba(233,162,160,.4);}
+  .card.good{border-color:rgba(143,201,226,.45);background:rgba(143,201,226,.05);}
+  .card .tag{
+    display:inline-block;font-size:12.5px;padding:2px 9px;border-radius:4px;
+    margin-bottom:10px;letter-spacing:.5px;
+  }
+  .card.bad .tag{background:rgba(233,162,160,.15);color:var(--chalk-pink);}
+  .card.good .tag{background:rgba(143,201,226,.16);color:var(--chalk-blue);}
+  .card p{margin:8px 0;}
+  .card .why{color:var(--chalk-dim);font-size:14.5px;}
+
+  /* 铁律条 */
+  .rule{
+    margin-top:20px;padding:14px 18px;border-left:4px solid var(--chalk-yellow);
+    background:rgba(244,211,94,.07);border-radius:0 8px 8px 0;font-size:16px;
+  }
+  .prompt{font-size:16.5px;color:var(--chalk);}
+  h3{font-family:"Kaiti SC","STKaiti","KaiTi",serif;}
+
+  /* 卡壳点 */
+  details.q{
+    border:1px solid var(--line);border-radius:8px;margin:12px 0;
+    background:rgba(255,255,255,.02);overflow:hidden;
+  }
+  details.q summary{
+    cursor:pointer;padding:14px 18px;font-size:17px;list-style:none;
+    display:flex;align-items:center;gap:10px;
+  }
+  details.q summary::-webkit-details-marker{display:none;}
+  details.q summary::before{
+    content:"+";font-family:"SF Mono",monospace;color:var(--chalk-yellow);
+    font-size:20px;line-height:1;width:16px;flex:none;
+  }
+  details.q[open] summary::before{content:"−";}
+  details.q[open] summary{border-bottom:1px dashed var(--line);}
+  .q .body{padding:14px 18px 18px;font-size:16px;}
+  .q .body p:first-child{margin-top:0;}
+
+  /* 尺度阶梯 */
+  .ladder{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 6px;}
+  .rung{
+    cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--chalk);
+    border-radius:999px;padding:7px 14px;font-size:14.5px;transition:.22s;
+    font-family:inherit;
+  }
+  .rung:hover{border-color:rgba(244,211,94,.6);transform:translateY(-1px);}
+  .rung.on{background:rgba(244,211,94,.16);border-color:var(--chalk-yellow);color:#fff;}
+  .rung .r-unit{color:var(--chalk-dim);font-size:12.5px;margin-left:6px;}
+  .rung.on .r-unit{color:rgba(255,255,255,.75);}
+  .ladder-out{
+    border:1px dashed var(--line);border-radius:8px;padding:16px 18px;margin-top:14px;
+    min-height:104px;
+  }
+  .ladder-out .lo-name{font-size:20px;font-family:"Kaiti SC",serif;color:#fff;}
+  .ladder-out .lo-size{font-family:"SF Mono",monospace;color:var(--chalk-yellow);font-size:17px;margin:6px 0;}
+  .ladder-out .lo-step{color:var(--chalk-blue);font-size:15px;margin-top:8px;}
+  .ladder-out .lo-note{color:var(--chalk-dim);font-size:14.5px;margin-top:8px;}
+
+  /* 计算器 */
+  .calc{margin-top:22px;}
+  .calc-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+  .calc input[type=number]{
+    font-family:"SF Mono",monospace;font-size:17px;padding:10px 12px;width:150px;
+    background:rgba(0,0,0,.28);border:1px solid var(--line);border-radius:6px;color:#fff;
+  }
+  .calc select{
+    font-family:inherit;font-size:15px;padding:11px 10px;border-radius:6px;
+    background:rgba(0,0,0,.28);border:1px solid var(--line);color:#fff;
+  }
+  .calc button{
+    font-family:inherit;font-size:15px;padding:10px 18px;border-radius:6px;cursor:pointer;
+    background:rgba(244,211,94,.16);border:1px solid rgba(244,211,94,.6);color:var(--chalk-yellow);
+    transition:.2s;
+  }
+  .calc button:hover{background:rgba(244,211,94,.28);}
+  .presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+  .presets button{
+    font-size:13.5px;padding:6px 12px;border-radius:999px;
+    background:transparent;border:1px solid var(--line);color:var(--chalk-dim);
+  }
+  .presets button:hover{color:var(--chalk);border-color:var(--chalk-blue);}
+  .calc-out{
+    margin-top:16px;padding:16px 18px;border-radius:8px;
+    background:rgba(143,201,226,.06);border:1px solid rgba(143,201,226,.3);
+    font-size:16px;min-height:76px;
+    overflow-wrap:anywhere;word-break:break-word;max-width:100%;
+  }
+  .calc-out .n{font-family:"SF Mono",monospace;color:#fff;font-size:19px;word-break:break-all;}
+
+  /* 拼图 */
+  .puzzle{display:flex;flex-wrap:wrap;gap:12px;margin:18px 0 14px;}
+  .pc{
+    flex:1 1 190px;border:1px solid var(--line);border-radius:8px;padding:14px 16px;
+    background:rgba(255,255,255,.02);cursor:pointer;transition:.25s;
+  }
+  .pc:hover{border-color:var(--chalk-blue);}
+  .pc.on{border-color:var(--chalk-yellow);background:rgba(244,211,94,.1);transform:translateY(-2px);}
+  .pc .pc-sym{font-family:"SF Mono",monospace;font-size:22px;color:var(--chalk-yellow);}
+  .pc .pc-name{font-size:14.5px;margin-top:6px;}
+  .pc .pc-val{font-family:"SF Mono",monospace;font-size:13px;color:var(--chalk-dim);margin-top:4px;word-break:break-all;}
+  .pc .pc-role{font-size:13.5px;color:var(--chalk-blue);margin-top:8px;}
+  .formula{
+    text-align:center;padding:20px 14px;border:1px dashed var(--line);border-radius:8px;
+    font-family:"SF Mono",Menlo,monospace;font-size:clamp(15px,3.6vw,21px);
+    color:var(--chalk-dim);transition:.35s;
+  }
+  .formula.live{color:#fff;border-color:rgba(244,211,94,.55);background:rgba(244,211,94,.06);}
+  .formula .res{display:block;margin-top:12px;color:var(--chalk-yellow);font-size:clamp(16px,4vw,23px);}
+
+  /* 类比纠错 */
+  .analogy{display:grid;gap:14px;margin-top:16px;}
+  .ana{border:1px solid var(--line);border-radius:8px;padding:14px 18px;}
+  .ana.wrong{border-color:rgba(233,162,160,.45);}
+  .ana.right{border-color:rgba(143,201,226,.5);background:rgba(143,201,226,.05);}
+  .ana h4{margin:0 0 8px;font-size:16.5px;font-weight:600;}
+  .ana.wrong h4{color:var(--chalk-pink);}
+  .ana.right h4{color:var(--chalk-blue);}
+  .ana p{margin:6px 0;font-size:15.5px;}
+
+  /* 第四步 */
+  .final{
+    border:1px solid rgba(244,211,94,.45);border-radius:10px;padding:22px 22px 26px;
+    background:rgba(244,211,94,.06);margin-top:18px;
+  }
+  .final .one-shot{
+    font-family:"Kaiti SC","STKaiti","KaiTi",serif;
+    font-size:clamp(18px,4.3vw,23px);line-height:1.9;color:#fff;margin:10px 0 0;
+  }
+  .checklist{margin-top:20px;padding-left:0;list-style:none;}
+  .checklist li{
+    padding:9px 0 9px 30px;position:relative;font-size:15.5px;border-bottom:1px dashed var(--line);
+  }
+  .checklist li:last-child{border-bottom:none;}
+  .checklist li::before{
+    content:"□";position:absolute;left:6px;color:var(--chalk-yellow);font-size:17px;
+  }
+  .egg{margin-top:26px;border:1px dashed var(--line);border-radius:8px;padding:16px 18px;}
+  .egg h4{margin:0 0 8px;font-size:16.5px;color:var(--chalk-yellow);font-weight:600;}
+  .guess{margin:10px 0;font-size:15.5px;}
+  .guess b{color:var(--chalk-blue);}
+
+  /* E · 自己写 */
+  textarea#mySpeech{
+    width:100%;min-height:130px;margin-top:10px;padding:14px;border-radius:8px;
+    background:rgba(0,0,0,.28);border:1px solid var(--line);color:#fff;
+    font-family:inherit;font-size:16px;line-height:1.7;resize:vertical;
+  }
+  textarea#mySpeech:focus{outline:none;border-color:rgba(244,211,94,.6);}
+  .writebar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:10px;}
+  .writebar button{
+    font-family:inherit;font-size:15px;padding:10px 18px;border-radius:6px;cursor:pointer;
+    background:rgba(244,211,94,.16);border:1px solid rgba(244,211,94,.6);color:var(--chalk-yellow);
+  }
+  .writebar button:hover{background:rgba(244,211,94,.28);}
+  .writebar span{color:var(--chalk-dim);font-size:14.5px;}
+
+  footer{
+    margin-top:56px;padding-top:20px;border-top:1px dashed var(--line);
+    color:var(--chalk-dim);font-size:14px;
+  }
+  .quote{
+    font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:17px;color:var(--chalk);
+    border-left:3px solid rgba(244,211,94,.5);padding-left:14px;margin:20px 0 8px;
+  }
+  .fadein{opacity:0;transform:translateY(14px);transition:opacity .8s ease,transform .8s ease;}
+  .fadein.in{opacity:1;transform:none;}
+  @media(prefers-reduced-motion:reduce){
+    .fadein{opacity:1;transform:none;transition:none;}
+  }
+</style>
+</head>
+<body>
+<div class="board">
+
+  <nav class="nav">
+    <a href="#step0">开场</a>
+    <a href="#step1">① 讲给小孩听</a>
+    <a href="#step2">② 找卡壳点</a>
+    <a href="#step3">③ 回源头补漏</a>
+    <a href="#step4">④ 讲成一段话</a>
+  </nav>
+
+  <header id="step0">
+    <h1>普朗克长度有多小？</h1>
+    <div class="sub">用费曼学习法，四步把一个"听起来很吓人"的概念讲到别人懂</div>
+    <div class="claim">先把结论放这儿：</div>
+    <div class="big">1.616 × 10⁻³⁵ 米</div>
+    <div class="big small-num">0.000000000000000000000000000000000016 米</div>
+    <p class="dim">但这个数字本身没什么用。往下走四步，你会得到一个能讲给同学听的说法。</p>
+    <div class="quote">"What I cannot create, I do not understand."<br>
+      <span class="dim" style="font-size:14.5px;">我无法创造的，我就还没理解。费曼去世时，黑板上留着这句话。</span>
+    </div>
+  </header>
+
+  <section id="step1">
+    <div class="step-tag">STEP 01</div>
+    <h2>假装讲给一个完全不懂的人</h2>
+    <p>费曼第一步：<span class="hl">把概念用最简单的话讲出来</span>，像讲给一个从没听过的小孩。讲不顺，说明你还没懂。</p>
+    <p class="dim">现在试试：一句话说清"普朗克长度有多小"，你会怎么说？</p>
+
+    <div class="compare">
+      <div class="card bad">
+        <span class="tag">说了等于没说</span>
+        <p>"普朗克长度是量子引力的特征尺度，约为 10⁻³⁵ 米。"</p>
+        <p class="why">每个词都认识，合起来谁也没懂。"10⁻³⁵ 米"对人脑来说，等于没说。这就是典型的"用术语掩盖没理解"。</p>
+      </div>
+      <div class="card good">
+        <span class="tag">费曼式说法</span>
+        <p>"把一根头发丝切成 <span class="mono">4</span> 后面跟 <span class="mono">30</span> 个零那么多份，取其中一份，那就是普朗克长度。"</p>
+        <p class="why">能想象，能量出来，能原样讲给下一个人。这才算讲清楚了。</p>
+      </div>
+    </div>
+
+    <div class="rule">第一步的铁律：<b>不许用"量子""特征尺度""维度"这类词</b>。只要用上，就说明卡壳了，回去补。</div>
+  </section>
+
+  <section id="step2">
+    <div class="step-tag">STEP 02</div>
+    <h2>找出卡壳的地方</h2>
+    <p>讲不下去的位置，就是你没懂的位置。下面三个问题，逐个点开看看自己会不会讲。</p>
+
+    <details class="q">
+      <summary>① 到底多小？说个数我听听</summary>
+      <div class="body">
+        <p>能报出「10⁻³⁵ 米」不算会讲，那只是背下来了。<span class="hl">要能跟熟悉的东西比出倍数</span>：</p>
+        <p>一根头发丝约 0.07 毫米，把它切成 4,300,000,000,000,000,000,000,000,000,000 份，其中一份才够到普朗克长度。</p>
+        <p class="dim">每一级台阶到底差多少倍，去第三步的「尺度阶梯」自己点一遍。</p>
+      </div>
+    </details>
+
+    <details class="q">
+      <summary>② 为什么不能再小了？谁规定的最小？</summary>
+      <div class="body">
+        <p>没有人规定。它也不是量出来的，是<span class="hl">算出来的</span>。</p>
+        <p>物理学家把宇宙里三个最基本的常数拿来拼：光速 c（相对论）、普朗克常数 ħ（量子）、引力常数 G（引力）。这三个一凑，量纲相消之后只剩下一个单位：<span class="mono">米</span>。拼出来的长度就是普朗克长度。</p>
+        <p>所以它更像是宇宙自己长出来的一把尺子。在这个尺度上，引力和量子效应同时变得不能忽略，我们现在的两套理论（广义相对论 + 量子场论）同时失效。</p>
+      </div>
+    </details>
+
+    <details class="q">
+      <summary>③ 这跟我有什么关系？</summary>
+      <div class="body">
+        <p>它最实用的一面是<span class="hl">它把话说死了一次</span>：空间不是无限可分的。如果空间像一块屏幕，普朗克长度就是屏幕上一个像素点的大小，「比一个像素更小的像素」没有意义。</p>
+        <p>这也直接决定了物理学能问的最深的问题：黑洞里面发生了什么、宇宙大爆炸的第一瞬间是什么样子，答案都藏在这个尺度上。人类现在最强的对撞机离需要的能量还差 10¹⁵ 倍，所以只能算，不能看。</p>
+      </div>
+    </details>
+  </section>
+
+  <section id="step3">
+    <div class="step-tag">STEP 03</div>
+    <h2>回到源头，把漏的地方补上</h2>
+    <p>刚才哪里支支吾吾，就回来重读。这一步不丢人，是必经之路。</p>
+
+    <h3 style="font-size:18px;margin:26px 0 6px;color:var(--chalk-blue);">A · 尺度阶梯（点一点）</h3>
+    <p class="dim">从人到普朗克长度，一共 35 个数量级。点每一级，看看它比上一级小多少倍。</p>
+    <div class="ladder" id="ladder"></div>
+    <div class="ladder-out" id="ladderOut">
+      <div class="lo-note">点上面任意一格开始。</div>
+    </div>
+
+    <h3 style="font-size:18px;margin:34px 0 6px;color:var(--chalk-blue);">B · 自己算一遍（别信我，信你自己）</h3>
+    <p class="dim">输入任意一个东西的大小，算算要切成多少份才是普朗克长度。</p>
+    <div class="calc">
+      <div class="calc-row">
+        <input type="number" id="cSize" value="0.07" step="any" min="0" aria-label="尺寸数值">
+        <select id="cUnit" aria-label="单位">
+          <option value="1">米</option>
+          <option value="0.001">毫米</option>
+          <option value="0.000001" selected>微米</option>
+          <option value="0.000000001">纳米</option>
+        </select>
+        <button type="button" id="cGo">算一算</button>
+      </div>
+      <div class="presets">
+        <button type="button" data-s="0.07" data-u="0.001">头发丝 0.07 毫米</button>
+        <button type="button" data-s="15" data-u="0.000001">细胞 15 微米</button>
+        <button type="button" data-s="100" data-u="0.000000001">病毒 100 纳米</button>
+        <button type="button" data-s="0.84" data-u="0.000000000001">质子 0.84 飞米</button>
+        <button type="button" data-s="1" data-u="1">1 米</button>
+      </div>
+      <div class="calc-out" id="cOut">
+        <span class="dim">结果显示在这里。</span>
+      </div>
+    </div>
+
+    <h3 style="font-size:18px;margin:34px 0 6px;color:var(--chalk-blue);">C · 三个常数拼出一把尺子</h3>
+    <p class="dim">点中间这三块牌子，看看宇宙的"最小长度"是怎么拼出来的。</p>
+    <div class="puzzle" id="puzzle">
+      <div class="pc" data-k="c">
+        <div class="pc-sym">c</div>
+        <div class="pc-name">真空中的光速</div>
+        <div class="pc-val">2.998 × 10⁸ m/s</div>
+        <div class="pc-role">代表：相对论、空间与时间</div>
+      </div>
+      <div class="pc" data-k="h">
+        <div class="pc-sym">ħ</div>
+        <div class="pc-name">约化普朗克常数</div>
+        <div class="pc-val">1.055 × 10⁻³⁴ J·s</div>
+        <div class="pc-role">代表：量子力学</div>
+      </div>
+      <div class="pc" data-k="G">
+        <div class="pc-sym">G</div>
+        <div class="pc-name">万有引力常数</div>
+        <div class="pc-val">6.674 × 10⁻¹¹ m³·kg⁻¹·s⁻²</div>
+        <div class="pc-role">代表：引力</div>
+      </div>
+    </div>
+    <div class="formula" id="formula">
+      √( ħ · G / c³ ) = ?<span class="res"> </span>
+      <div class="dim" style="margin-top:8px;font-size:14px;">三块牌子全点亮，尺子就出来了。</div>
+    </div>
+
+    <h3 style="font-size:18px;margin:34px 0 6px;color:var(--chalk-blue);">D · 一个流传很广的错类比</h3>
+    <p class="dim">很多科普图会用这句话让你"有感觉"，但它算错了。你自己看：</p>
+    <div class="analogy">
+      <div class="ana wrong">
+        <h4>网上流传的版本（错）</h4>
+        <p>"把质子放大到整个可观测宇宙那么大，普朗克长度就变成一个篮球大小。"</p>
+        <p class="why">按这个比例实算：可观测宇宙直径 8.8 × 10²⁶ 米 ÷ 质子直径 8.4 × 10⁻¹⁶ 米 ≈ 1.05 × 10⁴² 倍。普朗克长度放大这么多倍之后是 <b>16,904 公里</b>，比地球直径（12,742 公里）还长，跟篮球差了近 8 个数量级。</p>
+      </div>
+      <div class="ana right">
+        <h4>算对之后的版本（对）</h4>
+        <p>"把质子放大到整个可观测宇宙那么大，普朗克长度会变成约 <b>17,000 公里</b>：比地球直径还长一点点。"</p>
+        <p class="why">反向也成立：想让普朗克长度变成一个篮球那么大，质子得先放大到约 <b>1,300 光年</b>（银河系直径的六十分之一）。</p>
+        <p class="why">这就是费曼学习法最狠的地方：<b>任何图上的结论，你都可以当场把它按在地上验算。</b></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="step4">
+    <div class="step-tag">STEP 04</div>
+    <h2>简化到一口气讲完</h2>
+    <p>费曼的终极检验：<span class="hl">能不能不用一个术语，从头到尾讲完，让对方点头？</span></p>
+
+    <div class="final fadein">
+      <div class="dim">示范（试着念一遍，看能不能不打结）</div>
+      <p class="one-shot">"世界上最小的长度叫普朗克长度。它有多小呢？你把一根头发丝切成 4 后面带 30 个零那么多份，切到其中一份，就到了。这个数不是谁量出来的，是科学家把宇宙里三样最基本的东西（光的速度、量子的规则、引力的强度）拼在一起，拼出来的。到了这么小的尺度，空间就像屏幕上的像素，再往下问'更小'就没意义了。黑洞里面、宇宙刚诞生的那一瞬间，答案都藏在这一格像素里，所以这是现在全世界的物理学家都还没解开的地方。"</p>
+    </div>
+
+    <div class="prompt" style="margin-top:26px;">轮到你了：把你的讲法写下来</div>
+    <p class="dim">费曼学习法的最后一关不是“听懂”，是“讲出来”。用你自己的话写一遍，写不顺的地方就是还没懂的地方。</p>
+    <textarea id="mySpeech" placeholder="例：普朗克长度是世界上最小的长度。它有多小呢？把一根头发丝切成……"></textarea>
+    <div class="writebar">
+      <button type="button" id="saveSpeech">保存我的讲法</button>
+      <span id="speechInfo">写完后点保存（只存在你自己的设备上，不会上传）。</span>
+    </div>
+
+    <div class="prompt" style="margin-top:22px;">自测清单（能全打勾，才算学会）</div>
+    <ul class="checklist">
+      <li>我能不能不用"量子""尺度"这些词，就把它讲清楚？</li>
+      <li>我能不能说出它比头发丝小多少倍？</li>
+      <li>我能不能解释为什么它不能再小了？</li>
+      <li>我能不能说出一个"你以为对、其实是错的"类比，并纠正它？</li>
+      <li>我讲完之后，对方能不能把同样的话再讲给第三个人？</li>
+    </ul>
+
+    <div class="egg">
+      <h4>彩蛋：如果你接着问"那普朗克长度里面是什么"</h4>
+      <p class="dim">这个问题已经站在全世界物理最前沿了，没人知道确定答案。但目前有三种主流猜想：</p>
+      <div class="guess"><b>弦论</b>：没有"里面"，最小的东西是一根根极细的弦，不同的振动方式弹出不同的粒子。所谓"里面"，就是弦在抖。</div>
+      <div class="guess"><b>圈量子引力</b>：空间不是连续的，而是由一个个离散的"空间原子"编成的网，像台阶一样只能一格一格走。"里面"没有东西，它本身就是最小的那一格。</div>
+      <div class="guess"><b>量子泡沫</b>：时空在这个尺度像一锅沸腾的水，不断冒出又破掉小小的时空泡，甚至微型虫洞。空间不是安静背景，而是一直在生灭。</div>
+      <p class="dim" style="margin-top:14px;">也有另一派认为时空到这里依然是连续的，那些只是别的问题在捣乱。两种观点都还活着，谁对谁错，要等未来的实验。</p>
+    </div>
+  </section>
+
+  <footer>
+    <div>页面里的每一个数字都可以验算：普朗克长度 = √(ħG/c³) ≈ 1.616255 × 10⁻³⁵ 米（CODATA 2018）。</div>
+    <div>尺度阶梯用的是各类事物的常见尺度（头发 70 微米、动物细胞 15 微米、病毒约 100 纳米、原子核 1.6 到 15 飞米）。</div>
+    <div style="margin-top:8px;">Ariste 🦞 · 2026-09-10 · 送给牧童</div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var LP = 1.616255e-35; // 普朗克长度（米）
+
+  // ---------- 工具：科学计数法 → 带上标的可读字符串 ----------
+  var SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','-':'⁻'};
+  function sup(n){ return String(n).split('').map(function(ch){return SUP[ch]||ch;}).join(''); }
+  function sci(x, digits){
+    if(!isFinite(x) || x<=0) return '—';
+    digits = digits==null ? 2 : digits;
+    var e = Math.floor(Math.log10(x));
+    var m = x / Math.pow(10,e);
+    return m.toFixed(digits) + ' × 10' + sup(e);
+  }
+  // 大整数：分组加逗号（整数部分超过 1e6 时用）
+  function groupInt(x){
+    return Math.round(x).toLocaleString('en-US');
+  }
+  // 尺度显示：普朗克长度固定 3 位有效数字，其余保持 2 位，避免同一页出现 1.62 与 1.616 两种写法
+  function sizeDigits(x){ return x === LP ? 3 : (x >= 1 ? 1 : 1); }
+
+  // ---------- A. 尺度阶梯 ----------
+  var LEVELS = [
+    {name:'人',        size:1.7,        note:'身高 1 到 2 米，我们生活的尺度。'},
+    {name:'手指宽度',  size:0.015,      note:'约 1 厘米，指尖的世界。'},
+    {name:'头发丝',    size:0.00007,    note:'约 70 微米，一根头发的直径。'},
+    {name:'细胞',      size:0.000015,   note:'约 15 微米，一个动物细胞。'},
+    {name:'细菌',      size:0.000001,   note:'约 1 微米，一颗细菌的大小。'},
+    {name:'病毒',      size:0.0000001,  note:'约 100 纳米，新冠病毒大约这么大。'},
+    {name:'原子',      size:0.00000000015, note:'约 0.15 纳米，一个原子的大小。'},
+    {name:'原子核',    size:0.00000000000001, note:'约 10 飞米（1 飞米 = 10⁻¹⁵ 米），原子核的尺度。'},
+    {name:'普朗克长度', size:LP,         note:'1.616 × 10⁻³⁵ 米，理论尺度，量子引力的边界。'}
+  ];
+
+  var ladder = document.getElementById('ladder');
+  var ladderOut = document.getElementById('ladderOut');
+  LEVELS.forEach(function(lv, i){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'rung';
+    b.setAttribute('data-i', i);
+    b.innerHTML = lv.name + '<span class="r-unit">' + sci(lv.size, sizeDigits(lv.size)) + ' 米</span>';
+    b.addEventListener('click', function(){ showRung(i); });
+    ladder.appendChild(b);
+  });
+
+  function showRung(i){
+    var lv = LEVELS[i];
+    var prev = i>0 ? LEVELS[i-1] : null;
+    var ratios = '';
+    if(prev){
+      var r = prev.size / lv.size;
+      ratios = '比「' + prev.name + '」小 ' + (r>=1e6 ? sci(r,1) : Math.round(r).toLocaleString('en-US')) + ' 倍';
+    } else {
+      ratios = '这一级就是我们自己。';
+    }
+    var toLp = lv.size / LP;
+    ladderOut.innerHTML =
+      '<div class="lo-name">' + lv.name + '</div>' +
+      '<div class="lo-size">' + sci(lv.size, sizeDigits(lv.size)) + ' 米</div>' +
+      '<div class="lo-step">' + ratios + '</div>' +
+      '<div class="lo-step">如果切到普朗克长度，要切成 ' + sci(toLp,1) + ' 份</div>' +
+      '<div class="lo-note">' + lv.note + '</div>';
+    var rungs = ladder.querySelectorAll('.rung');
+    for(var k=0;k<rungs.length;k++) rungs[k].classList.toggle('on', k===i);
+  }
+  showRung(0);
+
+  // ---------- B. 计算器 ----------
+  var cSize = document.getElementById('cSize');
+  var cUnit = document.getElementById('cUnit');
+  var cOut  = document.getElementById('cOut');
+
+  function compute(){
+    var v = parseFloat(cSize.value);
+    var u = parseFloat(cUnit.value);
+    if(!(v>0) || !(u>0)){
+      cOut.innerHTML = '<span class="dim">请输入一个大于 0 的数字。</span>';
+      return;
+    }
+    var meters = v * u;
+    var parts = meters / LP;
+    cOut.innerHTML =
+      '这个尺寸是 <span class="mono">' + sci(meters,2) + '</span> 米<br>' +
+      '要切成 <span class="n">' + sci(parts,1) + '</span> 份才有一份是普朗克长度' +
+      '<div class="dim" style="margin-top:10px;">换个写法：' + groupInt(parts) + ' 份（这个整数有 ' + (Math.floor(Math.log10(parts))+1) + ' 位）</div>';
+  }
+  document.getElementById('cGo').addEventListener('click', compute);
+  cSize.addEventListener('keydown', function(e){ if(e.key==='Enter') compute(); });
+  cUnit.addEventListener('change', compute);
+  var preset = document.querySelectorAll('.presets button');
+  for(var p=0;p<preset.length;p++){
+    preset[p].addEventListener('click', function(){
+      cSize.value = this.getAttribute('data-s');
+      cUnit.value = this.getAttribute('data-u');
+      compute();
+    });
+  }
+  compute();
+
+  // ---------- C. 拼图 ----------
+  var pcs = document.querySelectorAll('.pc');
+  var formula = document.getElementById('formula');
+  var lit = {};
+  for(var q=0;q<pcs.length;q++){
+    pcs[q].addEventListener('click', function(){
+      var k = this.getAttribute('data-k');
+      lit[k] = !lit[k];
+      this.classList.toggle('on', !!lit[k]);
+      var n = Object.keys(lit).filter(function(x){return lit[x];}).length;
+      if(n===3){
+        formula.classList.add('live');
+        formula.innerHTML = '√( ħ · G / c³ ) ≈ <span class="res">1.616 × 10⁻³⁵ 米</span>' +
+          '<div style="margin-top:10px;font-size:14.5px;color:#fff;">三个常数凑在一起，量纲相消，只剩「米」这一个单位。' +
+          '普朗克长度不是谁规定的，是宇宙自己长出来的。</div>' +
+          '<div style="margin-top:8px;font-size:14px;" class="dim">配套的还有普朗克时间：光走过这段距离只要 5.39 × 10⁻⁴⁴ 秒。</div>';
+      } else if(n===0){
+        formula.classList.remove('live');
+        formula.innerHTML = '√( ħ · G / c³ ) = ?<span class="res"> </span>' +
+          '<div class="dim" style="margin-top:8px;font-size:14px;">三块牌子全点亮，尺子就出来了。</div>';
+      } else {
+        formula.classList.remove('live');
+        formula.innerHTML = '已点亮 ' + n + ' / 3 块：还差 ' + (3-n) + ' 块。' +
+          '<div class="dim" style="margin-top:8px;font-size:14px;">三块牌子全点亮，尺子就出来了。</div>';
+      }
+    });
+  }
+
+  // ---------- E. 自己写（本地保存） ----------
+  var ta = document.getElementById('mySpeech');
+  var info = document.getElementById('speechInfo');
+  var KEY = 'planck-feynman-speech';
+  function refreshInfo(){
+    var n = (ta.value || '').trim().length;
+    info.textContent = n ? ('已写 ' + n + ' 个字。' + (n < 60 ? '再写长一点，看看能不能到 100 字。' : '很好，试着一口气念出来。')) : '写完后点保存（只存在你自己的设备上，不会上传）。';
+  }
+  try{
+    var saved = window.localStorage.getItem(KEY);
+    if(saved){ ta.value = saved; }
+  }catch(e){}
+  refreshInfo();
+  ta.addEventListener('input', refreshInfo);
+  document.getElementById('saveSpeech').addEventListener('click', function(){
+    try{
+      window.localStorage.setItem(KEY, ta.value);
+      var n = (ta.value || '').trim().length;
+      info.textContent = '已保存（' + n + ' 字）。下次打开这台设备还在。';
+    }catch(e){
+      info.textContent = '这台设备不允许本地保存，写完可以截图留给你自己。';
+    }
+  });
+
+  // ---------- 入场动画（只给关键块） ----------
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, {rootMargin:'0px 0px -40px 0px'});
+    document.querySelectorAll('.fadein').forEach(function(el){ io.observe(el); });
+  } else {
+    document.querySelectorAll('.fadein').forEach(function(el){ el.classList.add('in'); });
+  }
+})();
+</script>
+</body>
+</html>
