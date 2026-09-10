@@ -376,6 +376,7 @@
           <option value="0.001">毫米</option>
           <option value="0.000001" selected>微米</option>
           <option value="0.000000001">纳米</option>
+          <option value="0.000000000000001">飞米</option>
         </select>
         <button type="button" id="cGo">算一算</button>
       </div>
@@ -383,7 +384,7 @@
         <button type="button" data-s="0.07" data-u="0.001">头发丝 0.07 毫米</button>
         <button type="button" data-s="15" data-u="0.000001">细胞 15 微米</button>
         <button type="button" data-s="100" data-u="0.000000001">病毒 100 纳米</button>
-        <button type="button" data-s="0.84" data-u="0.000000000001">质子 0.84 飞米</button>
+        <button type="button" data-s="0.84" data-u="0.000000000000001">质子 0.84 飞米</button>
         <button type="button" data-s="1" data-u="1">1 米</button>
       </div>
       <div class="calc-out" id="cOut">
@@ -574,6 +575,13 @@
     preset[p].addEventListener('click', function(){
       cSize.value = this.getAttribute('data-s');
       cUnit.value = this.getAttribute('data-u');
+      // 防御：若单位值与任何选项都不匹配（select.value 会变空），补一个等价选项
+      if(!cUnit.value){
+        var uv = this.getAttribute('data-u');
+        var o = document.createElement('option');
+        o.value = uv; o.textContent = '自定义'; o.selected = true;
+        cUnit.appendChild(o);
+      }
       compute();
     });
   }
