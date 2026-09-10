@@ -4,6 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>普朗克长度有多小 · 费曼学习法</title>
+<meta name="description" content="用费曼学习法讲透普朗克长度：从头发丝切到 10 的 30 次方份，到空间的最小像素。含九级尺度阶梯、自算器、三道找错题。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="普朗克长度有多小 · 费曼学习法">
+<meta property="og:description" content="把一根头发丝切成 10 的 30 次方份，切到其中一份的那个尺寸。给 11 岁孩子的一页讲透。">
+<meta property="og:url" content="https://k286c7hg65-hub.github.io/planck-feynman/">
+<meta property="og:image" content="https://k286c7hg65-hub.github.io/planck-feynman/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
 <style>
   /* ===== 主题变量 =====
      默认「演算纸」（亮色），html[data-theme="dark"] 切「黑板」 */
@@ -36,7 +47,7 @@
     --paper:#1d302a;
     --paper2:#24382f;
     --ink:#f2eee3;
-    --ink-dim:#a9b8ae;
+    --ink-dim:#b7c5bb;
     --pen:#f4d35e;
     --pen2:#8fc9e2;
     --penRed:#e9a2a0;
@@ -61,8 +72,8 @@
     background:var(--bgPage);
     color:var(--ink);
     font-family:system-ui,-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
-    line-height:1.75;
-    font-size:17px;
+    line-height:1.8;
+    font-size:clamp(17px, 16.2px + .45vw, 18.5px);
     padding:18px 12px 60px;
     -webkit-text-size-adjust:100%;
   }
@@ -315,8 +326,111 @@
     font-family:var(--titleFont);font-size:17px;color:var(--ink);
     border-left:3px solid color-mix(in srgb, var(--pen) 50%, transparent);padding-left:14px;margin:20px 0 8px;
   }
-  .fadein{opacity:0;transform:translateY(14px);transition:opacity .8s ease,transform .8s ease;}
-  .fadein.in{opacity:1;transform:none;}
+  .fadein{opacity:1;transform:none;}
+  /* 只有确认 JS 可用才隐藏（否则无 JS / 打印时内容会变成空白）*/
+  html.js .fadein{opacity:0;transform:translateY(14px);transition:opacity .8s ease,transform .8s ease;}
+  html.js .fadein.in{opacity:1;transform:none;}
+
+  /* ===== 阅读进度线（fixed 避开 .board 的 overflow:hidden） ===== */
+  .progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:60;pointer-events:none;background:transparent;}
+  .progress i{display:block;height:100%;width:0;background:var(--pen);transition:width .1s linear;}
+  .nav a.on{color:var(--pen);border-color:var(--pen);background:color-mix(in srgb, var(--pen) 10%, transparent);}
+
+  /* 打印页脚：屏幕上隐藏，只在打印时出现 */
+  /* ==== 键盘可达（借 archify 作法：只在键盘导航时显示轮廓）==== */
+  button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{
+    outline:3px solid color-mix(in srgb, var(--pen) 70%, transparent);
+    outline-offset:2px;
+    border-radius:6px;
+  }
+  .game-card:focus-visible,.rung:focus-visible,.pc:focus-visible{outline-offset:3px;}
+
+  /* ==== 复述计时器 ==== */
+  .timer-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px;}
+  .timer-row button{padding:10px 16px;border-radius:8px;border:1px solid var(--rule);background:transparent;color:var(--ink-dim);font:inherit;font-size:15.5px;cursor:pointer;}
+  .timer-row button:hover{color:var(--ink);border-color:var(--ink-dim);}
+  .timer-display{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:22px;color:var(--pen);min-width:74px;}
+
+  .print-foot{display:none;}
+
+  /* ===== 先猜后验（预测环节）===== */
+  .predict{margin-top:14px;padding:14px 16px;border-radius:10px;border:1px dashed var(--pen);background:color-mix(in srgb, var(--pen) 5%, transparent);}
+  .predict[hidden]{display:none;}
+  .predict-q{font-weight:700;margin-bottom:10px;}
+  .predict-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;}
+  .predict-row .mono{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:18px;}
+  .predict-row input{
+    width:92px;padding:10px;font-size:17px;border-radius:7px;
+    border:1px solid var(--rule);background:var(--inputBg);color:var(--ink);font-family:inherit;
+  }
+  .predict-row button{padding:11px 18px;border-radius:8px;border:1px solid var(--pen);background:color-mix(in srgb, var(--pen) 14%, transparent);color:var(--ink);font:inherit;font-size:16px;cursor:pointer;}
+  .predict-row button.ghost,.game-foot button.ghost{background:transparent;border-color:var(--rule);color:var(--ink-dim);}
+  .predict-row button.ghost:hover,.game-foot button.ghost:hover{color:var(--ink);border-color:var(--ink-dim);}
+  .predict-fb{margin-top:10px;font-size:15.5px;min-height:22px;line-height:1.7;}
+  .predict-fb.ok{color:var(--pen2);}
+  .predict-fb.miss{color:var(--penRed);}
+
+  /* ===== 找错游戏（借 lesson7 猜谜引擎：卡片 + 徽章 + 计分 + 轮次）===== */
+  .game-cards{display:grid;gap:12px;margin-top:16px;}
+  .game-card{
+    text-align:left;cursor:pointer;padding:16px 18px;border-radius:10px;
+    border:1px solid var(--rule);background:var(--cardBg);color:var(--ink);
+    font:inherit;font-size:16.5px;line-height:1.75;transition:border-color .2s,background .2s;width:100%;
+  }
+  .game-card:hover{border-color:var(--pen);}
+  .game-card .gc-badge{display:block;margin-top:8px;font-size:14px;color:var(--ink-dim);}
+  .game-card .gc-why{display:none;margin-top:9px;font-size:14.5px;color:var(--ink-dim);border-top:1px dashed var(--rule);padding-top:9px;}
+  .game-card.revealed{cursor:default;}
+  .game-card.revealed .gc-why{display:block;}
+  .game-card.picked .gc-why{color:var(--ink);}
+  .game-card.picked .gc-badge{font-weight:700;}
+  .game-card.true-reveal{border-color:var(--pen2);background:color-mix(in srgb, var(--pen2) 9%, transparent);}
+  .game-card.wrong-guess{border-color:var(--penRed);background:color-mix(in srgb, var(--penRed) 9%, transparent);}
+  .game-card.true{border-color:color-mix(in srgb, var(--pen2) 45%, transparent);}
+  .game-fb{margin-top:14px;font-size:15.5px;line-height:1.75;color:var(--ink-dim);}
+  .game-fb.ok{color:var(--pen2);}
+  .game-fb.miss{color:var(--penRed);}
+  .game-foot{display:flex;align-items:center;gap:14px;margin-top:14px;flex-wrap:wrap;}
+  .game-foot button{padding:11px 18px;border-radius:8px;border:1px solid var(--rule);background:transparent;color:var(--ink-dim);font:inherit;font-size:16px;cursor:pointer;}
+  .game-foot button:disabled{opacity:.45;cursor:not-allowed;}
+
+  /* ===== 术语白话注解（点击揭晓）===== */
+  .term{
+    border:0;border-bottom:1px dashed var(--pen);color:var(--pen);cursor:pointer;
+    font:inherit;background:none;padding:0 1px;
+  }
+  .term::after{content:"﹖";font-size:.72em;vertical-align:super;margin-left:2px;opacity:.8;}
+  .term-def{
+    display:none;margin:9px 0;padding:11px 15px;border-radius:0 8px 8px 0;
+    border-left:3px solid var(--pen);background:color-mix(in srgb, var(--pen) 7%, transparent);
+    font-size:15.5px;color:var(--ink);
+  }
+  .term-def.show{display:block;}
+
+  /* ===== 打印：强制亮色 + 展开折叠 + 隐藏交互件，可打印成一页纸 ===== */
+  @media print{
+    html, html[data-theme="dark"]{
+      --bgPage:#fff;--paper:#fff;--paper2:#fff;--ink:#111c26;--ink-dim:#41505c;
+      --pen:#0d4f80;--pen2:#0a5646;--penRed:#8f2d27;--frame:#fff;--frame2:#fff;--frameW:0;
+      --rule:rgba(17,28,38,.4);--cardBg:#fff;--inputBg:#fff;--mark:#ffeaa6;
+      --grid:transparent;--boardInner:none;--boardShadow:none;--grain:transparent;--titleFont:inherit;
+    }
+    body{background:#fff;padding:0;font-size:11.5pt;line-height:1.65;}
+    .board{border:0;box-shadow:none;border-radius:0;max-width:none;padding:0;background:#fff;}
+    .board::after{display:none;}
+    .progress,.theme-btn,.presets,.calc button,.writebar button,.nav .theme-btn{display:none!important;}
+    .nav{border-bottom:1px solid var(--rule);}
+    .rung{background:#fff!important;border-color:var(--rule)!important;color:var(--ink)!important;}
+    details{border-color:var(--rule);}
+    details>summary{list-style:none;}
+    details>summary::marker{content:'';}
+    .card,.chart-wrap,.final,figure{break-inside:avoid;}
+    h2,h3{break-after:avoid;}
+    .chart-wrap img{max-height:78vh;object-fit:contain;}
+    .print-foot{display:block!important;margin-top:22px;padding-top:10px;border-top:1px solid var(--rule);font-size:10.5pt;color:var(--ink-dim);}
+    a[href^="http"]{color:var(--pen);}
+    a::after{content:"";}
+  }
 
   /* 附录图 */
   .chart-wrap{margin:18px 0 0;}
@@ -344,7 +458,7 @@
 
   /* ===== 多端适配 ===== */
   @media (max-width:400px){
-    body{font-size:16.5px;padding:10px 8px 48px;}
+    body{padding:10px 8px 48px;}
     .board{padding:24px 15px 34px;border-radius:10px;}
     h1{font-size:25px;}
     .big{font-size:19px;}
@@ -358,7 +472,7 @@
     .compare{gap:12px;}
   }
   @media (min-width:1024px){
-    body{font-size:17.5px;padding:26px 20px 70px;}
+    body{padding:26px 20px 70px;}
     .board{padding:44px 46px 54px;}
   }
   @media (min-width:1440px){
@@ -387,10 +501,13 @@
     t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
   }
   document.documentElement.setAttribute('data-theme', t);
+  /* 标记 JS 可用：动效降级依赖它（无 JS / 打印时内容不能被隐藏）*/
+  document.documentElement.classList.add('js');
 })();
 </script>
 </head>
 <body>
+<div class="progress" aria-hidden="true"><i id="progBar"></i></div>
 <div class="board">
 
   <nav class="nav">
@@ -399,6 +516,7 @@
     <a href="#step2">② 找卡壳点</a>
     <a href="#step3">③ 回源头补漏</a>
     <a href="#step4">④ 讲成一段话</a>
+    <a href="#quiz">找错</a>
     <a href="#chart">速查图</a>
     <button class="theme-btn" id="themeBtn" type="button" aria-label="切换明暗主题" title="切换明暗主题">🌙</button>
   </nav>
@@ -456,7 +574,7 @@
       <div class="body">
         <p>没有人规定。它也不是量出来的，是<span class="hl">算出来的</span>。</p>
         <p>物理学家把宇宙里三个最基本的常数拿来拼：光速 c（相对论）、普朗克常数 ħ（量子）、引力常数 G（引力）。这三个一凑，量纲相消之后只剩下一个单位：<span class="mono">米</span>。拼出来的长度就是普朗克长度。</p>
-        <p>所以它更像是宇宙自己长出来的一把尺子。在这个尺度上，引力和量子效应同时变得不能忽略，我们现在的两套理论（广义相对论 + 量子场论）同时失效。</p>
+        <p>所以它更像是宇宙自己长出来的一把尺子。在这个尺度上，引力和量子效应同时变得不能忽略，我们现在的两套理论（<button type="button" class="term" data-def="描述引力和时空的理论，爱因斯坦提出：质量会弯曲时空，光也会被弯曲。它管得住大尺度，比如星系和黑洞。">广义相对论</button> + <button type="button" class="term" data-def="描述微观粒子的理论，把量子力学和狭义相对论合在一起。它管得住小尺度，比如原子内部。两套理论各自都没问题，就是没法合起来用。">量子场论</button>）同时失效。</p>
       </div>
     </details>
 
@@ -502,6 +620,17 @@
         <button type="button" data-s="0.84" data-u="0.000000000000001">质子 0.84 飞米</button>
         <button type="button" data-s="1" data-u="1">1 米</button>
       </div>
+      <div class="predict" id="predictBox" hidden>
+        <div class="predict-q">先猜一猜：要切成 10 的几次方份？</div>
+        <div class="predict-row">
+          <span class="mono">10<sup>?</sup></span>
+          <input type="number" id="gExp" min="1" max="60" step="1" placeholder="猜" aria-label="你猜的数量级指数">
+          <button type="button" id="gGo">验证我的猜测</button>
+          <button type="button" class="ghost" id="gSkip">直接看答案</button>
+        </div>
+        <div class="predict-fb" id="gFb" aria-live="polite"></div>
+      </div>
+
       <div class="calc-out" id="cOut">
         <span class="dim">结果显示在这里。</span>
       </div>
@@ -533,6 +662,20 @@
       √( ħ · G / c³ ) = ?<span class="res"> </span>
       <div class="dim" style="margin-top:8px;font-size:14px;">三块牌子全点亮，尺子就出来了。</div>
     </div>
+    <!-- 放在 .formula 外面：拼图 JS 会重写 .formula 的 innerHTML，放里面会被覆盖 -->
+    <details class="q" style="margin-top:14px;">
+      <summary>多问一句：这个公式到底是怎么拼出来的？</summary>
+      <div class="body">
+          <p>三个常数各自带着单位，拼的方式就是让单位一个不剩地消掉，只剩「米」：</p>
+          <p class="mono" style="font-size:15.5px;line-height:2;">
+          ħ（普朗克常数 ÷ 2π）单位是 J·s = kg·m²/s<br>
+          G（引力常数）单位是 m³/(kg·s²)<br>
+          c（光速）单位是 m/s</p>
+          <p>把 ħ 乘上 G 再除以 c 的三次方，〈kg〉和〈s〉互相抵消，最后只剩一个〈m〉。开平方之后就是长度的单位：</p>
+          <p class="mono" style="font-size:15.5px;">L<sub>p</sub> = √( ħG / c³ ) ≈ 1.616255 × 10⁻³⁵ 米</p>
+          <p class="dim">同样的拼法还能得出普朗克时间 5.39 × 10⁻⁴⁴ 秒、普朗克质量约 2.18 × 10⁻⁸ 千克。这不是巧合：这三个量恰好标出了「量子效应和引力同时变得不能忽略」的那个尺度。</p>
+      </div>
+    </details>
 
     <h3 style="font-size:18px;margin:34px 0 6px;color:var(--pen2);">D · 一个流传很广的错类比</h3>
     <p class="dim">很多科普图会用这句话让你"有感觉"，但它算错了。你自己看：</p>
@@ -568,6 +711,11 @@
       <button type="button" id="saveSpeech">保存我的讲法</button>
       <span id="speechInfo">写完后点保存（只存在你自己的设备上，不会上传）。</span>
     </div>
+    <div class="timer-row">
+      <span class="timer-display" id="timerShow">60.0s</span>
+      <button type="button" id="timerBtn">开始 60 秒计时</button>
+      <span class="dim" id="timerHint">真正讲一遍：不看页面，一口气说够 60 秒。</span>
+    </div>
 
     <div class="prompt" style="margin-top:22px;">自测清单（能全打勾，才算学会）</div>
     <ul class="checklist">
@@ -585,6 +733,18 @@
       <div class="guess"><b>圈量子引力</b>：空间不是连续的，而是由一个个离散的"空间原子"编成的网，像台阶一样只能一格一格走。"里面"没有东西，它本身就是最小的那一格。</div>
       <div class="guess"><b>量子泡沫</b>：时空在这个尺度像一锅沸腾的水，不断冒出又破掉小小的时空泡，甚至微型虫洞。空间不是安静背景，而是一直在生灭。</div>
       <p class="dim" style="margin-top:14px;">也有另一派认为时空到这里依然是连续的，那些只是别的问题在捣乱。两种观点都还活着，谁对谁错，要等未来的实验。</p>
+    </div>
+  </section>
+
+  <section id="quiz">
+    <div class="step-tag">检验</div>
+    <h2>三道题，验一验</h2>
+    <p id="gamePrompt">下面三句话，只有一句是对的。点出那一句。</p>
+    <div class="game-cards" id="gameCards"></div>
+    <div class="game-fb" id="gameFb" aria-live="polite">点卡片作答。</div>
+    <div class="game-foot">
+      <span id="gameScore" class="dim">答对 0 · 答错 0</span>
+      <button type="button" class="ghost" id="gameNext" disabled>下一组</button>
     </div>
   </section>
 
@@ -612,6 +772,11 @@
     <div>页面里的每一个数字都可以验算：普朗克长度 = √(ħG/c³) ≈ 1.616255 × 10⁻³⁵ 米（CODATA 2018）。</div>
     <div>尺度阶梯用的是各类事物的常见尺度（头发 70 微米、动物细胞 15 微米、病毒约 100 纳米、原子核 1.6 到 15 飞米）。</div>
     <div style="margin-top:8px;">Ariste 🦞 · 2026-09-10 · 送给牧童</div>
+    <div class="print-foot">
+      打印版 · 数据来源：普朗克长度 = √(ħG/c³) = 1.616255 × 10⁻³⁵ 米（CODATA 2018）；普朗克时间 5.39 × 10⁻⁴⁴ 秒。
+      尺度阶梯取各类事物常见尺度：头发 70 微米、动物细胞 15 微米、病毒约 100 纳米、原子核 1.6–15 飞米。
+      在线版：k286c7hg65-hub.github.io/planck-feynman
+    </div>
   </footer>
 </div>
 
@@ -688,21 +853,64 @@
   var cUnit = document.getElementById('cUnit');
   var cOut  = document.getElementById('cOut');
 
+  var pending = null;
+  var predictBox = document.getElementById('predictBox');
+  var gExp = document.getElementById('gExp'), gFb = document.getElementById('gFb');
+
+  function answerHTML(p){
+    return '这个尺寸是 <span class="mono">' + sci(p.meters,2) + '</span> 米<br>' +
+      '要切成 <span class="n">' + sci(p.parts,1) + '</span> 份才有一份是普朗克长度' +
+      '<div class="dim" style="margin-top:10px;">换个写法：' + groupInt(p.parts) + ' 份（这个整数有 ' + (Math.floor(Math.log10(p.parts))+1) + ' 位）</div>';
+  }
+
+  // 第一步：只做计算与状态准备，不直接揭晓（先猜后验）
   function compute(){
     var v = parseFloat(cSize.value);
     var u = parseFloat(cUnit.value);
     if(!(v>0) || !(u>0)){
       cOut.innerHTML = '<span class="dim">请输入一个大于 0 的数字。</span>';
+      if(predictBox) predictBox.hidden = true;
+      pending = null;
       return;
     }
     var meters = v * u;
     var parts = meters / LP;
-    cOut.innerHTML =
-      '这个尺寸是 <span class="mono">' + sci(meters,2) + '</span> 米<br>' +
-      '要切成 <span class="n">' + sci(parts,1) + '</span> 份才有一份是普朗克长度' +
-      '<div class="dim" style="margin-top:10px;">换个写法：' + groupInt(parts) + ' 份（这个整数有 ' + (Math.floor(Math.log10(parts))+1) + ' 位）</div>';
+    pending = { meters: meters, parts: parts, exp: Math.floor(Math.log10(parts)) };
+    predictBox.hidden = false;
+    gFb.textContent = '';
+    gFb.className = 'predict-fb';
+    gExp.value = '';
+    cOut.innerHTML = '<span class="dim">先在上面猜一个数量级（10 的几次方），再点「验证我的猜测」。猜错不扣分——猜过才记得住。</span>';
   }
+
+  // 第二步：揭晓 + 对照猜测
+  function reveal(guessed){
+    if(!pending) return;
+    var p = pending;
+    var exp = p.exp;
+    if(guessed === null || isNaN(guessed)){
+      gFb.className = 'predict-fb';
+      gFb.innerHTML = '真值在 10<sup>' + exp + '</sup> 量级。';
+    } else {
+      var d = guessed - exp, ad = Math.abs(d);
+      if(ad <= 1){
+        gFb.className = 'predict-fb ok';
+        gFb.innerHTML = '✓ 猜得准！真正的数量级就是 10<sup>' + exp + '</sup>。';
+      } else {
+        gFb.className = 'predict-fb miss';
+        gFb.innerHTML = (d < 0 ? '偏小' : '偏大') + '：你猜 10<sup>' + guessed + '</sup>，真值是 10<sup>' + exp + '</sup>，' +
+          '差了约 ' + ad + ' 个数量级' + (ad >= 7 ? '（一个亿倍以上）' : '') + '。';
+      }
+    }
+    cOut.innerHTML = answerHTML(p);
+  }
+
   document.getElementById('cGo').addEventListener('click', compute);
+  if(document.getElementById('gGo')){
+    document.getElementById('gGo').addEventListener('click', function(){ reveal(parseFloat(gExp.value)); });
+    document.getElementById('gSkip').addEventListener('click', function(){ reveal(null); });
+    gExp.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ reveal(parseFloat(gExp.value)); } });
+  }
   cSize.addEventListener('keydown', function(e){ if(e.key==='Enter') compute(); });
   cUnit.addEventListener('change', compute);
   var preset = document.querySelectorAll('.presets button');
@@ -720,7 +928,9 @@
       compute();
     });
   }
-  compute();
+  // 首次进入：只给引导，不提前揭晓（先猜后验的起点）
+  predictBox.hidden = true;
+  cOut.innerHTML = '<span class="dim">选一个尺寸（或点下面的例子），再点「算一算」——先猜一个数量级，再验证。</span>';
 
   // ---------- C. 拼图 ----------
   var pcs = document.querySelectorAll('.pc');
@@ -774,6 +984,40 @@
     }
   });
 
+  // ---------- 复述计时器：60 秒内讲完才算过关 ----------
+  (function(){
+    var show = document.getElementById('timerShow');
+    var btn = document.getElementById('timerBtn');
+    var hint = document.getElementById('timerHint');
+    if(!show || !btn) return;
+    var T0 = 60, left = T0, tid = null, running = false;
+    function paint(){
+      show.textContent = left.toFixed(1) + 's';
+      show.style.color = left <= 0 ? 'var(--penRed)' : 'var(--pen)';
+    }
+    function stop(msg){
+      if(tid){ clearInterval(tid); tid = null; }
+      running = false;
+      btn.textContent = '重新计时';
+      if(msg) hint.textContent = msg;
+    }
+    btn.addEventListener('click', function(){
+      if(running){ stop('已暂停，再点一次重新开始。'); return; }
+      left = T0; running = true; paint();
+      btn.textContent = '暂停';
+      hint.textContent = '开始讲——别停，卡住也继续往下说。';
+      tid = setInterval(function(){
+        left = Math.max(0, left - 0.1);
+        paint();
+        if(left <= 0){
+          stop('60 秒到了。能一口气讲完，就是真懂了。');
+          hint.textContent = '60 秒到了。能一口气讲完，就是真懂了。';
+        }
+      }, 100);
+    });
+    paint();
+  })();
+
   // ---------- 主题切换 ----------
   var htmlEl = document.documentElement;
   var themeBtn = document.getElementById('themeBtn');
@@ -791,6 +1035,135 @@
   });
 
   // ---------- 入场动画（只给关键块） ----------
+  // ---------- 找错游戏：三句里挑出唯一正确/唯一错误的那句 ----------
+  var ROUNDS = [
+    {
+      kind: 'pick-true',
+      prompt: '下面三句话，只有一句是对的。点出那一句。',
+      cards: [
+        { t: '把质子放大到宇宙那么大，普朗克长度就有篮球那么大。', truth: false, why: '真实结果是 16,904 公里，比地球直径（12,742 公里）还长。而篮球只有 24 厘米——差了 7 个数量级。这句话在网上流传很广，但它是错的。' },
+        { t: '原子核的直径大约是 1 飞米。', truth: false, why: '1 飞米是质子的大小。原子核是 1.6 到 15 飞米，比质子大好几倍。很多科普图在这里也画错了。' },
+        { t: '普朗克长度不是量出来的，是光速、量子规则、引力强度三样拼出来的。', truth: true, why: '对。把 c、ħ、G 放在一起让量纲相消，剩下长度单位，就是普朗克长度。它是算出来的，不是测出来的。' }
+      ]
+    },
+    {
+      kind: 'pick-false',
+      prompt: '这一组反过来：下面三句话，只有一句是错的。点出那一句。',
+      cards: [
+        { t: '普朗克长度大约是 1.6 × 10⁻³⁵ 米。', truth: true, why: '对，CODATA 2018 的值是 1.616255 × 10⁻³⁵ 米。' },
+        { t: '普朗克时间大约是 5.4 × 10⁻⁴⁴ 秒。', truth: true, why: '对，普朗克时间 = 普朗克长度 ÷ 光速 ≈ 5.39 × 10⁻⁴⁴ 秒，是光走过一个普朗克长度所需的时间。' },
+        { t: '普朗克长度已经在实验室里被直接量出来了。', truth: false, why: '错。它比人类现在能探测的尺度还小很多个数量级，对撞机完全够不着，只能从理论推算。' }
+      ]
+    }
+  ];
+  var round = 0, score = { right: 0, wrong: 0 }, locked = false;
+  var gameCards = document.getElementById('gameCards');
+  var gameFb = document.getElementById('gameFb');
+  var gamePrompt = document.getElementById('gamePrompt');
+  var gameScore = document.getElementById('gameScore');
+  var gameNext = document.getElementById('gameNext');
+
+  function esc(s){ return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  function renderRound(){
+    locked = false;
+    var R = ROUNDS[round];
+    gamePrompt.textContent = R.prompt;
+    var html = '';
+    for(var i = 0; i < R.cards.length; i++){
+      html += '<button type="button" class="game-card" data-i="' + i + '">' + esc(R.cards[i].t) +
+        '<span class="gc-badge"></span><span class="gc-why">' + esc(R.cards[i].why) + '</span></button>';
+    }
+    gameCards.innerHTML = html;
+    gameCards.querySelectorAll('.game-card').forEach(function(el){
+      el.addEventListener('click', function(){ pick(parseInt(this.getAttribute('data-i'), 10)); });
+    });
+    gameFb.textContent = '点卡片作答。';
+    gameFb.className = 'game-fb';
+    gameNext.disabled = true;
+    gameNext.textContent = (round === ROUNDS.length - 1) ? '重来一次' : '下一组';
+  }
+
+  function pick(idx){
+    if(locked) return;
+    locked = true;
+    var R = ROUNDS[round];
+    var wantTrue = R.kind === 'pick-true';
+    var chosen = R.cards[idx];
+    var ok = wantTrue ? (chosen.truth === true) : (chosen.truth === false);
+    if(ok){ score.right++; } else { score.wrong++; }
+    gameCards.querySelectorAll('.game-card').forEach(function(el, i){
+      var c = R.cards[i];
+      el.classList.add('revealed');
+      el.classList.add(c.truth ? 'true' : 'false');
+      var badge = el.querySelector('.gc-badge');
+      if(i === idx){
+        el.classList.add(ok ? 'true-reveal' : 'wrong-guess');
+        el.classList.add('picked');
+        badge.textContent = ok ? '✓ 选对了' : '✗ 选错了';
+      } else {
+        badge.textContent = c.truth ? '（这句是对的）' : '（这句是错的）';
+      }
+    });
+    gameFb.className = 'game-fb ' + (ok ? 'ok' : 'miss');
+    gameFb.textContent = (ok ? '✓ 对了。' : '✗ 不是这句。') + chosen.why;
+    gameScore.textContent = '答对 ' + score.right + ' · 答错 ' + score.wrong;
+    gameNext.disabled = false;
+  }
+
+  if(gameNext){
+    gameNext.addEventListener('click', function(){
+      if(round === ROUNDS.length - 1){ round = 0; score = { right: 0, wrong: 0 }; gameScore.textContent = '答对 0 · 答错 0'; }
+      else { round++; }
+      renderRound();
+      document.getElementById('quiz').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    renderRound();
+  }
+
+  // ---------- 术语白话注解：点一下展开 ----------
+  document.querySelectorAll('.term').forEach(function(t){
+    t.addEventListener('click', function(){
+      var nx = t.nextElementSibling;
+      if(!nx || !nx.classList || !nx.classList.contains('term-def')){
+        nx = document.createElement('span');
+        nx.className = 'term-def';
+        nx.textContent = t.getAttribute('data-def') || '';
+        t.parentNode.insertBefore(nx, t.nextSibling);
+      }
+      nx.classList.toggle('show');
+    });
+  });
+
+  // ---------- 阅读进度线 + 章节高亮 ----------
+  var progBar = document.getElementById('progBar');
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav a[href^="#"]'));
+  var secEls = navLinks.map(function(a){ return document.querySelector(a.getAttribute('href')); });
+  function onScroll(){
+    var st = window.pageYOffset || document.documentElement.scrollTop || 0;
+    var total = document.documentElement.scrollHeight - window.innerHeight;
+    if(progBar) progBar.style.width = (total > 0 ? Math.min(100, (st / total) * 100) : 0) + '%';
+    var cur = -1;
+    for(var i = 0; i < secEls.length; i++){
+      var el = secEls[i];
+      if(el && el.getBoundingClientRect().top <= window.innerHeight * 0.35) cur = i;
+    }
+    navLinks.forEach(function(a, i){ a.classList.toggle('on', i === cur); });
+  }
+  var ticking = false;
+  window.addEventListener('scroll', function(){
+    if(ticking) return;
+    ticking = true;
+    requestAnimationFrame(function(){ onScroll(); ticking = false; });
+  }, {passive:true});
+  window.addEventListener('resize', onScroll);
+  onScroll();
+
+  // ---------- 打印前自动展开所有折叠（CSS 单打无法展开 details）----------
+  function openAllDetails(){ document.querySelectorAll('details').forEach(function(d){ d.open = true; }); }
+  window.addEventListener('beforeprint', openAllDetails);
+  if(/[?&]print=1/.test(location.search)) openAllDetails();
+
   if('IntersectionObserver' in window){
     var io = new IntersectionObserver(function(es){
       es.forEach(function(e){
