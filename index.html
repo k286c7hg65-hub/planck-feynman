@@ -88,10 +88,13 @@ details .body p:last-child{margin-bottom:var(--s1)}
 
 /* ── 主脊：竖直对数尺度轴 ───────────────────────────────── */
 .wrap{display:grid;grid-template-columns:384px minmax(0,1fr);gap:var(--s7);align-items:start}
-.spine{position:sticky;top:80px}
+.spine{position:sticky;top:80px;height:calc(100vh - 112px);display:flex;flex-direction:column;gap:var(--s3)}
 .spine .cap{font-family:var(--mono);font-size:var(--fs-12);color:var(--inkDim);display:flex;
   justify-content:space-between;margin-bottom:var(--s2)}
-.spine svg{display:block;width:100%;height:auto;background:var(--paper);border:1px solid var(--frame);border-radius:var(--r2)}
+.spine svg{display:block;width:100%;background:var(--paper);border:1px solid var(--frame);border-radius:var(--r2)}
+.spine svg.v{flex:1;min-height:0;height:100%}
+.spine svg.h{display:none;height:auto}
+.spine+.cap,.spine .cap{flex:none}
 .spine .note{font-size:var(--fs-12);line-height:var(--lh-s);color:var(--inkDim);margin-top:var(--s3);
   border-top:1px solid var(--frame);padding-top:var(--s3)}
 
@@ -132,7 +135,10 @@ footer{border-top:1px solid var(--frame);margin-top:var(--s7);padding:var(--s5) 
 
 @media (max-width:900px){
   .wrap{grid-template-columns:1fr;gap:var(--s5)}
-  .spine{position:sticky;top:64px;z-index:20;background:var(--bgPage);padding-bottom:var(--s2)}
+  .spine{position:sticky;top:64px;z-index:20;height:auto;background:var(--bgPage);padding-bottom:var(--s2)}
+  .spine svg.v{display:none}
+  .spine svg.h{display:block}
+  .axisFull{display:block;margin:var(--s5) 0 var(--s6)}
   .spine svg{max-width:100%}
   .spine .note{display:none}
   h1{font-size:var(--fs-26);margin-top:var(--s6)}
@@ -147,7 +153,10 @@ footer{border-top:1px solid var(--frame);margin-top:var(--s7);padding:var(--s5) 
   tbody td{display:block;border:0;padding:var(--s1) 0}
   tbody td::before{content:attr(data-k) " ";font-family:var(--mono);font-size:var(--fs-12);color:var(--inkDim)}
 }
-@media print{.nav,.spine,.dev,.skip{display:none}}
+.axisFull{display:none}
+.axisFull figcaption{font-size:var(--fs-12);line-height:var(--lh-s);color:var(--inkDim);margin-top:var(--s3)}
+.axisFull svg{display:block;width:100%;height:auto;background:var(--paper);border:1px solid var(--frame);border-radius:var(--r2)}
+@media print{.nav,.spine,.dev,.skip{display:none}.axisFull{display:block}}
 </style>
 </head>
 <body>
@@ -172,7 +181,15 @@ footer{border-top:1px solid var(--frame);margin-top:var(--s7);padding:var(--s5) 
 
   <aside class="spine" id="spine" aria-label="尺度主脊">
     <div class="cap"><span>尺度轴 · 对数</span><span>米</span></div>
-    <svg viewBox="0 0 320 660" role="img" aria-label="从 1 米到 10 的负 35 次方米的尺度轴，标注了人、蚂蚁、细胞、可见光、原子、质子、探测前沿与普朗克长度">
+            <svg class="h" viewBox="0 0 360 74" role="img" aria-label="尺度轴横条：从 1 米到 10 的负 35 次方米">
+      <line x1="16.0" y1="34" x2="344.0" y2="34" stroke="#d7dad7" stroke-width="1"/>
+      <line x1="194.1" y1="34" x2="344.0" y2="34" stroke="#0e6f7a" stroke-width="1" stroke-dasharray="3 4"/>
+      <g stroke="#16191c" stroke-width="1"><line x1="16.0" y1="28" x2="16.0" y2="40"/><line x1="44.1" y1="28" x2="44.1" y2="40"/><line x1="62.9" y1="28" x2="62.9" y2="40"/><line x1="81.6" y1="28" x2="81.6" y2="40"/><line x1="109.7" y1="28" x2="109.7" y2="40"/><line x1="156.6" y1="28" x2="156.6" y2="40"/><line x1="184.7" y1="28" x2="184.7" y2="40"/><line x1="344.0" y1="28" x2="344.0" y2="40"/></g>
+      <g font-family="monospace" font-size="12" fill="#16191c"><text x="16.0" y="60" text-anchor="middle">10⁰</text><text x="62.9" y="60" text-anchor="middle">10⁻⁵</text><text x="109.7" y="60" text-anchor="middle">10⁻¹⁰</text><text x="156.6" y="60" text-anchor="middle">10⁻¹⁵</text><text x="344.0" y="60" text-anchor="end">10⁻³⁵</text></g>
+      <line id="spineHTip" x1="16.0" y1="22" x2="16.0" y2="46" stroke="#0e6f7a" stroke-width="2"/>
+      <circle id="spineHDot" cx="16.0" cy="34" r="5" fill="#0e6f7a"/>
+    </svg>
+    <svg class="v" viewBox="0 0 320 660" role="img" aria-label="从 1 米到 10 的负 35 次方米的尺度轴，标注了人、蚂蚁、细胞、可见光、原子、质子、探测前沿与普朗克长度">
       <text x="0" y="14" font-size="12" font-family="monospace" fill="#5b646a">10⁰</text>
       <text x="316" y="14" text-anchor="end" font-size="12" font-family="monospace" fill="#5b646a">10⁻³⁵</text>
       <line x1="112" y1="36" x2="112" y2="612" stroke="#d7dad7" stroke-width="1"/>
@@ -235,6 +252,57 @@ footer{border-top:1px solid var(--frame);margin-top:var(--s7);padding:var(--s5) 
         <p>一，米、秒、千克是怎么被钉住的（为什么这跟下面的事有关）。二，普朗克长度是怎么被三个常数拼出来的（含公式）。三，为什么到了那里物理就塌了，以及哪些说法是真的、哪些只是流行段子。</p>
       </div>
     </section>
+    <figure class="axisFull">
+      <svg class="v" viewBox="0 0 320 660" role="img" aria-label="从 1 米到 10 的负 35 次方米的尺度轴，标注了人、蚂蚁、细胞、可见光、原子、质子、探测前沿与普朗克长度">
+      <text x="0" y="14" font-size="12" font-family="monospace" fill="#5b646a">10⁰</text>
+      <text x="316" y="14" text-anchor="end" font-size="12" font-family="monospace" fill="#5b646a">10⁻³⁵</text>
+      <line x1="112" y1="36" x2="112" y2="612" stroke="#d7dad7" stroke-width="1"/>
+      <line x1="112" y1="348" x2="112" y2="612" stroke="#0e6f7a" stroke-width="1" stroke-dasharray="3 4"/>
+      <!-- 刻度 -->
+      <g stroke="#16191c" stroke-width="1">
+        <line x1="104" y1="36" x2="112" y2="36"/>
+        <line x1="104" y1="85" x2="112" y2="85"/>
+        <line x1="104" y1="118" x2="112" y2="118"/>
+        <line x1="104" y1="151" x2="112" y2="151"/>
+        <line x1="104" y1="201" x2="112" y2="201"/>
+        <line x1="104" y1="283" x2="112" y2="283"/>
+        <line x1="104" y1="332" x2="112" y2="332"/>
+        <line x1="100" y1="612" x2="112" y2="612" stroke-width="2"/>
+      </g>
+      <g font-family="monospace" font-size="12" fill="#16191c" text-anchor="end">
+        <text x="98" y="40">10⁰</text>
+        <text x="98" y="89">10⁻³</text>
+        <text x="98" y="122">10⁻⁵</text>
+        <text x="98" y="155">10⁻⁷</text>
+        <text x="98" y="205">10⁻¹⁰</text>
+        <text x="98" y="287">10⁻¹⁵</text>
+        <text x="98" y="336">10⁻¹⁸</text>
+        <text x="98" y="616">10⁻³⁵</text>
+      </g>
+      <g font-size="12" fill="#16191c">
+        <text x="120" y="40">人 · 桌子（1 米）</text>
+        <text x="120" y="89">蚂蚁（约 3 毫米）</text>
+        <text x="120" y="122">细胞（10 到 30 微米）</text>
+        <text x="120" y="155">可见光波长（400 到 700 纳米）</text>
+        <text x="120" y="205">原子（约 0.1 纳米）</text>
+        <text x="120" y="287">原子核 · 质子（0.8414 飞米）</text>
+        <text x="120" y="336">电子的尺寸上限</text>
+      </g>
+      <text x="120" y="392" font-size="12" fill="#0e6f7a">探测前沿：大型强子对撞机</text>
+      <text x="120" y="408" font-size="12" fill="#0e6f7a">能直接分辨的约 10⁻¹⁹ 米</text>
+      <text x="120" y="470" font-size="12" fill="#5b646a">往下 16 个数量级</text>
+      <text x="120" y="486" font-size="12" fill="#5b646a">没有任何测量，全是推算</text>
+      <g font-size="12" fill="#16191c">
+        <text x="120" y="616" font-weight="600">普朗克长度（1.616255×10⁻³⁵ 米）</text>
+      </g>
+      <g>
+        <circle cx="112" cy="36" r="4" fill="#0e6f7a"/>
+        <line x1="112" y1="36" x2="112" y2="612" stroke="#0e6f7a" stroke-width="1"/>
+      </g>
+    </svg>
+<figcaption>完整尺度轴：从 1 米到 10 的负 35 次方米。竖线越长代表越小；虚线以下（10⁻¹⁹ 米到 10⁻³⁵ 米）的 16 个数量级，没有任何直接测量，全部是推算。</figcaption>
+    </figure>
+
 
     <section id="s1">
       <span class="sec-no">CH 01 · 单位是怎么被钉住的</span>
@@ -514,12 +582,24 @@ footer{border-top:1px solid var(--frame);margin-top:var(--s7);padding:var(--s5) 
     return clamp(36 + (-lg) / 35 * 576, 36, 612);
   }
   var dot = $('spineDot'), tip = $('spineTip');
+  var hdot = $('spineHDot'), htip = $('spineHTip');
+  /* 手机横条：x = 16 + (−log₁₀v)/35 × 328（与竖向轴同一套对数映射） */
+  function spineX(v) {
+    var lg = Math.log(v) / Math.LN10;
+    return Math.max(16, Math.min(344, 16 + (-lg) / 35 * 328));
+  }
   function moveSpine(v) {
-    if (!dot) return;
-    var y = spineY(v);
-    dot.setAttribute('cy', y.toFixed(1));
-    tip.setAttribute('y1', Math.min(y, spineY(v)).toFixed(1));
-    tip.setAttribute('y2', '612');
+    if (dot) {
+      var y = spineY(v);
+      dot.setAttribute('cy', y.toFixed(1));
+      tip.setAttribute('y1', y.toFixed(1));
+      tip.setAttribute('y2', '612');
+    }
+    if (hdot) {
+      var x = spineX(v).toFixed(1);
+      hdot.setAttribute('cx', x);
+      htip.setAttribute('x1', x); htip.setAttribute('x2', x);
+    }
   }
 
   /* ── 通用：一条水平滑轨（pointer 拖动 + 方向键） ────────────── */
