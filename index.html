@@ -19,52 +19,52 @@
   /* ===== 主题变量 =====
      默认「演算纸」（亮色），html[data-theme="dark"] 切「黑板」 */
   :root{
-    --bgPage:#e7eeea;
-    --paper:#fbfcfa;
-    --paper2:#eff4f1;
-    --ink:#1d2b36;
-    --ink-dim:#586875;
-    --pen:#1668a8;
-    --pen2:#0e7a63;
-    --penRed:#c23a30;
-    --frame:#dde5e1;
-    --frame2:#c8d4ce;
+    --bgPage:#f6f7f6;
+    --paper:#ffffff;
+    --paper2:#eef1f0;
+    --ink:#16191c;
+    --ink-dim:#5b646a;
+    --pen:#0e6f7a;
+    --pen2:#0a545c;
+    --penRed:#8c2f39;
+    --frame:#dbddda;
+    --frame2:#dbddda;
     --frameW:1px;
-    --ruleSolid:#1d2b36;
+    --ruleSolid:#16191c;
     --rule:color-mix(in srgb, var(--ruleSolid) 16%, transparent);
-    --cardBg:rgba(255,255,255,.78);
+    --cardBg:rgba(255,255,255,.72);
     --inputBg:#ffffff;
-    --mark:rgba(255,224,102,.9);
-    --grid:rgba(22,104,168,.055);
+    --mark:rgba(127,208,218,.32);
+    --grid:rgba(14,111,122,.05);
     --boardInner:inset 0 1px 0 rgba(255,255,255,.9);
-    --boardShadow:0 14px 40px rgba(29,43,54,.13), 0 2px 6px rgba(29,43,54,.06);
-    --grain:rgba(29,43,54,.05);
+    --boardShadow:0 12px 34px rgba(22,25,28,.10), 0 2px 6px rgba(22,25,28,.05);
+    --grain:rgba(22,25,28,.04);
     --grainSize:6px;
-    --titleFont:system-ui,-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    --titleFont:"Noto Sans CJK SC",system-ui,-apple-system,sans-serif;
   }
   html[data-theme="dark"]{
-    --bgPage:#101a16;
-    --paper:#1d302a;
-    --paper2:#24382f;
-    --ink:#f2eee3;
-    --ink-dim:#b7c5bb;
-    --pen:#f4d35e;
-    --pen2:#8fc9e2;
-    --penRed:#e9a2a0;
-    --frame:#6b4a32;
-    --frame2:#3d2a1c;
+    --bgPage:#111416;
+    --paper:#1a1e21;
+    --paper2:rgba(255,255,255,.035);
+    --ink:#e9edec;
+    --ink-dim:#9aa4a8;
+    --pen:#7fd0da;
+    --pen2:#7fd0da;
+    --penRed:#d98b93;
+    --frame:rgba(255,255,255,.14);
+    --frame2:rgba(255,255,255,.14);
     --frameW:14px;
-    --ruleSolid:#f2eee3;
+    --ruleSolid:#e9edec;
     --rule:color-mix(in srgb, var(--ruleSolid) 22%, transparent);
-    --cardBg:rgba(255,255,255,.02);
+    --cardBg:rgba(255,255,255,.03);
     --inputBg:rgba(0,0,0,.28);
-    --mark:rgba(244,211,94,.22);
+    --mark:rgba(127,208,218,.22);
     --grid:rgba(255,255,255,.028);
     --boardInner:inset 0 0 90px rgba(0,0,0,.45);
     --boardShadow:0 24px 60px rgba(0,0,0,.55);
     --grain:rgba(255,255,255,.05);
     --grainSize:7px;
-    --titleFont:"Kaiti SC","STKaiti","KaiTi","Songti SC",serif;
+    --titleFont:"Noto Sans CJK SC",system-ui,-apple-system,sans-serif;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
@@ -351,6 +351,31 @@
   .timer-row button:hover{color:var(--ink);border-color:var(--ink-dim);}
   .timer-display{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:22px;color:var(--pen);min-width:74px;}
 
+  /* ==== 速查图（内联 SVG，跟随主题与打印）==== */
+  .chart-svg{margin:18px 0 0;}
+  .chart-svg svg{display:block;width:100%;height:auto;overflow:visible;}
+  .chart-svg figcaption{margin-top:10px;color:var(--ink-dim);font-size:14px;text-align:center;}
+  .scale-svg text{font-family:inherit;}
+  .scale-svg .s-name{font-size:14.5px;fill:var(--ink);}
+  .scale-svg .s-val{font-size:14px;fill:var(--ink);font-family:"SF Mono",Menlo,Consolas,monospace;}
+  .scale-svg .s-unit{font-size:12px;fill:var(--ink-dim);}
+  .scale-svg .s-note{font-size:13px;fill:var(--ink-dim);}
+  .scale-svg .s-dim{font-size:12.5px;fill:var(--ink-dim);}
+  .scale-svg .s-tick{font-size:11.5px;fill:var(--ink-dim);opacity:.85;}
+  .scale-svg .s-foot{font-size:13.5px;fill:var(--ink);}
+  .scale-svg .s-grid{stroke:var(--ruleSolid);stroke-width:1;opacity:.5;}
+  .scale-svg .s-sep{stroke:var(--rule);stroke-width:1;}
+  .scale-svg .s-bar{fill:var(--pen2);opacity:.5;}
+  .scale-svg .s-bar-hi{fill:var(--pen);opacity:.95;}
+  .scale-svg .s-row-hi .s-name,.scale-svg .s-row-hi .s-val{font-weight:700;}
+  @media (max-width:640px){
+    .scale-svg .s-name{font-size:20px;}
+    .scale-svg .s-val{font-size:19px;}
+    .scale-svg .s-unit,.scale-svg .s-note{font-size:16.5px;}
+    .scale-svg .s-foot{font-size:17px;}
+    .scale-svg .s-dim,.scale-svg .s-tick{font-size:16px;}
+  }
+
   .print-foot{display:none;}
 
   /* ===== 先猜后验（预测环节）===== */
@@ -410,9 +435,9 @@
   /* ===== 打印：强制亮色 + 展开折叠 + 隐藏交互件，可打印成一页纸 ===== */
   @media print{
     html, html[data-theme="dark"]{
-      --bgPage:#fff;--paper:#fff;--paper2:#fff;--ink:#111c26;--ink-dim:#41505c;
-      --pen:#0d4f80;--pen2:#0a5646;--penRed:#8f2d27;--frame:#fff;--frame2:#fff;--frameW:0;
-      --rule:rgba(17,28,38,.4);--cardBg:#fff;--inputBg:#fff;--mark:#ffeaa6;
+      --bgPage:#fff;--paper:#fff;--paper2:#fff;--ink:#111416;--ink-dim:#5b646a;
+      --pen:#0e6f7a;--pen2:#0a545c;--penRed:#8c2f39;--frame:#fff;--frame2:#fff;--frameW:0;
+      --rule:rgba(17,28,38,.4);--cardBg:#fff;--inputBg:#fff;--mark:#d98b93;
       --grid:transparent;--boardInner:none;--boardShadow:none;--grain:transparent;--titleFont:inherit;
     }
     body{background:#fff;padding:0;font-size:11.5pt;line-height:1.65;}
@@ -751,18 +776,110 @@
   <section id="chart">
     <div class="step-tag">速查图</div>
     <h2>一张图看完整尺度</h2>
-    <p class="dim">走完四步之后，这张图可以把整条链路一眼看完。点图可放大。</p>
-    <figure class="chart-wrap">
-      <a href="assets/planck-scale-final.jpg" target="_blank" rel="noopener">
-        <picture>
-          <source srcset="assets/planck-scale-final.webp" type="image/webp">
-          <img src="assets/planck-scale-final.jpg"
-               alt="从日常到普朗克尺度的完整尺度图：人、手指宽度、头发丝、细胞、细菌、病毒、原子、原子核、普朗克长度九级阶梯，附公式与三个常数"
-               width="1400" height="933" loading="lazy" decoding="async">
-        </picture>
-      </a>
-      <figcaption>从日常到普朗克尺度 · 九级阶梯 + 公式 + 三个常数</figcaption>
+    <p class="dim">九级阶梯按对数排开：每一格都是「再除以 10」。横条越长，东西越大；普朗克长度那一格，就是人类的尺子失效的地方。</p>
+    <figure class="chart-svg">
+<svg class="scale-svg" viewBox="0 0 920 500" role="img" aria-label="九级尺度速查图：从人到普朗克长度，按对数排开">
+<title>九级尺度速查图</title>
+<text class="s-dim" x="132" y="26">← 越小</text>
+<text class="s-dim" x="752" y="26" text-anchor="end">越大 →</text>
+<text class="s-dim" x="442.0" y="26" text-anchor="middle">横条长度 = 对数尺度（每一格都是十进制「除以 10」）</text>
+<line class="s-grid" x1="132.0" y1="64" x2="132.0" y2="426"/>
+<text class="s-tick" x="132.0" y="450" text-anchor="middle">-35</text>
+<line class="s-grid" x1="220.0" y1="64" x2="220.0" y2="426"/>
+<text class="s-tick" x="220.0" y="450" text-anchor="middle">-30</text>
+<line class="s-grid" x1="308.0" y1="64" x2="308.0" y2="426"/>
+<text class="s-tick" x="308.0" y="450" text-anchor="middle">-25</text>
+<line class="s-grid" x1="396.0" y1="64" x2="396.0" y2="426"/>
+<text class="s-tick" x="396.0" y="450" text-anchor="middle">-20</text>
+<line class="s-grid" x1="484.0" y1="64" x2="484.0" y2="426"/>
+<text class="s-tick" x="484.0" y="450" text-anchor="middle">-15</text>
+<line class="s-grid" x1="572.0" y1="64" x2="572.0" y2="426"/>
+<text class="s-tick" x="572.0" y="450" text-anchor="middle">-10</text>
+<line class="s-grid" x1="660.0" y1="64" x2="660.0" y2="426"/>
+<text class="s-tick" x="660.0" y="450" text-anchor="middle">-5</text>
+<line class="s-grid" x1="748.0" y1="64" x2="748.0" y2="426"/>
+<text class="s-tick" x="748.0" y="450" text-anchor="middle">0</text>
+<text class="s-tick" x="762" y="450" text-anchor="middle">10ⁿ 米</text>
+<g class="s-row">
+<text class="s-name" x="118" y="89" text-anchor="end">人</text>
+<rect class="s-bar" x="132" y="76" width="620.0" height="17" rx="4"/>
+<text class="s-val" x="140" y="90">1.7<tspan class="s-unit">米</tspan></text>
+<text class="s-note" x="910" y="90" text-anchor="end">≈ 你的身高</text>
+</g>
+<line class="s-sep" x1="126" y1="110" x2="910" y2="110"/>
+<g class="s-row">
+<text class="s-name" x="118" y="129" text-anchor="end">手指宽度</text>
+<rect class="s-bar" x="132" y="116" width="583.9" height="17" rx="4"/>
+<text class="s-val" x="140" y="130">1.5<tspan class="s-unit">×10⁻² 米</tspan></text>
+<text class="s-note" x="910" y="130" text-anchor="end">≈ 1.5 厘米</text>
+</g>
+<line class="s-sep" x1="126" y1="150" x2="910" y2="150"/>
+<g class="s-row">
+<text class="s-name" x="118" y="169" text-anchor="end">头发丝</text>
+<rect class="s-bar" x="132" y="156" width="542.8" height="17" rx="4"/>
+<text class="s-val" x="140" y="170">7<tspan class="s-unit">×10⁻⁵ 米</tspan></text>
+<text class="s-note" x="910" y="170" text-anchor="end">0.07 毫米</text>
+</g>
+<line class="s-sep" x1="126" y1="190" x2="910" y2="190"/>
+<g class="s-row">
+<text class="s-name" x="118" y="209" text-anchor="end">细胞</text>
+<rect class="s-bar" x="132" y="196" width="531.1" height="17" rx="4"/>
+<text class="s-val" x="140" y="210">1.5<tspan class="s-unit">×10⁻⁵ 米</tspan></text>
+<text class="s-note" x="910" y="210" text-anchor="end">15 微米</text>
+</g>
+<line class="s-sep" x1="126" y1="230" x2="910" y2="230"/>
+<g class="s-row">
+<text class="s-name" x="118" y="249" text-anchor="end">细菌</text>
+<rect class="s-bar" x="132" y="236" width="510.4" height="17" rx="4"/>
+<text class="s-val" x="140" y="250">1<tspan class="s-unit">×10⁻⁶ 米</tspan></text>
+<text class="s-note" x="910" y="250" text-anchor="end">1 微米</text>
+</g>
+<line class="s-sep" x1="126" y1="270" x2="910" y2="270"/>
+<g class="s-row">
+<text class="s-name" x="118" y="289" text-anchor="end">病毒</text>
+<rect class="s-bar" x="132" y="276" width="492.8" height="17" rx="4"/>
+<text class="s-val" x="140" y="290">1<tspan class="s-unit">×10⁻⁷ 米</tspan></text>
+<text class="s-note" x="910" y="290" text-anchor="end">100 纳米</text>
+</g>
+<line class="s-sep" x1="126" y1="310" x2="910" y2="310"/>
+<g class="s-row">
+<text class="s-name" x="118" y="329" text-anchor="end">原子</text>
+<rect class="s-bar" x="132" y="316" width="443.1" height="17" rx="4"/>
+<text class="s-val" x="140" y="330">1.5<tspan class="s-unit">×10⁻¹⁰ 米</tspan></text>
+<text class="s-note" x="910" y="330" text-anchor="end">0.15 纳米</text>
+</g>
+<line class="s-sep" x1="126" y1="350" x2="910" y2="350"/>
+<g class="s-row">
+<text class="s-name" x="118" y="369" text-anchor="end">原子核</text>
+<rect class="s-bar" x="132" y="356" width="369.6" height="17" rx="4"/>
+<text class="s-val" x="140" y="370">1<tspan class="s-unit">×10⁻¹⁴ 米</tspan></text>
+<text class="s-note" x="910" y="370" text-anchor="end">10 飞米</text>
+</g>
+<line class="s-sep" x1="126" y1="390" x2="910" y2="390"/>
+<g class="s-row-hi">
+<text class="s-name" x="118" y="409" text-anchor="end">普朗克长度</text>
+<rect class="s-bar-hi" x="132" y="396" width="12.0" height="17" rx="4"/>
+<text class="s-val" x="140" y="410">1.616<tspan class="s-unit">×10⁻³⁵ 米</tspan></text>
+<text class="s-note" x="910" y="410" text-anchor="end">小于一切可测</text>
+</g>
+<text class="s-foot" x="460.0" y="468" text-anchor="middle">头发丝 (0.07 毫米) ÷ 普朗克长度 ≈ 4.3 × 10³⁰──切成 43 后面 29 个零那么多份，才切到一格。</text>
+</svg>
+      <figcaption>九级尺度速查图 · 从人到普朗克长度（数值经 CODATA 2018 逐项验算）</figcaption>
     </figure>
+    <details class="q" style="margin-top:22px;">
+      <summary>原版：AI 生成的长图（深色，含三个常数与公式）</summary>
+      <figure class="chart-wrap">
+        <a href="assets/planck-scale-final.jpg" target="_blank" rel="noopener">
+          <picture>
+            <source srcset="assets/planck-scale-final.webp" type="image/webp">
+            <img src="assets/planck-scale-final.jpg"
+                 alt="从日常到普朗克尺度的完整尺度图：人、手指宽度、头发丝、细胞、细菌、病毒、原子、原子核、普朗克长度九级阶梯，附公式与三个常数"
+                 width="1400" height="933" loading="lazy" decoding="async">
+          </picture>
+        </a>
+        <figcaption>从日常到普朗克尺度 · 九级阶梯 + 公式 + 三个常数（原版图，深色）</figcaption>
+      </figure>
+    </details>
     <div class="chart-note">
       这张图的每个数字都逐项验算过，还修了网上版本常见的两个错：<b>原子核</b>那级不是 1 飞米（那是质子），而是 1.6 到 15 飞米；传说中「质子放大到宇宙、普朗克长度就像个篮球」的类比也算了，实际是 <b>16,904 公里</b>，比地球直径还长。
     </div>
