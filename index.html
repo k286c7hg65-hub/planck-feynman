@@ -1,1376 +1,789 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>普朗克长度有多小 · 费曼学习法</title>
-<meta name="description" content="用费曼学习法讲透普朗克长度：从头发丝切到 10 的 30 次方份，到空间的最小像素。含九级尺度阶梯、自算器、三道找错题。">
-<meta property="og:type" content="website">
-<meta property="og:title" content="普朗克长度有多小 · 费曼学习法">
-<meta property="og:description" content="把一根头发丝切成 10 的 30 次方份，切到其中一份的那个尺寸。给 11 岁孩子的一页讲透。">
-<meta property="og:url" content="https://k286c7hg65-hub.github.io/planck-feynman/">
-<meta property="og:image" content="https://k286c7hg65-hub.github.io/planck-feynman/assets/og-cover.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
-<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>普朗克长度：一把尺的尽头</title>
+<meta name="description" content="从米、秒、千克怎么被钉住讲起，顺着尺度轴走到 10⁻³⁵ 米，看普朗克长度是怎么被三个常数拼出来的，以及为什么到那里物理就塌了。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23111517'/%3E%3Cpath d='M16 5v22' stroke='%237fd0da' stroke-width='2'/%3E%3Ccircle cx='16' cy='9' r='2.6' fill='%23e9edec'/%3E%3Ccircle cx='16' cy='16' r='1.8' fill='%237fd0da'/%3E%3Ccircle cx='16' cy='23' r='1.2' fill='%233fc7d4'/%3E%3C/svg%3E">
 <style>
-  /* ===== 主题变量 =====
-     默认「演算纸」（亮色），html[data-theme="dark"] 切「黑板」 */
-  :root{
-    --bgPage:#f6f7f6;
-    --paper:#ffffff;
-    --paper2:#eef1f0;
-    --ink:#16191c;
-    --ink-dim:#5b646a;
-    --pen:#0e6f7a;
-    --pen2:#0a545c;
-    --penRed:#8c2f39;
-    --frame:#dbddda;
-    --frame2:#dbddda;
-    --frameW:1px;
-    --ruleSolid:#16191c;
-    --rule:color-mix(in srgb, var(--ruleSolid) 16%, transparent);
-    --cardBg:rgba(255,255,255,.72);
-    --inputBg:#ffffff;
-    --mark:rgba(127,208,218,.32);
-    --grid:rgba(14,111,122,.05);
-    --boardInner:inset 0 1px 0 rgba(255,255,255,.9);
-    --boardShadow:0 12px 34px rgba(22,25,28,.10), 0 2px 6px rgba(22,25,28,.05);
-    --grain:rgba(22,25,28,.04);
-    --grainSize:6px;
-    --monoFont:ui-monospace,"SF Mono",Menlo,Consolas,"Noto Sans Mono CJK SC",monospace;
-    --titleFont:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif;
-  }
-  html[data-theme="dark"]{
-    --bgPage:#111416;
-    --paper:#1a1e21;
-    --paper2:rgba(255,255,255,.035);
-    --ink:#e9edec;
-    --ink-dim:#9aa4a8;
-    --pen:#7fd0da;
-    --pen2:#7fd0da;
-    --penRed:#d98b93;
-    --frame:rgba(255,255,255,.14);
-    --frame2:rgba(255,255,255,.14);
-    --frameW:14px;
-    --ruleSolid:#e9edec;
-    --rule:color-mix(in srgb, var(--ruleSolid) 22%, transparent);
-    --cardBg:rgba(255,255,255,.03);
-    --inputBg:rgba(0,0,0,.28);
-    --mark:rgba(127,208,218,.22);
-    --grid:rgba(255,255,255,.028);
-    --boardInner:inset 0 0 90px rgba(0,0,0,.45);
-    --boardShadow:0 24px 60px rgba(0,0,0,.55);
-    --grain:rgba(255,255,255,.05);
-    --grainSize:7px;
-    --titleFont:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif;
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  body{
-    background:var(--bgPage);
-    color:var(--ink);
-    font-family:system-ui,-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
-    line-height:1.8;
-    font-size:clamp(17px, 16.2px + .45vw, 18.5px);
-    padding:18px 12px 60px;
-    -webkit-text-size-adjust:100%;
-  }
-  /* 纸张 / 黑板 外层 */
-  .board{
-    max-width:920px;margin:0 auto;
-    background:
-      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/100% 29px,
-      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/29px 100%,
-      linear-gradient(160deg,var(--paper2),var(--paper) 55%,var(--paper2));
-    border:var(--frameW) solid var(--frame);
-    border-radius:12px;
-    box-shadow:0 0 0 2px var(--frame2), var(--boardInner), var(--boardShadow);
-    padding:34px 26px 44px;
-    position:relative;
-    overflow:hidden;
-  }
-  .board::after{ /* 纸纹 / 粉笔灰 */
-    content:"";position:absolute;inset:0;pointer-events:none;opacity:.6;
-    background-image:radial-gradient(var(--grain) 1px, transparent 1px);
-    background-size:var(--grainSize) var(--grainSize);
-  }
-  .board > *{position:relative;z-index:1;}
+:root{
+  --bgPage:#f6f7f6; --paper:#ffffff; --paper2:#eef1f0;
+  --ink:#16191c; --inkDim:#5b646a; --frame:#d7dad7;
+  --pen:#0e6f7a; --pen2:#0a545c; --penRed:#8c2f39;
+  --void:#111416; --void2:#1a1e21; --voidInk:#e9edec; --voidDim:#98a2a6; --voidPen:#7fd0da;
+  --fs-12:12px; --fs-14:14px; --fs-16:16px; --fs-20:20px; --fs-26:26px; --fs-34:34px;
+  --wt-400:400; --wt-600:600; --wt-700:700;
+  --lh-t:1.3; --lh-b:1.8; --lh-s:1.5;
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --s7:48px;
+  --r1:4px; --r2:8px;
+  --body:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans CJK SC",sans-serif;
+  --mono:"Noto Sans Mono CJK SC",ui-monospace,monospace;
+  --shadow:0 10px 28px rgba(22,25,28,.09),0 2px 5px rgba(22,25,28,.05);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bgPage);color:var(--ink);font-family:var(--body);
+  font-size:var(--fs-16);line-height:var(--lh-b);-webkit-font-smoothing:antialiased}
+.skip{position:absolute;left:-9999px;top:0;background:var(--pen);color:#fff;font-size:var(--fs-14);min-height:44px;display:flex;align-items:center;padding:var(--s2) var(--s4);z-index:99}
+.skip:focus{left:var(--s3);top:var(--s3)}
 
-  /* 顶部导航 */
-  .nav{
-    display:flex;flex-wrap:wrap;gap:8px;margin-bottom:26px;
-    padding-bottom:16px;border-bottom:1px dashed var(--rule);
-  }
-  .nav a{
-    color:var(--ink-dim);text-decoration:none;font-size:13.5px;
-    border:1px solid var(--rule);border-radius:999px;padding:4px 12px;
-    transition:.25s;
-  }
-  .nav a:hover,.nav a.on{color:var(--pen);border-color:color-mix(in srgb, var(--pen) 55%, transparent);}
+.nav{position:sticky;top:0;z-index:30;background:rgba(246,247,246,.92);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--frame)}
+.nav .in{max-width:1120px;margin:0 auto;display:flex;align-items:center;gap:var(--s5);
+  padding:var(--s2) var(--s4);min-height:44px}
+.brand{font-family:var(--mono);font-size:var(--fs-14);font-weight:var(--wt-600);letter-spacing:.04em;white-space:nowrap}
+.rail{display:flex;gap:var(--s3);overflow-x:auto;flex:1;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.rail a{font-size:var(--fs-14);color:var(--inkDim);text-decoration:none;white-space:nowrap;
+  display:inline-flex;align-items:center;min-height:44px;padding:0 var(--s2);border-bottom:2px solid transparent}
+.rail a:hover,.rail a.on{color:var(--pen2);border-bottom-color:var(--pen)}
+.tgl{border:1px solid var(--frame);background:var(--paper);color:var(--inkDim);border-radius:var(--r2);
+  font:inherit;font-size:var(--fs-14);min-height:44px;padding:0 var(--s3);cursor:pointer}
+.tgl:hover{color:var(--pen2);border-color:var(--pen)}
 
-  h1{
-    font-family:var(--titleFont);
-    font-size:clamp(28px,6vw,44px);
-    margin:0 0 6px;font-weight:600;letter-spacing:.5px;
-    text-shadow:0 0 14px color-mix(in srgb, var(--ink) 22%, transparent);
-  }
-  .sub{color:var(--ink-dim);font-size:15.5px;margin-bottom:10px;}
-  .claim{
-    font-size:clamp(19px,4.4vw,25px);color:var(--pen);
-    font-family:var(--titleFont);margin:16px 0 6px;
-  }
-  .big{
-    font-family:var(--monoFont);
-    font-size:clamp(20px,5vw,30px);color:var(--ink);
-    letter-spacing:.5px;word-break:break-all;
-  }
-  /* 荧光笔划重点：演算纸主题的语义色，只用在最关键的数字上 */
-  .big-mark{
-    display:inline-block;
-    background-image:linear-gradient(var(--mark),var(--mark));
-    background-repeat:no-repeat;
-    background-size:100% .4em;
-    background-position:0 .74em;
-    padding:0 .14em;
-  }
-  .big.small-num{font-size:clamp(11px,3vw,16px);color:var(--ink-dim);word-break:break-all;line-height:1.65;letter-spacing:.2px;}
+main{max-width:1120px;margin:0 auto;padding:0 var(--s4) var(--s7)}
+.col{max-width:720px}
+h1{font-size:var(--fs-34);font-weight:var(--wt-700);line-height:var(--lh-t);margin:var(--s7) 0 var(--s4);letter-spacing:-.01em}
+h2{font-size:var(--fs-26);font-weight:var(--wt-700);line-height:var(--lh-t);margin:var(--s7) 0 var(--s4)}
+h3{font-size:var(--fs-20);font-weight:var(--wt-600);line-height:var(--lh-t);margin:var(--s6) 0 var(--s3)}
+p{margin:0 0 var(--s4)}
+.lede{font-size:var(--fs-20);line-height:var(--lh-b);color:var(--inkDim);max-width:720px}
+.dim{color:var(--inkDim);font-size:var(--fs-14);line-height:var(--lh-s)}
+.mono{font-family:var(--mono)}
+b,strong{font-weight:var(--wt-600)}
+sub,sup{font-size:var(--fs-12);vertical-align:baseline}
+.hl{background:linear-gradient(transparent 62%,rgba(127,208,218,.38) 62%)}
+.num{font-family:var(--mono);font-size:var(--fs-14)}
+.sec-no{font-family:var(--mono);font-size:var(--fs-12);color:var(--pen);letter-spacing:.14em;display:block;margin:var(--s7) 0 calc(-1 * var(--s2))}
+section{scroll-margin-top:96px}
 
-  section{margin:52px 0 0;scroll-margin-top:16px;}
-  h2{
-    font-family:var(--titleFont);
-    font-size:clamp(21px,4.8vw,27px);margin:0 0 4px;font-weight:600;
-    border-bottom:2px solid color-mix(in srgb, var(--pen) 40%, transparent);display:inline-block;
-    padding-bottom:6px;
-  }
-  .step-tag{
-    display:inline-block;font-family:"SF Mono",Menlo,monospace;font-size:12.5px;
-    color:var(--pen);border:1px solid color-mix(in srgb, var(--pen) 50%, transparent);
-    border-radius:4px;padding:1px 8px;margin-bottom:10px;letter-spacing:1px;
-  }
-  p{margin:12px 0;}
-  .dim{color:var(--ink-dim);font-size:15px;}
-  .hl{color:var(--pen);}
-  .hl-b{color:var(--pen2);}
-  .mono{font-family:var(--monoFont);word-break:break-word;overflow-wrap:anywhere;}
+.fig{margin:var(--s5) 0;border:1px solid var(--frame);border-radius:var(--r2);background:var(--paper);padding:var(--s4)}
+.fig svg{display:block;width:100%;height:auto}
+.fig figcaption,.figcap{margin-top:var(--s3);font-size:var(--fs-12);line-height:var(--lh-s);color:var(--inkDim)}
+.fig figcaption b,.figcap b{color:var(--ink);font-weight:var(--wt-600)}
 
-  /* 对照卡 */
-  .compare{display:grid;gap:16px;grid-template-columns:1fr;margin-top:18px;}
-  @media(min-width:720px){ .compare{grid-template-columns:1fr 1fr;} }
-  .card{
-    border:1px solid var(--rule);border-radius:8px;padding:16px 18px;
-    background:var(--cardBg);
-  }
-  .card.bad{border-color:color-mix(in srgb, var(--penRed) 40%, transparent);}
-  .card.good{border-color:color-mix(in srgb, var(--pen2) 45%, transparent);background:color-mix(in srgb, var(--pen2) 5%, transparent);}
-  .card .tag{
-    display:inline-block;font-size:12.5px;padding:2px 9px;border-radius:4px;
-    margin-bottom:10px;letter-spacing:.5px;
-  }
-  .card.bad .tag{background:color-mix(in srgb, var(--penRed) 15%, transparent);color:var(--penRed);}
-  .card.good .tag{background:color-mix(in srgb, var(--pen2) 16%, transparent);color:var(--pen2);}
-  .card p{margin:8px 0;}
-  .card .why{color:var(--ink-dim);font-size:14.5px;}
+table{border-collapse:collapse;width:100%;margin:var(--s5) 0;font-size:var(--fs-14);line-height:var(--lh-s)}
+caption{caption-side:bottom;text-align:left;font-size:var(--fs-12);color:var(--inkDim);padding-top:var(--s3)}
+th,td{text-align:left;padding:var(--s3) var(--s3);border-bottom:1px solid var(--frame);vertical-align:top}
+th{font-weight:var(--wt-600);color:var(--ink);border-bottom:1px solid var(--ink)}
+td.n{font-family:var(--mono);white-space:nowrap}
+tbody tr:hover{background:var(--paper2)}
 
-  /* 铁律条 */
-  .rule{
-    margin-top:20px;padding:14px 18px;border-left:4px solid var(--pen);
-    background:color-mix(in srgb, var(--pen) 7%, transparent);border-radius:0 8px 8px 0;font-size:16px;
-  }
-  .prompt{font-size:16.5px;color:var(--ink);}
-  h3{font-family:var(--titleFont);}
+.eq{margin:var(--s5) 0;padding:var(--s4);background:var(--paper);border:1px solid var(--frame);
+  border-left:3px solid var(--pen);border-radius:var(--r1);font-family:var(--mono);font-size:var(--fs-16);
+  overflow-x:auto}
+.eq .why{display:block;font-family:var(--body);font-size:var(--fs-14);color:var(--inkDim);margin-top:var(--s2);line-height:var(--lh-s)}
+.callout{margin:var(--s5) 0;padding:var(--s4);background:var(--paper);border:1px solid var(--frame);
+  border-left:3px solid var(--pen);border-radius:var(--r1)}
+.callout .tag{display:inline-block;font-family:var(--mono);font-size:var(--fs-12);color:var(--pen2);
+  letter-spacing:.06em;margin-bottom:var(--s2)}
+.callout p:last-child{margin-bottom:0}
+.callout.miss{border-left-color:var(--penRed)}
+.callout.miss .tag{color:var(--penRed)}
+details{border:1px solid var(--frame);border-radius:var(--r2);background:var(--paper);padding:var(--s3) var(--s4);margin:var(--s5) 0}
+details summary{cursor:pointer;font-size:var(--fs-16);font-weight:var(--wt-600);min-height:44px;display:flex;align-items:center}
+details[open] summary{border-bottom:1px solid var(--frame);margin-bottom:var(--s3)}
+details .body p:last-child{margin-bottom:var(--s1)}
 
-  /* 卡壳点 */
-  details.q{
-    border:1px solid var(--rule);border-radius:8px;margin:12px 0;
-    background:var(--cardBg);overflow:hidden;
-  }
-  details.q summary{
-    cursor:pointer;padding:14px 18px;font-size:17px;list-style:none;
-    display:flex;align-items:center;gap:10px;
-  }
-  details.q summary::-webkit-details-marker{display:none;}
-  details.q summary::before{
-    content:"+";font-family:"SF Mono",monospace;color:var(--pen);
-    font-size:20px;line-height:1;width:16px;flex:none;
-  }
-  details.q[open] summary::before{content:"−";}
-  details.q[open] summary{border-bottom:1px dashed var(--rule);}
-  .q .body{padding:14px 18px 18px;font-size:16px;}
-  .q .body p:first-child{margin-top:0;}
+/* ── 主脊：竖直对数尺度轴 ───────────────────────────────── */
+.wrap{display:grid;grid-template-columns:384px minmax(0,1fr);gap:var(--s7);align-items:start}
+.spine{position:sticky;top:80px}
+.spine .cap{font-family:var(--mono);font-size:var(--fs-12);color:var(--inkDim);display:flex;
+  justify-content:space-between;margin-bottom:var(--s2)}
+.spine svg{display:block;width:100%;height:auto;background:var(--paper);border:1px solid var(--frame);border-radius:var(--r2)}
+.spine .note{font-size:var(--fs-12);line-height:var(--lh-s);color:var(--inkDim);margin-top:var(--s3);
+  border-top:1px solid var(--frame);padding-top:var(--s3)}
 
-  /* 尺度阶梯 */
-  .ladder{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 6px;}
-  .rung{
-    cursor:pointer;border:1px solid var(--rule);background:transparent;color:var(--ink);
-    border-radius:999px;padding:7px 14px;font-size:14.5px;transition:.22s;
-    font-family:inherit;
-  }
-  .rung:hover{border-color:color-mix(in srgb, var(--pen) 60%, transparent);transform:translateY(-1px);}
-  .rung.on{background:color-mix(in srgb, var(--pen) 16%, transparent);border-color:var(--pen);color:var(--ink);}
-  .rung .r-unit{color:var(--ink-dim);font-size:12.5px;margin-left:6px;}
-  .rung.on .r-unit{color:color-mix(in srgb, var(--ink) 72%, transparent);}
-  .ladder-out{
-    border:1px dashed var(--rule);border-radius:8px;padding:16px 18px;margin-top:14px;
-    min-height:104px;
-  }
-  .ladder-out .lo-name{font-size:20px;font-family:var(--titleFont);color:var(--ink);}
-  .ladder-out .lo-size{font-family:"SF Mono",monospace;color:var(--pen);font-size:17px;margin:6px 0;}
-  .ladder-out .lo-step{color:var(--pen2);font-size:15px;margin-top:8px;}
-  .ladder-out .lo-note{color:var(--ink-dim);font-size:14.5px;margin-top:8px;}
+/* ── 装置 ───────────────────────────────────────────────── */
+.dev{margin:var(--s5) 0;border:1px solid var(--frame);border-radius:var(--r2);background:var(--paper);padding:var(--s4)}
+.dev h4{margin:0 0 var(--s2);font-size:var(--fs-16);font-weight:var(--wt-600);font-family:var(--body)}
+.dev .sub{font-size:var(--fs-12);color:var(--inkDim);line-height:var(--lh-s);margin:0 0 var(--s4)}
+.dev svg{display:block;width:100%;height:auto}
+.readout{display:flex;flex-wrap:wrap;gap:var(--s6);margin-top:var(--s4)}
+.ro{min-width:132px}
+.ro .k{font-size:var(--fs-12);color:var(--inkDim)}
+.ro .v{font-family:var(--mono);font-size:var(--fs-16);font-weight:var(--wt-600)}
+.ro .v.warn{color:var(--penRed)}
+.track{position:relative;height:44px;cursor:grab;touch-action:none;user-select:none}
+.track:active{cursor:grabbing}
+.tickmarks{display:flex;justify-content:space-between;font-family:var(--mono);font-size:var(--fs-12);color:var(--inkDim)}
+.btn{font:inherit;font-size:var(--fs-14);min-height:44px;padding:0 var(--s4);border-radius:var(--r2);
+  border:1px solid var(--frame);background:var(--paper2);color:var(--ink);cursor:pointer}
+.btn:hover{border-color:var(--pen);color:var(--pen2)}
+.row{display:flex;gap:var(--s3);flex-wrap:wrap;align-items:center;margin-top:var(--s3)}
 
-  /* 计算器 */
-  .calc{margin-top:22px;}
-  .calc-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
-  .calc input[type=number]{
-    font-family:"SF Mono",monospace;font-size:17px;padding:10px 12px;width:150px;
-    background:var(--inputBg);border:1px solid var(--rule);border-radius:6px;color:var(--ink);
-  }
-  .calc select{
-    font-family:inherit;font-size:15px;padding:11px 10px;border-radius:6px;
-    background:var(--inputBg);border:1px solid var(--rule);color:var(--ink);
-  }
-  .calc button{
-    font-family:inherit;font-size:15px;padding:10px 18px;border-radius:6px;cursor:pointer;
-    background:color-mix(in srgb, var(--pen) 16%, transparent);border:1px solid color-mix(in srgb, var(--pen) 60%, transparent);color:var(--pen2);
-    transition:.2s;
-  }
-  .calc button:hover{background:color-mix(in srgb, var(--pen) 28%, transparent);}
-  .presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
-  .presets button{
-    font-size:13.5px;padding:6px 12px;border-radius:999px;
-    background:transparent;border:1px solid var(--rule);color:var(--ink-dim);
-  }
-  .presets button:hover{color:var(--ink);border-color:var(--pen2);}
-  .calc-out{
-    margin-top:16px;padding:16px 18px;border-radius:8px;
-    background:color-mix(in srgb, var(--pen2) 6%, transparent);border:1px solid color-mix(in srgb, var(--pen2) 30%, transparent);
-    font-size:16px;min-height:76px;
-    overflow-wrap:anywhere;word-break:break-word;max-width:100%;
-  }
-  .calc-out .n{font-family:"SF Mono",monospace;color:var(--ink);font-size:19px;word-break:break-all;}
+/* ── 深色聚焦段 ─────────────────────────────────────────── */
+.plate{background:var(--void);color:var(--voidInk);margin:var(--s7) 0;padding:var(--s6) var(--s4)}
+.plate .in{max-width:1120px;margin:0 auto}
+.fin{max-width:1120px;margin:0 auto}
+.plate h2{color:var(--voidInk);margin-top:0}
+.plate p{color:var(--voidDim)}
+.plate p b{color:var(--voidInk)}
+.plate .eq{background:var(--void2);border-color:rgba(127,208,218,.28);color:var(--voidPen)}
+.plate .eq .why{color:var(--voidDim)}
+.plate figure{margin:var(--s5) 0 0}
+.plate a{display:block;font-size:var(--fs-14)}
+.plate img{display:block;width:100%;height:auto;border-radius:var(--r2);border:1px solid rgba(233,237,236,.16)}
+.plate figcaption{font-size:var(--fs-12);color:var(--voidDim);margin-top:var(--s3);line-height:var(--lh-s)}
+.plate figcaption b{color:var(--voidInk)}
+footer{border-top:1px solid var(--frame);margin-top:var(--s7);padding:var(--s5) 0 var(--s7);
+  font-size:var(--fs-12);color:var(--inkDim);line-height:var(--lh-s)}
 
-  /* 拼图 */
-  .puzzle{display:flex;flex-wrap:wrap;gap:12px;margin:18px 0 14px;}
-  .pc{
-    flex:1 1 190px;border:1px solid var(--rule);border-radius:8px;padding:14px 16px;
-    background:var(--cardBg);cursor:pointer;transition:.25s;
-  }
-  .pc:hover{border-color:var(--pen2);}
-  .pc.on{border-color:var(--pen);background:color-mix(in srgb, var(--pen) 10%, transparent);transform:translateY(-2px);}
-  .pc .pc-sym{font-family:"SF Mono",monospace;font-size:22px;color:var(--pen);}
-  .pc .pc-name{font-size:14.5px;margin-top:6px;}
-  .pc .pc-val{font-family:"SF Mono",monospace;font-size:13px;color:var(--ink-dim);margin-top:4px;word-break:break-all;}
-  .pc .pc-role{font-size:13.5px;color:var(--pen2);margin-top:8px;}
-  .formula{
-    text-align:center;padding:20px 14px;border:1px dashed var(--rule);border-radius:8px;
-    font-family:"SF Mono",Menlo,monospace;font-size:clamp(15px,3.6vw,21px);
-    color:var(--ink-dim);transition:.35s;
-  }
-  .formula.live{color:var(--ink);border-color:color-mix(in srgb, var(--pen) 55%, transparent);background:color-mix(in srgb, var(--pen) 6%, transparent);}
-  .formula .res{display:block;margin-top:12px;color:var(--pen);font-size:clamp(16px,4vw,23px);}
-
-  /* 类比纠错 */
-  .analogy{display:grid;gap:14px;margin-top:16px;}
-  .ana{border:1px solid var(--rule);border-radius:8px;padding:14px 18px;}
-  .ana.wrong{border-color:color-mix(in srgb, var(--penRed) 45%, transparent);}
-  .ana.right{border-color:color-mix(in srgb, var(--pen2) 50%, transparent);background:color-mix(in srgb, var(--pen2) 5%, transparent);}
-  .ana h4{margin:0 0 8px;font-size:16.5px;font-weight:600;}
-  .ana.wrong h4{color:var(--penRed);}
-  .ana.right h4{color:var(--pen2);}
-  .ana p{margin:6px 0;font-size:15.5px;}
-
-  /* 第四步 */
-  .final{
-    border:1px solid color-mix(in srgb, var(--pen) 45%, transparent);border-radius:10px;padding:22px 22px 26px;
-    background:color-mix(in srgb, var(--pen) 6%, transparent);margin-top:18px;
-  }
-  .final .one-shot{
-    font-family:var(--titleFont);
-    font-size:clamp(18px,4.3vw,23px);line-height:1.9;color:var(--ink);margin:10px 0 0;
-  }
-  .checklist{margin-top:20px;padding-left:0;list-style:none;}
-  .checklist li{
-    padding:9px 0 9px 30px;position:relative;font-size:15.5px;border-bottom:1px dashed var(--rule);
-  }
-  .checklist li:last-child{border-bottom:none;}
-  .checklist li::before{
-    content:"□";position:absolute;left:6px;color:var(--pen);font-size:17px;
-  }
-  .egg{margin-top:26px;border:1px dashed var(--rule);border-radius:8px;padding:16px 18px;}
-  .egg h4{margin:0 0 8px;font-size:16.5px;color:var(--pen);font-weight:600;}
-  .guess{margin:10px 0;font-size:15.5px;}
-  .guess b{color:var(--pen2);}
-
-  /* E · 自己写 */
-  textarea#mySpeech{
-    width:100%;min-height:130px;margin-top:10px;padding:14px;border-radius:8px;
-    background:var(--inputBg);border:1px solid var(--rule);color:var(--ink);
-    font-family:inherit;font-size:16px;line-height:1.7;resize:vertical;
-  }
-  textarea#mySpeech:focus{outline:none;border-color:color-mix(in srgb, var(--pen) 60%, transparent);}
-  .writebar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:10px;}
-  .writebar button{
-    font-family:inherit;font-size:15px;padding:10px 18px;border-radius:6px;cursor:pointer;
-    background:color-mix(in srgb, var(--pen) 16%, transparent);border:1px solid color-mix(in srgb, var(--pen) 60%, transparent);color:var(--pen2);
-  }
-  .writebar button:hover{background:color-mix(in srgb, var(--pen) 28%, transparent);}
-  .writebar span{color:var(--ink-dim);font-size:14.5px;}
-
-  footer{
-    margin-top:56px;padding-top:20px;border-top:1px dashed var(--rule);
-    color:var(--ink-dim);font-size:14px;
-  }
-  .quote{
-    font-family:var(--titleFont);font-size:17px;color:var(--ink);
-    border-left:3px solid color-mix(in srgb, var(--pen) 50%, transparent);padding-left:14px;margin:20px 0 8px;
-  }
-  .fadein{opacity:1;transform:none;}
-  /* 只有确认 JS 可用才隐藏（否则无 JS / 打印时内容会变成空白）*/
-  html.js .fadein{opacity:0;transform:translateY(14px);transition:opacity .8s ease,transform .8s ease;}
-  html.js .fadein.in{opacity:1;transform:none;}
-
-  /* ===== 阅读进度线（fixed 避开 .board 的 overflow:hidden） ===== */
-  .progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:60;pointer-events:none;background:transparent;}
-  .progress i{display:block;height:100%;width:0;background:var(--pen);transition:width .1s linear;}
-  .nav a.on{color:var(--pen);border-color:var(--pen);background:color-mix(in srgb, var(--pen) 10%, transparent);}
-
-  /* 打印页脚：屏幕上隐藏，只在打印时出现 */
-  /* ==== 键盘可达（借 archify 作法：只在键盘导航时显示轮廓）==== */
-  button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{
-    outline:3px solid color-mix(in srgb, var(--pen) 70%, transparent);
-    outline-offset:2px;
-    border-radius:6px;
-  }
-  .game-card:focus-visible,.rung:focus-visible,.pc:focus-visible{outline-offset:3px;}
-
-  /* ==== 复述计时器 ==== */
-  .timer-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px;}
-  .timer-row button{padding:10px 16px;border-radius:8px;border:1px solid var(--rule);background:transparent;color:var(--ink-dim);font:inherit;font-size:15.5px;cursor:pointer;}
-  .timer-row button:hover{color:var(--ink);border-color:var(--ink-dim);}
-  .timer-display{font-family:var(--monoFont);font-size:22px;color:var(--pen);min-width:74px;}
-
-
-  /* ==== 常数卡（2026-09-11 重做：原为深色 AI 长图，与浅色页面接不上）==== */
-  .const-card{margin:22px 0 0;padding:22px 24px;border:1px solid var(--frame);background:var(--paper);}
-  .cc-head{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding-bottom:12px;border-bottom:1px solid var(--rule);}
-  .cc-note{font-size:13.5px;color:var(--ink-dim);}
-  .cc-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin:20px 0 22px;}
-  .cc-item{display:flex;flex-direction:column;gap:5px;padding-left:13px;border-left:2px solid var(--pen);}
-  .cc-k{font-size:12px;letter-spacing:.14em;color:var(--pen);}
-  .cc-v{font-family:var(--monoFont);font-size:17px;color:var(--ink);white-space:nowrap;}
-  .cc-u{font-size:12.5px;line-height:1.6;color:var(--ink-dim);}
-  .cc-formula{display:flex;flex-wrap:wrap;align-items:baseline;gap:12px;padding-top:20px;border-top:1px solid var(--rule);}
-  .cc-lhs{font-size:15px;color:var(--ink-dim);}
-  .cc-eq{color:var(--ink-dim);}
-  .cc-sqrt{font-family:var(--monoFont);font-size:20px;color:var(--ink);}
-  .cc-res{font-family:var(--monoFont);font-size:24px;font-weight:700;color:var(--pen);}
-  .cc-foot{margin-top:16px;font-size:13.5px;line-height:1.85;color:var(--ink-dim);}
-  @media(max-width:760px){
-    .cc-head{flex-direction:column;gap:4px;}
-    .cc-row{grid-template-columns:1fr;gap:14px;}
-    .cc-res{font-size:20px;}
-  }
-
-  /* ==== 深色展板（放 AI 生成的尺度直觉长图；浅色页里当「展品墙」）==== */
-  .plate{background:#111416;border:1px solid #2a2f33;border-radius:8px;padding:16px;margin-top:18px;}
-  .plate img{display:block;width:100%;height:auto;border-radius:4px;}
-  .plate .plate-cap{margin-top:12px;font-size:13.5px;line-height:1.7;color:#e9edec;}
-  .plate .plate-src{display:block;margin-top:6px;font-size:13px;color:#9aa4a8;line-height:1.6;}
-  .plate .plate-hd{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;}
-  .plate .plate-hd b{font-size:15.5px;color:#e9edec;font-weight:700;}
-  .plate .plate-hd span{font-size:13px;color:#9aa4a8;}
-  .plate a{display:block;cursor:zoom-in;text-decoration:none;}
-  .plate .plate-zoom-hint{display:block;margin-top:8px;font-size:12.5px;color:#9aa4a8;}
-  @media (max-width:640px){
-    .plate{margin-left:-15px;margin-right:-15px;border-radius:0;border-left:0;border-right:0;padding:10px;}
-    .plate .plate-cap{font-size:13px;}
-    .plate .plate-src{font-size:12.5px;}
-  }
-  @media (min-width:900px){
-    .plate{padding:22px;}
-    .plate .plate-cap{font-size:14.5px;}
-    .plate .plate-src{font-size:13.5px;}
-    .plate .plate-hd b{font-size:17px;}
-    .plate .plate-hd span{font-size:13.5px;}
-  }
-  /* ==== 速查图（内联 SVG，跟随主题与打印）==== */
-  .chart-svg{margin:18px 0 0;}
-  .chart-svg svg{display:block;width:100%;height:auto;overflow:visible;}
-  .chart-svg figcaption{margin-top:10px;color:var(--ink-dim);font-size:14px;text-align:center;}
-  .scale-svg text{font-family:inherit;}
-  .scale-svg .s-name{font-size:14.5px;fill:var(--ink);}
-  .scale-svg .s-val{font-size:13.5px;fill:var(--ink);font-family:var(--monoFont);}
-  .scale-svg .s-unit{font-size:12px;fill:var(--ink-dim);}
-  .scale-svg .s-note{font-size:13px;fill:var(--ink-dim);}
-  .scale-svg .s-dim{font-size:12.5px;fill:var(--ink-dim);}
-  .scale-svg .s-tick{font-size:11.5px;fill:var(--ink-dim);opacity:.85;}
-  .scale-svg .s-foot{font-size:13.5px;fill:var(--ink);}
-  .scale-svg .s-grid{stroke:var(--ruleSolid);stroke-width:1;opacity:.16;}
-  .scale-svg .s-grid-major{stroke:var(--ruleSolid);stroke-width:1;opacity:.34;}
-  .scale-svg .s-name{font-weight:500;}
-  .scale-svg .s-lead{stroke:var(--pen);stroke-width:1;stroke-dasharray:2 3;opacity:.7;}
-  .scale-svg .s-mask{fill:var(--bgPage);}
-  .scale-svg .s-sep{stroke:var(--rule);stroke-width:1;}
-  .scale-svg .s-bar{fill:var(--pen);opacity:.22;}
-  .scale-svg .s-bar-hi{fill:var(--pen);opacity:.95;}
-  .scale-svg .s-row-hi .s-name,.scale-svg .s-row-hi .s-val{font-weight:700;}
-  @media (max-width:640px){
-    .scale-svg .s-name{font-size:20px;}
-    .scale-svg .s-val{font-size:19px;}
-    .scale-svg .s-unit,.scale-svg .s-note{font-size:16.5px;}
-    .scale-svg .s-foot{font-size:17px;}
-    .scale-svg .s-dim,.scale-svg .s-tick{font-size:16px;}
-  }
-
-  .print-foot{display:none;}
-
-  /* ===== 先猜后验（预测环节）===== */
-  .predict{margin-top:14px;padding:14px 16px;border-radius:10px;border:1px dashed var(--pen);background:color-mix(in srgb, var(--pen) 5%, transparent);}
-  .predict[hidden]{display:none;}
-  .predict-q{font-weight:700;margin-bottom:10px;}
-  .predict-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;}
-  .predict-row .mono{font-family:var(--monoFont);font-size:18px;}
-  .predict-row input{
-    width:92px;padding:10px;font-size:17px;border-radius:7px;
-    border:1px solid var(--rule);background:var(--inputBg);color:var(--ink);font-family:inherit;
-  }
-  .predict-row button{padding:11px 18px;border-radius:8px;border:1px solid var(--pen);background:color-mix(in srgb, var(--pen) 14%, transparent);color:var(--ink);font:inherit;font-size:16px;cursor:pointer;}
-  .predict-row button.ghost,.game-foot button.ghost{background:transparent;border-color:var(--rule);color:var(--ink-dim);}
-  .predict-row button.ghost:hover,.game-foot button.ghost:hover{color:var(--ink);border-color:var(--ink-dim);}
-  .predict-fb{margin-top:10px;font-size:15.5px;min-height:22px;line-height:1.7;}
-  .predict-fb.ok{color:var(--pen2);}
-  .predict-fb.miss{color:var(--penRed);}
-
-  /* ===== 找错游戏（借 lesson7 猜谜引擎：卡片 + 徽章 + 计分 + 轮次）===== */
-  .game-cards{display:grid;gap:12px;margin-top:16px;}
-  .game-card{
-    text-align:left;cursor:pointer;padding:16px 18px;border-radius:10px;
-    border:1px solid var(--rule);background:var(--cardBg);color:var(--ink);
-    font:inherit;font-size:16.5px;line-height:1.75;transition:border-color .2s,background .2s;width:100%;
-  }
-  .game-card:hover{border-color:var(--pen);}
-  .game-card .gc-badge{display:block;margin-top:8px;font-size:14px;color:var(--ink-dim);}
-  .game-card .gc-why{display:none;margin-top:9px;font-size:14.5px;color:var(--ink-dim);border-top:1px dashed var(--rule);padding-top:9px;}
-  .game-card.revealed{cursor:default;}
-  .game-card.revealed .gc-why{display:block;}
-  .game-card.picked .gc-why{color:var(--ink);}
-  .game-card.picked .gc-badge{font-weight:700;}
-  .game-card.true-reveal{border-color:var(--pen2);background:color-mix(in srgb, var(--pen2) 9%, transparent);}
-  .game-card.wrong-guess{border-color:var(--penRed);background:color-mix(in srgb, var(--penRed) 9%, transparent);}
-  .game-card.true{border-color:color-mix(in srgb, var(--pen2) 45%, transparent);}
-  .game-fb{margin-top:14px;font-size:15.5px;line-height:1.75;color:var(--ink-dim);}
-  .game-fb.ok{color:var(--pen2);}
-  .game-fb.miss{color:var(--penRed);}
-  .game-foot{display:flex;align-items:center;gap:14px;margin-top:14px;flex-wrap:wrap;}
-  .game-foot button{padding:11px 18px;border-radius:8px;border:1px solid var(--rule);background:transparent;color:var(--ink-dim);font:inherit;font-size:16px;cursor:pointer;}
-  .game-foot button:disabled{opacity:.45;cursor:not-allowed;}
-
-  /* ===== 术语白话注解（点击揭晓）===== */
-  .term{
-    border:0;border-bottom:1px dashed var(--pen);color:var(--pen);cursor:pointer;
-    font:inherit;background:none;padding:0 1px;
-  }
-  .term::after{content:"﹖";font-size:.72em;vertical-align:super;margin-left:2px;opacity:.8;}
-  .term-def{
-    display:none;margin:9px 0;padding:11px 15px;border-radius:0 8px 8px 0;
-    border-left:3px solid var(--pen);background:color-mix(in srgb, var(--pen) 7%, transparent);
-    font-size:15.5px;color:var(--ink);
-  }
-  .term-def.show{display:block;}
-
-  /* ===== 打印：强制亮色 + 展开折叠 + 隐藏交互件，可打印成一页纸 ===== */
-  @media print{
-    html, html[data-theme="dark"]{
-      --bgPage:#fff;--paper:#fff;--paper2:#fff;--ink:#111416;--ink-dim:#5b646a;
-      --pen:#0e6f7a;--pen2:#0a545c;--penRed:#8c2f39;--frame:#fff;--frame2:#fff;--frameW:0;
-      --rule:rgba(17,28,38,.4);--cardBg:#fff;--inputBg:#fff;--mark:#d98b93;
-      --grid:transparent;--boardInner:none;--boardShadow:none;--grain:transparent;--titleFont:inherit;
-    }
-    body{background:#fff;padding:0;font-size:11.5pt;line-height:1.65;}
-    .board{border:0;box-shadow:none;border-radius:0;max-width:none;padding:0;background:#fff;}
-    .board::after{display:none;}
-    .progress,.theme-btn,.presets,.calc button,.writebar button,.nav .theme-btn{display:none!important;}
-    .nav{border-bottom:1px solid var(--rule);}
-    .rung{background:#fff!important;border-color:var(--rule)!important;color:var(--ink)!important;}
-    details{border-color:var(--rule);}
-    details>summary{list-style:none;}
-    details>summary::marker{content:'';}
-    .card,.chart-wrap,.final,figure{break-inside:avoid;}
-    h2,h3{break-after:avoid;}
-    .chart-wrap img{max-height:78vh;object-fit:contain;}
-    .print-foot{display:block!important;margin-top:22px;padding-top:10px;border-top:1px solid var(--rule);font-size:10.5pt;color:var(--ink-dim);}
-    a[href^="http"]{color:var(--pen);}
-    a::after{content:"";}
-  }
-
-  /* 附录图 */
-  .chart-wrap{margin:18px 0 0;}
-  .chart-wrap a{
-    display:block;border:1px solid var(--rule);border-radius:10px;overflow:hidden;
-    background:var(--cardBg);transition:.25s;
-  }
-  .chart-wrap a:hover{border-color:var(--pen);}
-  .chart-wrap img{display:block;width:100%;height:auto;}
-  .chart-wrap figcaption{margin-top:10px;color:var(--ink-dim);font-size:14px;text-align:center;}
-  .chart-note{
-    margin-top:12px;padding:12px 16px;border-radius:8px;
-    background:color-mix(in srgb, var(--pen) 8%, transparent);
-    border-left:3px solid var(--pen);font-size:15px;
-  }
-
-  /* 主题切换按钮 */
-  .theme-btn{
-    margin-left:auto;flex:none;cursor:pointer;
-    width:38px;height:34px;border-radius:999px;font-size:16px;line-height:1;
-    background:transparent;border:1px solid var(--rule);color:var(--ink-dim);
-    transition:.25s;font-family:inherit;
-  }
-  .theme-btn:hover{color:var(--pen);border-color:var(--pen);}
-
-  /* ===== 多端适配 ===== */
-  @media (max-width:400px){
-    body{padding:10px 8px 48px;}
-    .board{padding:24px 15px 34px;border-radius:10px;}
-    h1{font-size:25px;}
-    .big{font-size:19px;}
-    section{margin-top:40px;}
-    .card,.ladder-out,.calc-out,.ana,.egg,.final{padding:13px 14px;}
-  }
-  @media (max-width:640px){
-    .calc input[type=number]{width:100%;}
-    .calc select{flex:1 1 auto;}
-    .calc-row{gap:8px;}
-    .compare{gap:12px;}
-  }
-  @media (min-width:1024px){
-    body{padding:26px 20px 70px;}
-    .board{padding:44px 46px 54px;}
-  }
-  @media (min-width:1440px){
-    .board{max-width:960px;}
-  }
-  /* 触控设备：放大可点区域到 44px 以上 */
-  @media (pointer:coarse){
-    .nav a{padding:8px 14px;}
-    .rung{padding:10px 16px;}
-    .pc{padding:16px 18px;}
-    .presets button{padding:9px 14px;}
-    .calc button,.writebar button{padding:12px 20px;}
-    details.q summary{padding:16px 18px;}
-    .theme-btn{width:44px;height:42px;}
-  }
-  @media(prefers-reduced-motion:reduce){
-    .fadein{opacity:1;transform:none;transition:none;}
-  }
+@media (max-width:900px){
+  .wrap{grid-template-columns:1fr;gap:var(--s5)}
+  .spine{position:sticky;top:64px;z-index:20;background:var(--bgPage);padding-bottom:var(--s2)}
+  .spine svg{max-width:100%}
+  .spine .note{display:none}
+  h1{font-size:var(--fs-26);margin-top:var(--s6)}
+  h2{font-size:var(--fs-20)}
+}
+@media (max-width:640px){
+  .nav .in{gap:var(--s3);padding:var(--s2) var(--s3)}
+  main{padding:0 var(--s3) var(--s7)}
+  th,td{padding:var(--s2) var(--s2)}
+  thead{display:none}
+  tbody tr{display:block;border-bottom:1px solid var(--frame);padding:var(--s2) 0}
+  tbody td{display:block;border:0;padding:var(--s1) 0}
+  tbody td::before{content:attr(data-k) " ";font-family:var(--mono);font-size:var(--fs-12);color:var(--inkDim)}
+}
+@media print{.nav,.spine,.dev,.skip{display:none}}
 </style>
-<script>
-/* 主题在首帧前定好，避免闪烁（FOUC） */
-(function(){
-  var t = null;
-  try{ t = localStorage.getItem('planck-theme'); }catch(e){}
-  if(t !== 'dark' && t !== 'light'){
-    t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
-  }
-  document.documentElement.setAttribute('data-theme', t);
-  /* 标记 JS 可用：动效降级依赖它（无 JS / 打印时内容不能被隐藏）*/
-  document.documentElement.classList.add('js');
-})();
-</script>
 </head>
 <body>
-<div class="progress" aria-hidden="true"><i id="progBar"></i></div>
-<div class="board">
-
-  <nav class="nav">
-    <a href="#step0">开场</a>
-    <a href="#step1">① 讲给小孩听</a>
-    <a href="#step2">② 找卡壳点</a>
-    <a href="#step3">③ 回源头补漏</a>
-    <a href="#step4">④ 讲成一段话</a>
-    <a href="#quiz">找错</a>
-    <a href="#chart">速查图</a>
-    <button class="theme-btn" id="themeBtn" type="button" aria-label="切换明暗主题" title="切换明暗主题">🌙</button>
-  </nav>
-
-  <header id="step0">
-    <h1>普朗克长度有多小？</h1>
-    <div class="sub">用费曼学习法，四步把一个"听起来很吓人"的概念讲到别人懂</div>
-    <div class="claim">先把结论放这儿：</div>
-    <div class="big big-mark">1.616 × 10⁻³⁵ 米</div>
-    <div class="big small-num">0.000000000000000000000000000000000016 米</div>
-    <p class="dim">但这个数字本身没什么用。往下走四步，你会得到一个能讲给同学听的说法。</p>
-    <div class="quote">"What I cannot create, I do not understand."<br>
-      <span class="dim" style="font-size:14.5px;">我无法创造的，我就还没理解。费曼去世时，黑板上留着这句话。</span>
+<a class="skip" href="#s0">跳到正文</a>
+<nav class="nav" aria-label="小节导航">
+  <div class="in">
+    <span class="brand">普朗克长度</span>
+    <div class="rail">
+      <a href="#s0">开场</a>
+      <a href="#s1">单位</a>
+      <a href="#s2">往下走</a>
+      <a href="#s3">怎么算</a>
+      <a href="#s4">为什么塌</a>
+      <a href="#s5">回头看</a>
     </div>
-  </header>
+    <button class="tgl" id="jump" type="button">看主脊</button>
+  </div>
+</nav>
 
-  <section id="step1">
-    <div class="step-tag">STEP 01</div>
-    <h2>假装讲给一个完全不懂的人</h2>
-    <p>费曼第一步：<span class="hl">把概念用最简单的话讲出来</span>，像讲给一个从没听过的小孩。讲不顺，说明你还没懂。</p>
-    <p class="dim">现在试试：一句话说清"普朗克长度有多小"，你会怎么说？</p>
+<main>
+<div class="wrap">
 
-    <div class="compare">
-      <div class="card bad">
-        <span class="tag">说了等于没说</span>
-        <p>"普朗克长度是量子引力的特征尺度，约为 10⁻³⁵ 米。"</p>
-        <p class="why">每个词都认识，合起来谁也没懂。"10⁻³⁵ 米"对人脑来说，等于没说。这就是典型的"用术语掩盖没理解"。</p>
+  <aside class="spine" id="spine" aria-label="尺度主脊">
+    <div class="cap"><span>尺度轴 · 对数</span><span>米</span></div>
+    <svg viewBox="0 0 320 660" role="img" aria-label="从 1 米到 10 的负 35 次方米的尺度轴，标注了人、蚂蚁、细胞、可见光、原子、质子、探测前沿与普朗克长度">
+      <text x="0" y="14" font-size="12" font-family="monospace" fill="#5b646a">10⁰</text>
+      <text x="316" y="14" text-anchor="end" font-size="12" font-family="monospace" fill="#5b646a">10⁻³⁵</text>
+      <line x1="112" y1="36" x2="112" y2="612" stroke="#d7dad7" stroke-width="1"/>
+      <line x1="112" y1="348" x2="112" y2="612" stroke="#0e6f7a" stroke-width="1" stroke-dasharray="3 4"/>
+      <!-- 刻度 -->
+      <g stroke="#16191c" stroke-width="1">
+        <line x1="104" y1="36" x2="112" y2="36"/>
+        <line x1="104" y1="85" x2="112" y2="85"/>
+        <line x1="104" y1="118" x2="112" y2="118"/>
+        <line x1="104" y1="151" x2="112" y2="151"/>
+        <line x1="104" y1="201" x2="112" y2="201"/>
+        <line x1="104" y1="283" x2="112" y2="283"/>
+        <line x1="104" y1="332" x2="112" y2="332"/>
+        <line x1="100" y1="612" x2="112" y2="612" stroke-width="2"/>
+      </g>
+      <g font-family="monospace" font-size="12" fill="#16191c" text-anchor="end">
+        <text x="98" y="40">10⁰</text>
+        <text x="98" y="89">10⁻³</text>
+        <text x="98" y="122">10⁻⁵</text>
+        <text x="98" y="155">10⁻⁷</text>
+        <text x="98" y="205">10⁻¹⁰</text>
+        <text x="98" y="287">10⁻¹⁵</text>
+        <text x="98" y="336">10⁻¹⁸</text>
+        <text x="98" y="616">10⁻³⁵</text>
+      </g>
+      <g font-size="12" fill="#16191c">
+        <text x="120" y="40">人 · 桌子（1 米）</text>
+        <text x="120" y="89">蚂蚁（约 3 毫米）</text>
+        <text x="120" y="122">细胞（10 到 30 微米）</text>
+        <text x="120" y="155">可见光波长（400 到 700 纳米）</text>
+        <text x="120" y="205">原子（约 0.1 纳米）</text>
+        <text x="120" y="287">原子核 · 质子（0.8414 飞米）</text>
+        <text x="120" y="336">电子的尺寸上限</text>
+      </g>
+      <text x="120" y="392" font-size="12" fill="#0e6f7a">探测前沿：大型强子对撞机</text>
+      <text x="120" y="408" font-size="12" fill="#0e6f7a">能直接分辨的约 10⁻¹⁹ 米</text>
+      <text x="120" y="470" font-size="12" fill="#5b646a">往下 16 个数量级</text>
+      <text x="120" y="486" font-size="12" fill="#5b646a">没有任何测量，全是推算</text>
+      <g font-size="12" fill="#16191c">
+        <text x="120" y="616" font-weight="600">普朗克长度（1.616255×10⁻³⁵ 米）</text>
+      </g>
+      <g id="spineMark">
+        <circle id="spineDot" cx="112" cy="36" r="4" fill="#0e6f7a"/>
+        <line id="spineTip" x1="112" y1="36" x2="112" y2="612" stroke="#0e6f7a" stroke-width="1"/>
+      </g>
+    </svg>
+    <p class="note">竖轴按数量级等距（对数），所以每一格代表"缩小 10 倍"，不是"缩小同样多的米"。这一页从最上面往下走。</p>
+  </aside>
+
+  <div class="col">
+
+    <section id="s0">
+      <span class="sec-no">CH 00 · 开场</span>
+      <h1>一把尺的尽头</h1>
+      <p class="lede">我们能把空间量到多小？答案不是"你想多小就多小"，而是一个具体的数：<b>1.616255×10⁻³⁵ 米</b>。这个数不是量出来的，是算出来的。</p>
+      <p>先做一件桌上就能做的事。把一支铅笔分成两半，再分一半，再分一半。分到第 20 次左右，铅笔剩下一个原子那么粗；再往下分，你分的不再是"铅笔"，而是原子内部的空间。问题来了：<b>这个"再往下"能一直进行吗？</b></p>
+      <p>直觉会说不封顶。但物理的答案是有底。这一页从头讲这件事：先把"米"是怎么被钉住的讲清楚，再顺着尺度轴一路往下走到细胞、原子、质子，最后走到那个底。走到最后你会发现，那段路的后半程没有任何仪器，只有三个常数和一点量纲运算。</p>
+      <div class="callout">
+        <span class="tag">这一页要回答三件事</span>
+        <p>一，米、秒、千克是怎么被钉住的（为什么这跟下面的事有关）。二，普朗克长度是怎么被三个常数拼出来的（含公式）。三，为什么到了那里物理就塌了，以及哪些说法是真的、哪些只是流行段子。</p>
       </div>
-      <div class="card good">
-        <span class="tag">费曼式说法</span>
-        <p>"把一根头发丝切成 <span class="mono">4</span> 后面跟 <span class="mono">30</span> 个零那么多份，取其中一份，那就是普朗克长度。"</p>
-        <p class="why">能想象，能量出来，能原样讲给下一个人。这才算讲清楚了。</p>
+    </section>
+
+    <section id="s1">
+      <span class="sec-no">CH 01 · 单位是怎么被钉住的</span>
+      <h2>米不是一把尺，是一条约定</h2>
+      <p>要谈"最小的长度"，先得知道我们手里的"米"是怎么来的。这件事在 <b>2019 年 5 月 20 日</b>发生过一次彻底的更换：那一天起，国际单位制（SI）里最后一个靠实物定义的单位也退场了。</p>
+      <p>在那之前，"一千克"的定义是巴黎郊外保险柜里的一块铂铱合金圆柱，叫国际千克原器，1889 年造好。它的问题不是不够准，而是<b>它会变</b>：一百多年里，它的质量和各国复制品的质量之间漂了大约 50 微克。一块金属在原子尺度上偷偷喘了口气，全世界所有称重就跟着一起漂。</p>
+      <p>现在的做法反过来：不拿实物定义常数，拿常数定义单位。三个关键约定是：</p>
+      <table>
+        <caption>三个钉住单位的常数。用常数定义单位，等于把"标准"交给了自然律，任何人任何地方都能复现。</caption>
+        <thead><tr><th>单位</th><th>从哪年起</th><th>钉在什么上</th></tr></thead>
+        <tbody>
+          <tr><td data-k="单位">秒</td><td data-k="从哪年起" class="n">1967</td><td data-k="钉在什么上">铯 133 原子两个能级之间的跃迁频率 <span class="mono">9 192 631 770 Hz</span></td></tr>
+          <tr><td data-k="单位">米</td><td data-k="从哪年起" class="n">1983</td><td data-k="钉在什么上">真空光速 <span class="mono">c = 299 792 458 m/s</span>：光在 1/299792458 秒里走的距离就是 1 米</td></tr>
+          <tr><td data-k="单位">千克</td><td data-k="从哪年起" class="n">2019</td><td data-k="钉在什么上">普朗克常数 <span class="mono">h = 6.62607015×10⁻³⁴ J·s</span>，用基布尔天平实现</td></tr>
+        </tbody>
+      </table>
+      <p>注意米的定义里藏着一个转折：<b>长度最终是靠时间和速度定义的</b>。而时间本身靠原子跃迁。所以"量长度"这件事，底层站着的是频率。</p>
+      <p>这三个约定里，有两个数是被<b>精确固定</b>的（c 和 h，写下去就是定义，没有误差），第三个 G（万有引力常数）没有精确值，只能测，而且它是所有物理常数里测得最不准的一个。为什么它重要？因为<b>引力是唯一一个不肯进入这个"精确俱乐部"的基本作用</b>，而普朗克长度恰恰需要它。</p>
+      <div class="callout">
+        <span class="tag">记住这一点</span>
+        <p>单位不是"找到"的，是"约定"的。约定的代价是：你必须挑一个自然界里到处都一样的东西当锚。挑完 c（速度）和 h（作用量）之后，剩下的空缺正好由 G 填。</p>
       </div>
-    </div>
+    </section>
 
-    <div class="rule">第一步的铁律：<b>不许用"量子""特征尺度""维度"这类词</b>。只要用上，就说明卡壳了，回去补。</div>
-  </section>
+    <section id="s2">
+      <span class="sec-no">CH 02 · 往下走</span>
+      <h2>从人到质子：九个台阶</h2>
+      <p>下面每一步都比上一步小三个到七个数量级。别只记数字，注意每个台阶上"看得见的方法"是什么，以及它在哪一步开始失效。</p>
 
-  <section id="step2">
-    <div class="step-tag">STEP 02</div>
-    <h2>找出卡壳的地方</h2>
-    <p>讲不下去的位置，就是你没懂的位置。下面三个问题，逐个点开看看自己会不会讲。</p>
+      <h3>10⁻³ 米：蚂蚁</h3>
+      <p>一只手能捏住的东西。约 3 毫米，也就是 3×10⁻³ 米。到这一步，尺子还完全够用。</p>
 
-    <details class="q">
-      <summary>① 到底多小？说个数我听听</summary>
-      <div class="body">
-        <p>能报出「10⁻³⁵ 米」不算会讲，那只是背下来了。<span class="hl">要能跟熟悉的东西比出倍数</span>：</p>
-        <p>一根头发丝约 0.07 毫米，把它切成 4,300,000,000,000,000,000,000,000,000,000 份，其中一份才够到普朗克长度。</p>
-        <p class="dim">每一级台阶到底差多少倍，去第三步的「尺度阶梯」自己点一遍。</p>
+      <h3>10⁻⁵ 米：细胞</h3>
+      <p>10 到 30 微米。人眼在最好条件下能分辨约 0.1 毫米，所以细胞从来不是"看见"的，是靠光学显微镜放大出来的。这一步仍然靠光。</p>
+
+      <h3>10⁻⁷ 米：可见光的波长</h3>
+      <p>400 到 700 纳米。这一阶要单独说，因为它是<b>光学方法的门槛</b>：比波长更小的细节，用光去看就会糊成一团。想看更小，只能换波长更短的东西，比如电子。电子显微镜就是这么上台的。</p>
+
+      <h3>10⁻¹⁰ 米：原子</h3>
+      <p>原子直径约 0.1 纳米，也就是 1 埃。氢原子的尺度可以算出来，玻尔半径是 5.29×10⁻¹¹ 米，比 1 埃稍小。注意，原子的大小不是"核变小了撑不住"，而是电子云摊开的范围：原子内部绝大部分是空的。</p>
+
+      <h3>10⁻¹⁵ 米：原子核与质子</h3>
+      <p>原子核的尺度在 1 到 10 飞米之间。质子本身也不是一个实心小球：它的电荷半径按 CODATA 2018 的推荐值是 <b>0.8414 飞米</b>（0.8414×10⁻¹⁵ 米）。这里已经比原子小十万倍。</p>
+
+      <h3>10⁻¹⁸ 米：电子的尺寸上限</h3>
+      <p>电子到今天没有被测出内部结构，实验给出的是一个<b>上限</b>，大约在 10⁻¹⁸ 到 10⁻¹⁹ 米之间。写"上限"两个字很重要：意思是我们只证明了它比这个数小，没说它到底多小。</p>
+
+      <div class="callout">
+        <span class="tag">探测前沿</span>
+        <p>目前人类能直接分辨的最小尺度大约在 10⁻¹⁹ 米量级，靠的是大型强子对撞机把粒子加速到极高能量，用更高的能量换取更短的分辨距离。再往下，就没有"直接看"这条路了。</p>
       </div>
-    </details>
 
-    <details class="q">
-      <summary>② 为什么不能再小了？谁规定的最小？</summary>
-      <div class="body">
-        <p>没有人规定。它也不是量出来的，是<span class="hl">算出来的</span>。</p>
-        <p>物理学家把宇宙里三个最基本的常数拿来拼：光速 c（相对论）、普朗克常数 ħ（量子）、引力常数 G（引力）。这三个一凑，量纲相消之后只剩下一个单位：<span class="mono">米</span>。拼出来的长度就是普朗克长度。</p>
-        <p>所以它更像是宇宙自己长出来的一把尺子。在这个尺度上，引力和量子效应同时变得不能忽略，我们现在的两套理论（<button type="button" class="term" data-def="描述引力和时空的理论，爱因斯坦提出：质量会弯曲时空，光也会被弯曲。它管得住大尺度，比如星系和黑洞。">广义相对论</button> + <button type="button" class="term" data-def="描述微观粒子的理论，把量子力学和狭义相对论合在一起。它管得住小尺度，比如原子内部。两套理论各自都没问题，就是没法合起来用。">量子场论</button>）同时失效。</p>
-      </div>
-    </details>
+      <h3>10⁻³⁵ 米：普朗克长度</h3>
+      <p>从 10⁻¹⁹ 到 10⁻³⁵，中间隔了 <b>16 个数量级</b>。这一段没有任何测量数据，全部是理论推算。这也解释了为什么普通科普里这个数总被写得神神秘秘：它确实离得远，远到它的名字更像是"我们这套物理的边界线"，而不是一个可以拿尺子去够的东西。</p>
+      <p class="dim">换个说法感受这个距离：一根头发丝约 7×10⁻⁵ 米，把它除以普朗克长度，得到 4.331×10³⁰。也就是说，普朗克长度在头发丝面前，比头发丝在你面前还要小得多得多。</p>
 
-    <details class="q">
-      <summary>③ 这跟我有什么关系？</summary>
-      <div class="body">
-        <p>它最实用的一面是<span class="hl">它把话说死了一次</span>：空间不是无限可分的。如果空间像一块屏幕，普朗克长度就是屏幕上一个像素点的大小，「比一个像素更小的像素」没有意义。</p>
-        <p>这也直接决定了物理学能问的最深的问题：黑洞里面发生了什么、宇宙大爆炸的第一瞬间是什么样子，答案都藏在这个尺度上。人类现在最强的对撞机离需要的能量还差 10¹⁵ 倍，所以只能算，不能看。</p>
-      </div>
-    </details>
-  </section>
-
-  <section id="step3">
-    <div class="step-tag">STEP 03</div>
-    <h2>回到源头，把漏的地方补上</h2>
-    <p>刚才哪里支支吾吾，就回来重读。这一步不丢人，是必经之路。</p>
-
-    <h3 style="font-size:18px;margin:26px 0 6px;color:var(--pen2);">A · 尺度阶梯（点一点）</h3>
-    <p class="dim">从人到普朗克长度，一共 35 个数量级。点每一级，看看它比上一级小多少倍。</p>
-    <div class="ladder" id="ladder"></div>
-    <div class="ladder-out" id="ladderOut">
-      <div class="lo-note">点上面任意一格开始。</div>
-    </div>
-
-    <h3 style="font-size:18px;margin:34px 0 6px;color:var(--pen2);">B · 自己算一遍（别信我，信你自己）</h3>
-    <p class="dim">输入任意一个东西的大小，算算要切成多少份才是普朗克长度。</p>
-    <div class="calc">
-      <div class="calc-row">
-        <input type="number" id="cSize" value="0.07" step="any" min="0" aria-label="尺寸数值">
-        <select id="cUnit" aria-label="单位">
-          <option value="1">米</option>
-          <option value="0.001">毫米</option>
-          <option value="0.000001" selected>微米</option>
-          <option value="0.000000001">纳米</option>
-          <option value="0.000000000000001">飞米</option>
-        </select>
-        <button type="button" id="cGo">算一算</button>
-      </div>
-      <div class="presets">
-        <button type="button" data-s="0.07" data-u="0.001">头发丝 0.07 毫米</button>
-        <button type="button" data-s="15" data-u="0.000001">细胞 15 微米</button>
-        <button type="button" data-s="100" data-u="0.000000001">病毒 100 纳米</button>
-        <button type="button" data-s="0.84" data-u="0.000000000000001">质子 0.84 飞米</button>
-        <button type="button" data-s="1" data-u="1">1 米</button>
-      </div>
-      <div class="predict" id="predictBox" hidden>
-        <div class="predict-q">先猜一猜：要切成 10 的几次方份？</div>
-        <div class="predict-row">
-          <span class="mono">10<sup>?</sup></span>
-          <input type="number" id="gExp" min="1" max="60" step="1" placeholder="猜" aria-label="你猜的数量级指数">
-          <button type="button" id="gGo">验证我的猜测</button>
-          <button type="button" class="ghost" id="gSkip">直接看答案</button>
+      <div class="dev" id="dev0">
+        <h4>装置一 · 拉一遍这条轴</h4>
+        <p class="sub">在滑轨上拖动，左边主脊上的标记会跟着走。读数里的“倍数”是这个尺度除以普朗克长度，用来看清一共缩了多少量级。</p>
+        <svg viewBox="0 0 600 96" id="d0-svg" role="img" aria-label="从 1 米到普朗克长度的对数滑轨">
+          <line x1="40" y1="52" x2="560" y2="52" stroke="#d7dad7" stroke-width="2"/>
+          <g stroke="#16191c" stroke-width="1">
+            <line x1="40" y1="46" x2="40" y2="58"/>
+            <line x1="188" y1="46" x2="188" y2="58"/>
+            <line x1="337" y1="46" x2="337" y2="58"/>
+            <line x1="560" y1="46" x2="560" y2="58"/>
+          </g>
+          <g font-family="monospace" font-size="12" fill="#5b646a">
+            <text x="40" y="78" text-anchor="middle">10⁰</text>
+            <text x="188" y="78" text-anchor="middle">10⁻¹⁰</text>
+            <text x="337" y="78" text-anchor="middle">10⁻²⁰</text>
+            <text x="560" y="78" text-anchor="middle">10⁻³⁵</text>
+          </g>
+          <circle id="d0-knob" cx="120" cy="52" r="11" fill="#0e6f7a" stroke="#ffffff" stroke-width="2" style="cursor:grab"/>
+        </svg>
+        <div class="readout">
+          <div class="ro"><div class="k">你选的尺度</div><div class="v" id="d0-v">待选</div></div>
+          <div class="ro"><div class="k">相当于几分之一个普朗克长度</div><div class="v" id="d0-r">待算</div></div>
+          <div class="ro"><div class="k">这个量级上有什么</div><div class="v" id="d0-obj">待选</div></div>
         </div>
-        <div class="predict-fb" id="gFb" aria-live="polite"></div>
+        <div class="row"><button class="btn" type="button" id="d0-reset">回到 1 米</button></div>
+      </div>
+    </section>
+    <section id="s3">
+      <span class="sec-no">CH 03 · 怎么算出来的</span>
+      <h2>三个常数，拼出唯一一把尺</h2>
+      <p>现在进入这一页的核心。普朗克长度不是测出来的，它是<b>三个常数的唯一组合</b>。这三个常数各自负责一件事：</p>
+      <table>
+        <caption>三个常数各自代表一种"物理的边界"：量子、相对论、引力。它们的值来自 CODATA 2018 推荐值（2019 年国际单位制生效后发布）。</caption>
+        <thead><tr><th>常数</th><th>值</th><th>它管什么</th></tr></thead>
+        <tbody>
+          <tr><td data-k="常数">普朗克常数 ħ</td><td data-k="值" class="n">1.054571817…×10⁻³⁴ J·s</td><td data-k="它管什么">量子。h 在 2019 年 SI 里是定义值，ħ = h/2π 随之精确</td></tr>
+          <tr><td data-k="常数">真空光速 c</td><td data-k="值" class="n">299 792 458 m/s</td><td data-k="它管什么">相对论。1983 年起的定义值，无误差</td></tr>
+          <tr><td data-k="常数">万有引力常数 G</td><td data-k="值" class="n">6.67430×10⁻¹¹ m³·kg⁻¹·s⁻²</td><td data-k="它管什么">引力。没有精确值，CODATA 2018 给的相对不确定度约 2.2×10⁻⁵</td></tr>
+        </tbody>
+      </table>
+      <p>要拼出一个长度，先问一个纯数学的问题：用 ħ、c、G 三个量，能凑出几个长度？答案是<b>恰好一个</b>。做法是设 ℓ = ħ<sup>a</sup> c<sup>b</sup> G<sup>d</sup>，然后要求两边的量纲一致。把质量、长度、时间三个维度各列一个方程：</p>
+      <div class="eq">
+        M：a + d = 0　　L：2a + b + 3d = 1　　T：−a − b − 2d = 0
+        <span class="why">三个未知数、三个方程，解出来只有一组：a = 1/2，b = −3/2，d = 1/2。这就是普朗克长度的完整来源，没有别的选择。</span>
+      </div>
+      <div class="eq">
+        ℓ<sub>P</sub> = √( ħG / c³ )
+        <span class="why">代入 CODATA 2018 推荐值算得 ℓ<sub>P</sub> = 1.616255×10⁻³⁵ 米。右边全用精确或高精度的常数，所以这个长度的不确定度几乎全部来自 G。</span>
+      </div>
+      <p>把同样的三个常数换一种组合，还能拼出普朗克时间、普朗克质量、普朗克能量。它们是同一个"尺度"的四种写法：</p>
+      <table>
+        <caption>四个普朗克量。它们不是四个独立发现，而是同一组常数换指数得到的四个侧面。</caption>
+        <thead><tr><th>量</th><th>表达式</th><th>数值</th></tr></thead>
+        <tbody>
+          <tr><td data-k="量">普朗克长度</td><td data-k="表达式" class="n">√(ħG/c³)</td><td data-k="数值" class="n">1.616255×10⁻³⁵ m</td></tr>
+          <tr><td data-k="量">普朗克时间</td><td data-k="表达式" class="n">√(ħG/c⁵)</td><td data-k="数值" class="n">5.391247×10⁻⁴⁴ s</td></tr>
+          <tr><td data-k="量">普朗克质量</td><td data-k="表达式" class="n">√(ħc/G)</td><td data-k="数值" class="n">2.176434×10⁻⁸ kg</td></tr>
+          <tr><td data-k="量">普朗克能量</td><td data-k="表达式" class="n">√(ħc⁵/G)</td><td data-k="数值" class="n">1.220890×10²⁸ eV</td></tr>
+        </tbody>
+      </table>
+
+      <div class="dev" id="dev1">
+        <h4>装置二 · 三个常数拼一把尺</h4>
+        <p class="sub">三条轨分别调 ħ、c、G 相对官方值的倍数，页面实时算 √(ħG/c³)，并给出与标准值 1.616255×10⁻³⁵ 米的相对误差。三条都在 1.00 倍时，误差是 0。</p>
+        <div id="tracks"></div>
+        <div class="readout">
+          <div class="ro"><div class="k">实时算得 ℓ<sub>P</sub></div><div class="v" id="d1-val">1.616255×10⁻³⁵ m</div></div>
+          <div class="ro"><div class="k">与标准值的相对误差</div><div class="v" id="d1-err">0.000%</div></div>
+          <div class="ro"><div class="k">谁最敏感</div><div class="v" id="d1-sens">c 的 3/2 次方</div></div>
+        </div>
+        <p class="sub" id="d1-why" style="margin-top:var(--s3)">ℓ<sub>P</sub> 对三个常数的依赖：ħ 与 G 各是 1/2 次方，c 是 −3/2 次方。所以 c 变大，ℓ<sub>P</sub> 变小，而且变得最快；把 G 调成 1.01 倍（多 1%），ℓ<sub>P</sub> 只多约 0.5%。</p>
+        <div class="row"><button class="btn" type="button" id="d1-reset">复位到官方值</button></div>
       </div>
 
-      <div class="calc-out" id="cOut">
-        <span class="dim">结果显示在这里。</span>
+      <div class="callout">
+        <span class="tag">这一步最容易误会</span>
+        <p>"量纲上自然出现"不等于"自然界里真的存在这么长的东西"。它只说明：只要你同时承认量子、相对论和引力这三件事，就必然出现一个带长度量纲的组合。它是不是"空间的颗粒"，是另一个问题，见下一节。</p>
       </div>
-    </div>
+    </section>
 
-    <h3 style="font-size:18px;margin:34px 0 6px;color:var(--pen2);">C · 三个常数拼出一把尺子</h3>
-    <p class="dim">点中间这三块牌子，看看宇宙的"最小长度"是怎么拼出来的。</p>
-    <div class="puzzle" id="puzzle">
-      <div class="pc" data-k="c">
-        <div class="pc-sym">c</div>
-        <div class="pc-name">真空中的光速</div>
-        <div class="pc-val">2.998 × 10⁸ m/s</div>
-        <div class="pc-role">代表：相对论、空间与时间</div>
+    <section id="s4">
+      <span class="sec-no">CH 04 · 为什么到那里就塌</span>
+      <h2>两种长度撞在一起的地方</h2>
+      <p>要理解这个"底"，看两个数就够了。它们都在量子力学和相对论里出现过，而且走向正好相反。</p>
+      <table>
+        <caption>两个长度随质量的变化方向相反：一个往下压，一个往上顶，中间必然相交一次。</caption>
+        <thead><tr><th>长度</th><th>表达式</th><th>质量变大时</th></tr></thead>
+        <tbody>
+          <tr><td data-k="长度">康普顿波长（量子）</td><td data-k="表达式" class="n">ħ / (mc)</td><td data-k="质量变大时">变小。质量越大，粒子被"看"得越紧</td></tr>
+          <tr><td data-k="长度">施瓦西半径（引力）</td><td data-k="表达式" class="n">2Gm / c²</td><td data-k="质量变大时">变大。质量越集中，视界越大</td></tr>
+        </tbody>
+      </table>
+      <p>让两者相等，解出质量，就得到普朗克质量；把普朗克质量代回任意一边，两个长度给出的都是普朗克长度。这就是那个"底"的来历：<b>要探测更小的距离，你需要把更多能量挤进更小的范围；当这个范围小到普朗克长度，它自身的引力已经把这块区域的因果结构封死了。</b>你想探头进去，探针先变成了黑洞。</p>
+      <div class="callout miss">
+        <span class="tag">常见错</span>
+        <p>"普朗克长度是最小的长度，空间是像素化的。"这句话不是结论，是猜测。目前没有任何实验证据表明空间是离散的。<b>已验证的部分只有</b>：用现有的量子力学加广义相对论去描述普朗克尺度时，两边的适用前提同时失效，计算不再给出可靠答案。</p>
       </div>
-      <div class="pc" data-k="h">
-        <div class="pc-sym">ħ</div>
-        <div class="pc-name">约化普朗克常数</div>
-        <div class="pc-val">1.055 × 10⁻³⁴ J·s</div>
-        <div class="pc-role">代表：量子力学</div>
+      <p>失效得有多彻底？广义相对论假设时空是一个光滑的背景，物体在它上面运动；量子力学假设这个背景是固定的，不会自己涨落。到了普朗克尺度，时空自身的涨落量级赶上了它被用来测量的距离，<b>背景不再是背景</b>。这不是精度不够，是概念错位。</p>
+      <p>所以正确说法是一句很克制的话：<b>普朗克长度是"我们现有这两套理论合起来能用到哪里"的界碑。</b>越过它需要量子引力理论，而量子引力到今天还没有被实验证实。弦论、圈量子引力都是候选方案，它们对界碑之外的世界给出不同的图景，还没有哪一个被实验挑出来。</p>
+
+      <div class="dev" id="dev2">
+        <h4>装置三 · 不确定度跷跷板</h4>
+        <p class="sub">海森堡关系 δx · δp ≥ ħ/2。拖动曲线上的点：δx 压得越小，δp 就必须越大。曲线左上方的区域物理禁止，画成斜纹的一半就是它。</p>
+        <svg viewBox="0 0 600 300" id="d2-svg" role="img" aria-label="不确定度跷跷板：位置不确定度与动量不确定度的双曲线关系">
+          <defs>
+            <pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <line x1="0" y1="0" x2="0" y2="8" stroke="rgba(140,47,57,.38)" stroke-width="2"/>
+            </pattern>
+          </defs>
+          <rect x="0" y="0" width="600" height="300" fill="#ffffff"/>
+          <g stroke="#e5e8e5" stroke-width="1">
+            <line x1="60" y1="240" x2="580" y2="240"/>
+            <line x1="60" y1="30" x2="60" y2="240"/>
+          </g>
+          <g font-size="12" font-family="monospace" fill="#5b646a">
+            <text x="560" y="262" text-anchor="end">δx（位置越不确定 →）</text>
+            <text x="66" y="26">δp（动量）</text>
+          </g>
+          <polygon id="d2-forbid" points="60,240 580,240 300,240" fill="url(#hatch)"/>
+          <path id="d2-curve" d="" fill="none" stroke="#0e6f7a" stroke-width="2"/>
+          <line id="d2-gx" x1="0" y1="240" x2="0" y2="240" stroke="#0e6f7a" stroke-width="1" stroke-dasharray="3 3"/>
+          <line id="d2-gy" x1="60" y1="0" x2="60" y2="0" stroke="#0e6f7a" stroke-width="1" stroke-dasharray="3 3"/>
+          <circle id="d2-knob" cx="300" cy="120" r="9" fill="#0e6f7a" stroke="#ffffff" stroke-width="2" style="cursor:grab"/>
+          <rect x="90" y="216" width="252" height="19" fill="#ffffff"/>
+          <text id="d2-red" x="96" y="230" font-size="12" fill="#8c2f39">斜纹区：物理禁止（δx·δp &lt; ħ/2）</text>
+          <text x="404" y="70" font-size="12" fill="#5b646a">允许区</text>
+        </svg>
+        <div class="readout">
+          <div class="ro"><div class="k">δx（位置不确定度）</div><div class="v" id="d2-x">待拖</div></div>
+          <div class="ro"><div class="k">δp（动量不确定度）</div><div class="v" id="d2-p">待拖</div></div>
+          <div class="ro"><div class="k">δx·δp ÷ (ħ/2)</div><div class="v" id="d2-r">1.00</div></div>
+        </div>
+        <div class="row"><button class="btn" type="button" id="d2-reset">复位</button></div>
       </div>
-      <div class="pc" data-k="G">
-        <div class="pc-sym">G</div>
-        <div class="pc-name">万有引力常数</div>
-        <div class="pc-val">6.674 × 10⁻¹¹ m³·kg⁻¹·s⁻²</div>
-        <div class="pc-role">代表：引力</div>
+    </section>
+
+    <section id="s5">
+      <span class="sec-no">CH 05 · 回头看</span>
+      <h2>把它压成一张表</h2>
+      <p>三个常数钉住单位，一个组合给出尺度，两种长度相撞划出边界。整页的内容就是这些。</p>
+      <table>
+        <caption>速查：本页出现的全部数值。常数出自 CODATA 2018 推荐值；比例用精确值现算。</caption>
+        <thead><tr><th>量</th><th>值</th><th>怎么来的</th></tr></thead>
+        <tbody>
+          <tr><td data-k="量">普朗克长度 ℓ<sub>P</sub></td><td data-k="值" class="n">1.616255×10⁻³⁵ m</td><td data-k="怎么来的">√(ħG/c³)，用 CODATA 2018 值代入</td></tr>
+          <tr><td data-k="量">头发丝 ÷ ℓ<sub>P</sub></td><td data-k="值" class="n">4.331×10³⁰</td><td data-k="怎么来的">7×10⁻⁵ m 除以 ℓ<sub>P</sub></td></tr>
+          <tr><td data-k="量">质子 ÷ ℓ<sub>P</sub></td><td data-k="值" class="n">5.206×10¹⁹</td><td data-k="怎么来的">0.8414×10⁻¹⁵ m 除以 ℓ<sub>P</sub></td></tr>
+          <tr><td data-k="量">米定义中的速度</td><td data-k="值" class="n">299 792 458 m/s</td><td data-k="怎么来的">1983 年起为定义值</td></tr>
+          <tr><td data-k="量">米的实现方式</td><td data-k="值" class="n">1/299792458 秒的光程</td><td data-k="怎么来的">长度靠时间与速度定义</td></tr>
+        </tbody>
+      </table>
+      <div class="callout">
+        <span class="tag">三句话</span>
+        <p>一，单位是人约定的，约定的锚是自然常数。二，ħ、c、G 拼出的长度只有一个，就是普朗克长度，它不是量出来的。三，到了那里塌掉的不是仪器，是"时空作为背景"这个前提。</p>
       </div>
-    </div>
-    <div class="formula" id="formula">
-      √( ħ · G / c³ ) = ?<span class="res"> </span>
-      <div class="dim" style="margin-top:8px;font-size:14px;">三块牌子全点亮，尺子就出来了。</div>
-    </div>
-    <!-- 放在 .formula 外面：拼图 JS 会重写 .formula 的 innerHTML，放里面会被覆盖 -->
-    <details class="q" style="margin-top:14px;">
-      <summary>多问一句：这个公式到底是怎么拼出来的？</summary>
-      <div class="body">
-          <p>三个常数各自带着单位，拼的方式就是让单位一个不剩地消掉，只剩「米」：</p>
-          <p class="mono" style="font-size:15.5px;line-height:2;">
-          ħ（普朗克常数 ÷ 2π）单位是 J·s = kg·m²/s<br>
-          G（引力常数）单位是 m³/(kg·s²)<br>
-          c（光速）单位是 m/s</p>
-          <p>把 ħ 乘上 G 再除以 c 的三次方，〈kg〉和〈s〉互相抵消，最后只剩一个〈m〉。开平方之后就是长度的单位：</p>
-          <p class="mono" style="font-size:15.5px;">L<sub>p</sub> = √( ħG / c³ ) ≈ 1.616255 × 10⁻³⁵ 米</p>
-          <p class="dim">同样的拼法还能得出普朗克时间 5.39 × 10⁻⁴⁴ 秒、普朗克质量约 2.18 × 10⁻⁸ 千克。这不是巧合：这三个量恰好标出了「量子效应和引力同时变得不能忽略」的那个尺度。</p>
-      </div>
-    </details>
+      <p>再回到开头那个问题：把铅笔一直分下去，能分到多细？现在的答案分了两种：<b>能测量的</b>那一半，终点大约在 10⁻¹⁹ 米，靠对撞机；<b>能推算的</b>那一半，终点写在 1.616255×10⁻³⁵ 米，靠三个常数和一行量纲方程。中间那 16 个数量级，是这一代人留给下一代人的空白。</p>
+      <p class="dim">这一页的数值口径：ħ、c 为 2019 年国际单位制下的精确值；G、质子电荷半径、普朗克量为 CODATA 2018 推荐值（2019 年 5 月发布）。凡标注"上限"的地方都只是上限，凡标注"候选"的理论都还没有被实验证实。</p>
+    </section>
 
-    <h3 style="font-size:18px;margin:34px 0 6px;color:var(--pen2);">D · 一个流传很广的错类比</h3>
-    <p class="dim">很多科普图会用这句话让你"有感觉"，但它算错了。你自己看：</p>
-    <div class="analogy">
-      <div class="ana wrong">
-        <h4>网上流传的版本（错）</h4>
-        <p>"把质子放大到整个可观测宇宙那么大，普朗克长度就变成一个篮球大小。"</p>
-        <p class="why">按这个比例实算：可观测宇宙直径 8.8 × 10²⁶ 米 ÷ 质子直径 8.4 × 10⁻¹⁶ 米 ≈ 1.05 × 10⁴² 倍。普朗克长度放大这么多倍之后是 <b>16,904 公里</b>，比地球直径（12,742 公里）还长，跟篮球差了近 8 个数量级。</p>
-      </div>
-      <div class="ana right">
-        <h4>算对之后的版本（对）</h4>
-        <p>"把质子放大到整个可观测宇宙那么大，普朗克长度会变成约 <b>17,000 公里</b>：比地球直径还长一点点。"</p>
-        <p class="why">反向也成立：想让普朗克长度变成一个篮球那么大，质子得先放大到约 <b>1,300 光年</b>（银河系直径的六十分之一）。</p>
-        <p class="why">这就是费曼学习法最狠的地方：<b>任何图上的结论，你都可以当场把它按在地上验算。</b></p>
-      </div>
-    </div>
-  </section>
+  </div>
+</div>
+</main>
 
-  <section id="step4">
-    <div class="step-tag">STEP 04</div>
-    <h2>简化到一口气讲完</h2>
-    <p>费曼的终极检验：<span class="hl">能不能不用一个术语，从头到尾讲完，让对方点头？</span></p>
-
-    <div class="final fadein">
-      <div class="dim">示范（试着念一遍，看能不能不打结）</div>
-      <p class="one-shot">"世界上最小的长度叫普朗克长度。它有多小呢？你把一根头发丝切成 4 后面带 30 个零那么多份，切到其中一份，就到了。这个数不是谁量出来的，是科学家把宇宙里三样最基本的东西（光的速度、量子的规则、引力的强度）拼在一起，拼出来的。到了这么小的尺度，空间就像屏幕上的像素，再往下问'更小'就没意义了。黑洞里面、宇宙刚诞生的那一瞬间，答案都藏在这一格像素里，所以这是现在全世界的物理学家都还没解开的地方。"</p>
-    </div>
-
-    <div class="prompt" style="margin-top:26px;">轮到你了：把你的讲法写下来</div>
-    <p class="dim">费曼学习法的最后一关不是“听懂”，是“讲出来”。用你自己的话写一遍，写不顺的地方就是还没懂的地方。</p>
-    <textarea id="mySpeech" placeholder="例：普朗克长度是世界上最小的长度。它有多小呢？把一根头发丝切成……"></textarea>
-    <div class="writebar">
-      <button type="button" id="saveSpeech">保存我的讲法</button>
-      <span id="speechInfo">写完后点保存（只存在你自己的设备上，不会上传）。</span>
-    </div>
-    <div class="timer-row">
-      <span class="timer-display" id="timerShow">60.0s</span>
-      <button type="button" id="timerBtn">开始 60 秒计时</button>
-      <span class="dim" id="timerHint">真正讲一遍：不看页面，一口气说够 60 秒。</span>
-    </div>
-
-    <div class="prompt" style="margin-top:22px;">自测清单（能全打勾，才算学会）</div>
-    <ul class="checklist">
-      <li>我能不能不用"量子""尺度"这些词，就把它讲清楚？</li>
-      <li>我能不能说出它比头发丝小多少倍？</li>
-      <li>我能不能解释为什么它不能再小了？</li>
-      <li>我能不能说出一个"你以为对、其实是错的"类比，并纠正它？</li>
-      <li>我讲完之后，对方能不能把同样的话再讲给第三个人？</li>
-    </ul>
-
-    <div class="egg">
-      <h4>彩蛋：如果你接着问"那普朗克长度里面是什么"</h4>
-      <p class="dim">这个问题已经站在全世界物理最前沿了，没人知道确定答案。但目前有三种主流猜想：</p>
-      <div class="guess"><b>弦论</b>：没有"里面"，最小的东西是一根根极细的弦，不同的振动方式弹出不同的粒子。所谓"里面"，就是弦在抖。</div>
-      <div class="guess"><b>圈量子引力</b>：空间不是连续的，而是由一个个离散的"空间原子"编成的网，像台阶一样只能一格一格走。"里面"没有东西，它本身就是最小的那一格。</div>
-      <div class="guess"><b>量子泡沫</b>：时空在这个尺度像一锅沸腾的水，不断冒出又破掉小小的时空泡，甚至微型虫洞。空间不是安静背景，而是一直在生灭。</div>
-      <p class="dim" style="margin-top:14px;">也有另一派认为时空到这里依然是连续的，那些只是别的问题在捣乱。两种观点都还活着，谁对谁错，要等未来的实验。</p>
-    </div>
-  </section>
-
-  <section id="quiz">
-    <div class="step-tag">检验</div>
-    <h2>三道题，验一验</h2>
-    <p id="gamePrompt">下面三句话，只有一句是对的。点出那一句。</p>
-    <div class="game-cards" id="gameCards"></div>
-    <div class="game-fb" id="gameFb" aria-live="polite">点卡片作答。</div>
-    <div class="game-foot">
-      <span id="gameScore" class="dim">答对 0 · 答错 0</span>
-      <button type="button" class="ghost" id="gameNext" disabled>下一组</button>
-    </div>
-  </section>
-
-  <section id="chart">
-    <div class="step-tag">速查图</div>
-    <h2>一张图看完整尺度</h2>
-    <p class="dim">九级阶梯按对数排开：每一格都是「再除以 10」。横条越长，东西越大；普朗克长度那一格，就是人类的尺子失效的地方。</p>
-    <figure class="chart-svg">
-<svg class="scale-svg" viewBox="0 0 1000 552" role="img" aria-label="九级尺度速查图：从人到普朗克长度，按对数排开">
-<title>九级尺度速查图</title>
-<text class="s-dim" x="176" y="34">← 越小</text>
-<text class="s-dim" x="806" y="34" text-anchor="end">越大 →</text>
-<text class="s-dim" x="988" y="34" text-anchor="end">横条长度 = 对数尺度（每一格都是十进制「除以 10」）</text>
-<line class="s-grid" x1="176.0" y1="72" x2="176.0" y2="487.0"/>
-<text class="s-tick" x="176.0" y="509.0" text-anchor="middle">-35</text>
-<line class="s-grid-major" x1="266.0" y1="72" x2="266.0" y2="487.0"/>
-<text class="s-tick" x="266.0" y="509.0" text-anchor="middle">-30</text>
-<line class="s-grid" x1="356.0" y1="72" x2="356.0" y2="487.0"/>
-<text class="s-tick" x="356.0" y="509.0" text-anchor="middle">-25</text>
-<line class="s-grid-major" x1="446.0" y1="72" x2="446.0" y2="487.0"/>
-<text class="s-tick" x="446.0" y="509.0" text-anchor="middle">-20</text>
-<line class="s-grid" x1="536.0" y1="72" x2="536.0" y2="487.0"/>
-<text class="s-tick" x="536.0" y="509.0" text-anchor="middle">-15</text>
-<line class="s-grid-major" x1="626.0" y1="72" x2="626.0" y2="487.0"/>
-<text class="s-tick" x="626.0" y="509.0" text-anchor="middle">-10</text>
-<line class="s-grid" x1="716.0" y1="72" x2="716.0" y2="487.0"/>
-<text class="s-tick" x="716.0" y="509.0" text-anchor="middle">-5</text>
-<line class="s-grid-major" x1="806.0" y1="72" x2="806.0" y2="487.0"/>
-<text class="s-tick" x="806.0" y="509.0" text-anchor="middle">0</text>
-<text class="s-tick" x="806.0" y="509.0" text-anchor="middle">10ⁿ 米</text>
-<g class="s-row">
-<text class="s-name" x="156" y="123.1" text-anchor="end">人</text>
-<rect class="s-bar" x="176.0" y="108.0" width="634.1" height="21.0" rx="3"/>
-<rect class="s-mask" x="184.0" y="109.0" width="61.0" height="20"/>
-<text class="s-val" x="187.0" y="123.1">1.7<tspan class="s-unit"> 米</tspan></text>
-<text class="s-note" x="988" y="123.1" text-anchor="end">≈ 你的身高</text>
-</g>
-<line class="s-sep" x1="156" y1="140.0" x2="988" y2="140.0"/>
-<g class="s-row">
-<text class="s-name" x="156" y="167.1" text-anchor="end">手指宽度</text>
-<rect class="s-bar" x="176.0" y="152.0" width="597.2" height="21.0" rx="3"/>
-<rect class="s-mask" x="184.0" y="153.0" width="112.6" height="20"/>
-<text class="s-val" x="187.0" y="167.1">1.5<tspan class="s-unit"> ×10⁻² 米</tspan></text>
-<text class="s-note" x="988" y="167.1" text-anchor="end">≈ 1.5 厘米</text>
-</g>
-<line class="s-sep" x1="156" y1="184.0" x2="988" y2="184.0"/>
-<g class="s-row">
-<text class="s-name" x="156" y="211.1" text-anchor="end">头发丝</text>
-<rect class="s-bar" x="176.0" y="196.0" width="555.2" height="21.0" rx="3"/>
-<rect class="s-mask" x="184.0" y="197.0" width="95.4" height="20"/>
-<text class="s-val" x="187.0" y="211.1">7<tspan class="s-unit"> ×10⁻⁵ 米</tspan></text>
-<text class="s-note" x="988" y="211.1" text-anchor="end">0.07 毫米</text>
-</g>
-<line class="s-sep" x1="156" y1="228.0" x2="988" y2="228.0"/>
-<g class="s-row">
-<text class="s-name" x="156" y="255.1" text-anchor="end">细胞</text>
-<rect class="s-bar" x="176.0" y="240.0" width="543.2" height="21.0" rx="3"/>
-<rect class="s-mask" x="184.0" y="241.0" width="112.6" height="20"/>
-<text class="s-val" x="187.0" y="255.1">1.5<tspan class="s-unit"> ×10⁻⁵ 米</tspan></text>
-<text class="s-note" x="988" y="255.1" text-anchor="end">15 微米</text>
-</g>
-<line class="s-sep" x1="156" y1="272.0" x2="988" y2="272.0"/>
-<g class="s-row">
-<text class="s-name" x="156" y="299.1" text-anchor="end">细菌</text>
-<rect class="s-bar" x="176.0" y="284.0" width="522.0" height="21.0" rx="3"/>
-<rect class="s-mask" x="184.0" y="285.0" width="95.4" height="20"/>
-<text class="s-val" x="187.0" y="299.1">1<tspan class="s-unit"> ×10⁻⁶ 米</tspan></text>
-<text class="s-note" x="988" y="299.1" text-anchor="end">1 微米</text>
-</g>
-<line class="s-sep" x1="156" y1="316.0" x2="988" y2="316.0"/>
-<g class="s-row">
-<text class="s-name" x="156" y="343.1" text-anchor="end">病毒</text>
-<rect class="s-bar" x="176.0" y="328.0" width="504.0" height="21.0" rx="3"/>
-<rect class="s-mask" x="184.0" y="329.0" width="95.4" height="20"/>
-<text class="s-val" x="187.0" y="343.1">1<tspan class="s-unit"> ×10⁻⁷ 米</tspan></text>
-<text class="s-note" x="988" y="343.1" text-anchor="end">100 纳米</text>
-</g>
-<line class="s-sep" x1="156" y1="360.0" x2="988" y2="360.0"/>
-<g class="s-row">
-<text class="s-name" x="156" y="387.1" text-anchor="end">原子</text>
-<rect class="s-bar" x="176.0" y="372.0" width="453.2" height="21.0" rx="3"/>
-<rect class="s-mask" x="184.0" y="373.0" width="121.2" height="20"/>
-<text class="s-val" x="187.0" y="387.1">1.5<tspan class="s-unit"> ×10⁻¹⁰ 米</tspan></text>
-<text class="s-note" x="988" y="387.1" text-anchor="end">0.15 纳米</text>
-</g>
-<line class="s-sep" x1="156" y1="404.0" x2="988" y2="404.0"/>
-<g class="s-row">
-<text class="s-name" x="156" y="431.1" text-anchor="end">原子核</text>
-<rect class="s-bar" x="176.0" y="416.0" width="378.0" height="21.0" rx="3"/>
-<rect class="s-mask" x="184.0" y="417.0" width="104.0" height="20"/>
-<text class="s-val" x="187.0" y="431.1">1<tspan class="s-unit"> ×10⁻¹⁴ 米</tspan></text>
-<text class="s-note" x="988" y="431.1" text-anchor="end">10 飞米（质子 1.6）</text>
-</g>
-<line class="s-sep" x1="156" y1="448.0" x2="988" y2="448.0"/>
-<g class="s-row-hi">
-<text class="s-name" x="156" y="475.1" text-anchor="end">普朗克长度</text>
-<rect class="s-bar-hi" x="176.0" y="460.0" width="3.8" height="21.0" rx="3"/>
-<line class="s-lead" x1="182.8" y1="471.1" x2="194.8" y2="471.1"/>
-<rect class="s-mask" x="198.8" y="461.0" width="138.4" height="20"/>
-<text class="s-val" x="201.8" y="475.1">1.616<tspan class="s-unit"> ×10⁻³⁵ 米</tspan></text>
-<text class="s-note" x="988" y="475.1" text-anchor="end">小于一切可测</text>
-</g>
-<text class="s-foot" x="176" y="547">头发丝 0.07 毫米 ÷ 普朗克长度 ≈ 4.3 × 10³⁰：切成 43 后面 29 个零那么多份，才切到一格。</text>
-</svg>
-      <figcaption>九级尺度速查图 · 从人到普朗克长度（数值经 CODATA 2018 逐项验算）</figcaption>
-    </figure>
-    <figure class="plate">
-      <div class="plate-hd"><b>同一件事，画给你看</b><span>从人到普朗克长度，一次走完 35 个数量级</span></div>
-      <a href="assets/planck-scale-final.webp" target="_blank" rel="noopener" aria-label="点开看原尺寸长图">
-        <picture>
-          <source type="image/webp" srcset="assets/planck-scale-final.webp">
-          <img src="assets/planck-scale-final.jpg" width="1200" height="800" loading="lazy" decoding="async"
-               alt="深色尺度长图：人、头发、细胞、细菌、病毒、原子、原子核、普朗克长度依次缩小，标出 10⁰ 到 10⁻³⁵ 米">
-        </picture>
-        <span class="plate-zoom-hint">点图看原尺寸（手机上字才看得清）</span>
+<div class="plate" id="plate">
+  <div class="in">
+    <h2>一张图看清上下两头</h2>
+    <p>上面那张矢量轴负责准，这张长图负责好记：从人的尺度一路缩到普朗克长度，每往下一步，缩小的倍数都写在了旁边。注意后半段：过了原子核之后，剩下的全是推算。</p>
+    <figure>
+      <a href="assets/planck-scale-final.webp" target="_blank" rel="noopener">
+        <img src="assets/planck-scale-final.jpg" alt="从人类日常尺度逐级缩小到普朗克长度的示意图" width="1200" height="1800" loading="lazy" decoding="async">
       </a>
-      <figcaption class="plate-cap">
-        上面那张矢量阶梯表负责<b>准</b>，这张长图负责<b>好记</b>：它把九级尺度画成一条视觉路径，让你先有身体感，再回去看数字。
-        <span class="plate-src">图：AI 生成插图（seedream），只用来建立尺度直觉，不作数值依据。图里说的是「原子 ÷ 普朗克长度 ≈ 10²⁵」，与上方表里的「头发丝 ÷ 普朗克长度 = 4.3310 × 10³⁰」比较对象不同，别混。</span>
-      </figcaption>
+      <figcaption><b>说明</b>：这张长图由 AI 绘图生成，用来帮助记忆层级关系，<b>不承担精度责任</b>；所有数值以本文上面的矢量轴与表格为准。点图可看原尺寸。</figcaption>
     </figure>
-    <div class="const-card">
-      <div class="cc-head">
-        <span class="lbl">三个常数，一条公式</span>
-        <span class="cc-note">不用量，把数字代进去就得到普朗克长度</span>
-      </div>
-      <div class="cc-row">
-        <div class="cc-item"><span class="cc-k">c 光速</span><span class="cc-v">2.99792458 × 10⁸</span><span class="cc-u">米 / 秒（定义值，无误差）</span></div>
-        <div class="cc-item"><span class="cc-k">h 普朗克常数</span><span class="cc-v">6.62607015 × 10⁻³⁴</span><span class="cc-u">焦耳 · 秒（定义值，无误差）</span></div>
-        <div class="cc-item"><span class="cc-k">G 引力常数</span><span class="cc-v">6.67430 × 10⁻¹¹</span><span class="cc-u">米³ /（千克 · 秒²）</span></div>
-      </div>
-      <div class="cc-formula">
-        <span class="cc-lhs">普朗克长度 ℓ<sub>P</sub></span>
-        <span class="cc-eq">=</span>
-        <span class="cc-sqrt">√( ħG / c³ )</span>
-        <span class="cc-eq">=</span>
-        <span class="cc-res">1.616255 × 10⁻³⁵ 米</span>
-      </div>
-      <div class="cc-foot">这里 ħ = h / 2π = 1.054571817 × 10⁻³⁴ 焦耳 · 秒。这是唯一一个把量子（h）、相对论（c）、引力（G）拼在一起才会出现的长度：再往下，人类的尺子没有刻度。</div>
-    </div>
-    <div class="chart-note">
-      这张图的每个数字都逐项验算过，还修了网上版本常见的两个错：<b>原子核</b>那级不是 1 飞米（那是质子），而是 1.6 到 15 飞米；传说中「质子放大到宇宙、普朗克长度就像个篮球」的类比也算了，实际是 <b>16,904 公里</b>，比地球直径还长。
-    </div>
-  </section>
-
-  <footer>
-    <div>页面里的每一个数字都可以验算：普朗克长度 = √(ħG/c³) ≈ 1.616255 × 10⁻³⁵ 米（CODATA 2018）。</div>
-    <div>尺度阶梯用的是各类事物的常见尺度（头发 70 微米、动物细胞 15 微米、病毒约 100 纳米、原子核 1.6 到 15 飞米）。</div>
-    <div style="margin-top:8px;">Ariste 🦞 · 2026-09-10 · 送给牧童</div>
-    <div class="print-foot">
-      打印版 · 数据来源：普朗克长度 = √(ħG/c³) = 1.616255 × 10⁻³⁵ 米（CODATA 2018）；普朗克时间 5.39 × 10⁻⁴⁴ 秒。
-      尺度阶梯取各类事物常见尺度：头发 70 微米、动物细胞 15 微米、病毒约 100 纳米、原子核 1.6–15 飞米。
-      在线版：k286c7hg65-hub.github.io/planck-feynman
-    </div>
-  </footer>
+  </div>
 </div>
 
+<footer>
+  <div class="fin">数值口径：CODATA 2018 推荐值（2019 年 5 月发布）＋ 2019 年国际单位制定义值。本页不依赖任何外部资源，可离线打开。</div>
+</footer>
 <script>
-(function(){
-  var LP = 1.616255e-35; // 普朗克长度（米）
+/* 普朗克长度 · 页面交互
+   两个纪律：① 所有数字都用页面上的常数现算，不写死结果；② 拖动件用 SVG 自绘，不用表单控件。*/
+(function () {
+  var HBAR = 1.0545718176461565e-34;      // h/2π，2019 SI 下精确
+  var C = 299792458;                      // 定义值
+  var G = 6.67430e-11;                    // CODATA 2018
+  var LP = Math.sqrt(HBAR * G / Math.pow(C, 3));   // 1.6162550244237053e-35 m
+  var HALF_HBAR = HBAR / 2;
 
-  // ---------- 工具：科学计数法 → 带上标的可读字符串 ----------
-  var SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','-':'⁻'};
-  function sup(n){ return String(n).split('').map(function(ch){return SUP[ch]||ch;}).join(''); }
-  function sci(x, digits){
-    if(!isFinite(x) || x<=0) return '—';
-    digits = digits==null ? 2 : digits;
-    var e = Math.floor(Math.log10(x));
-    var m = x / Math.pow(10,e);
-    return m.toFixed(digits) + ' × 10' + sup(e);
+  var SUP = { '-': '⁻', '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹' };
+  function sup(n) { return String(n).split('').map(function (c) { return SUP[c] || c; }).join(''); }
+  function sci(x, d) {
+    d = d || 6;
+    if (!isFinite(x) || x === 0) return '0';
+    var e = Math.floor(Math.log10(Math.abs(x)));
+    var m = x / Math.pow(10, e);
+    var s = m.toFixed(d);
+    if (Math.abs(parseFloat(s)) >= 10) { s = (m / 10).toFixed(d); e += 1; }
+    return s + '×10' + sup(e);
   }
-  // 大整数：分组加逗号（整数部分超过 1e6 时用）
-  function groupInt(x){
-    return Math.round(x).toLocaleString('en-US');
+  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  function $(id) { return document.getElementById(id); }
+
+  /* ── 主脊映射：y = 36 + (−log₁₀v)/35 × 576 ───────────────── */
+  function spineY(v) {
+    var lg = Math.log10(v);
+    return clamp(36 + (-lg) / 35 * 576, 36, 612);
   }
-  // 尺度显示：普朗克长度固定 3 位有效数字，其余保持 2 位，避免同一页出现 1.62 与 1.616 两种写法
-  function sizeDigits(x){ return x === LP ? 3 : (x >= 1 ? 1 : 1); }
-
-  // ---------- A. 尺度阶梯 ----------
-  var LEVELS = [
-    {name:'人',        size:1.7,        note:'身高 1 到 2 米，我们生活的尺度。'},
-    {name:'手指宽度',  size:0.015,      note:'约 1 厘米，指尖的世界。'},
-    {name:'头发丝',    size:0.00007,    note:'约 70 微米，一根头发的直径。'},
-    {name:'细胞',      size:0.000015,   note:'约 15 微米，一个动物细胞。'},
-    {name:'细菌',      size:0.000001,   note:'约 1 微米，一颗细菌的大小。'},
-    {name:'病毒',      size:0.0000001,  note:'约 100 纳米，新冠病毒大约这么大。'},
-    {name:'原子',      size:0.00000000015, note:'约 0.15 纳米，一个原子的大小。'},
-    {name:'原子核',    size:0.00000000000001, note:'约 10 飞米（1 飞米 = 10⁻¹⁵ 米），原子核的尺度。'},
-    {name:'普朗克长度', size:LP,         note:'1.616 × 10⁻³⁵ 米，理论尺度，量子引力的边界。'}
-  ];
-
-  var ladder = document.getElementById('ladder');
-  var ladderOut = document.getElementById('ladderOut');
-  LEVELS.forEach(function(lv, i){
-    var b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'rung';
-    b.setAttribute('data-i', i);
-    b.innerHTML = lv.name + '<span class="r-unit">' + sci(lv.size, sizeDigits(lv.size)) + ' 米</span>';
-    b.addEventListener('click', function(){ showRung(i); });
-    ladder.appendChild(b);
-  });
-
-  function showRung(i){
-    var lv = LEVELS[i];
-    var prev = i>0 ? LEVELS[i-1] : null;
-    var ratios = '';
-    if(prev){
-      var r = prev.size / lv.size;
-      ratios = '比「' + prev.name + '」小 ' + (r>=1e6 ? sci(r,1) : Math.round(r).toLocaleString('en-US')) + ' 倍';
-    } else {
-      ratios = '这一级就是我们自己。';
-    }
-    var toLp = lv.size / LP;
-    ladderOut.innerHTML =
-      '<div class="lo-name">' + lv.name + '</div>' +
-      '<div class="lo-size">' + sci(lv.size, sizeDigits(lv.size)) + ' 米</div>' +
-      '<div class="lo-step">' + ratios + '</div>' +
-      '<div class="lo-step">如果切到普朗克长度，要切成 ' + sci(toLp,1) + ' 份</div>' +
-      '<div class="lo-note">' + lv.note + '</div>';
-    var rungs = ladder.querySelectorAll('.rung');
-    for(var k=0;k<rungs.length;k++) rungs[k].classList.toggle('on', k===i);
-  }
-  showRung(0);
-
-  // ---------- B. 计算器 ----------
-  var cSize = document.getElementById('cSize');
-  var cUnit = document.getElementById('cUnit');
-  var cOut  = document.getElementById('cOut');
-
-  var pending = null;
-  var predictBox = document.getElementById('predictBox');
-  var gExp = document.getElementById('gExp'), gFb = document.getElementById('gFb');
-
-  function answerHTML(p){
-    return '这个尺寸是 <span class="mono">' + sci(p.meters,2) + '</span> 米<br>' +
-      '要切成 <span class="n">' + sci(p.parts,1) + '</span> 份才有一份是普朗克长度' +
-      '<div class="dim" style="margin-top:10px;">换个写法：' + groupInt(p.parts) + ' 份（这个整数有 ' + (Math.floor(Math.log10(p.parts))+1) + ' 位）</div>';
+  var dot = $('spineDot'), tip = $('spineTip');
+  function moveSpine(v) {
+    if (!dot) return;
+    var y = spineY(v);
+    dot.setAttribute('cy', y.toFixed(1));
+    tip.setAttribute('y1', Math.min(y, spineY(v)).toFixed(1));
+    tip.setAttribute('y2', '612');
   }
 
-  // 第一步：只做计算与状态准备，不直接揭晓（先猜后验）
-  function compute(){
-    var v = parseFloat(cSize.value);
-    var u = parseFloat(cUnit.value);
-    if(!(v>0) || !(u>0)){
-      cOut.innerHTML = '<span class="dim">请输入一个大于 0 的数字。</span>';
-      if(predictBox) predictBox.hidden = true;
-      pending = null;
-      return;
-    }
-    var meters = v * u;
-    var parts = meters / LP;
-    pending = { meters: meters, parts: parts, exp: Math.floor(Math.log10(parts)) };
-    predictBox.hidden = false;
-    gFb.textContent = '';
-    gFb.className = 'predict-fb';
-    gExp.value = '';
-    cOut.innerHTML = '<span class="dim">先在上面猜一个数量级（10 的几次方），再点「验证我的猜测」。猜错不扣分——猜过才记得住。</span>';
-  }
+  /* ── 通用：一条水平滑轨（pointer 拖动 + 方向键） ────────────── */
+  function makeTrack(svg, opts) {
+    var NS = 'http://www.w3.org/2000/svg';
+    var x0 = opts.x0, x1 = opts.x1, y = opts.y || 30;
+    var rail = document.createElementNS(NS, 'line');
+    rail.setAttribute('x1', x0); rail.setAttribute('x2', x1);
+    rail.setAttribute('y1', y); rail.setAttribute('y2', y);
+    rail.setAttribute('stroke', '#d7dad7'); rail.setAttribute('stroke-width', '2');
+    svg.appendChild(rail);
+    var fill = document.createElementNS(NS, 'line');
+    fill.setAttribute('x1', x0); fill.setAttribute('y1', y); fill.setAttribute('y2', y);
+    fill.setAttribute('stroke', '#0e6f7a'); fill.setAttribute('stroke-width', '2');
+    svg.appendChild(fill);
+    var knob = document.createElementNS(NS, 'circle');
+    knob.setAttribute('r', '11'); knob.setAttribute('cy', y);
+    knob.setAttribute('fill', '#0e6f7a'); knob.setAttribute('stroke', '#ffffff'); knob.setAttribute('stroke-width', '2');
+    knob.setAttribute('style', 'cursor:grab;pointer-events:none');
+    svg.appendChild(knob);
+    // 透明热区：视觉圆点 11px，命中区 24px（44px 以上），避免出现 <44px 的触控目标
+    var hit = document.createElementNS(NS, 'circle');
+    hit.setAttribute('r', '26'); hit.setAttribute('cy', y); hit.setAttribute('cx', 0);
+    hit.setAttribute('fill', '#0e6f7a'); hit.setAttribute('fill-opacity', '0');
+    hit.setAttribute('style', 'cursor:grab');
+    hit.setAttribute('tabindex', '0');
+    hit.setAttribute('role', 'slider');
+    hit.setAttribute('aria-label', opts.label);
+    svg.appendChild(hit);
 
-  // 第二步：揭晓 + 对照猜测
-  function reveal(guessed){
-    if(!pending) return;
-    var p = pending;
-    var exp = p.exp;
-    if(guessed === null || isNaN(guessed)){
-      gFb.className = 'predict-fb';
-      gFb.innerHTML = '真值在 10<sup>' + exp + '</sup> 量级。';
-    } else {
-      var d = guessed - exp, ad = Math.abs(d);
-      if(ad <= 1){
-        gFb.className = 'predict-fb ok';
-        gFb.innerHTML = '✓ 猜得准！真正的数量级就是 10<sup>' + exp + '</sup>。';
-      } else {
-        gFb.className = 'predict-fb miss';
-        gFb.innerHTML = (d < 0 ? '偏小' : '偏大') + '：你猜 10<sup>' + guessed + '</sup>，真值是 10<sup>' + exp + '</sup>，' +
-          '差了约 ' + ad + ' 个数量级' + (ad >= 7 ? '（一个亿倍以上）' : '') + '。';
-      }
-    }
-    cOut.innerHTML = answerHTML(p);
-  }
+    var lab = document.createElementNS(NS, 'text');
+    lab.setAttribute('y', y - 20); lab.setAttribute('text-anchor', 'middle');
+    lab.setAttribute('font-family', 'monospace'); lab.setAttribute('font-size', '12'); lab.setAttribute('fill', '#16191c');
+    svg.appendChild(lab);
 
-  document.getElementById('cGo').addEventListener('click', compute);
-  if(document.getElementById('gGo')){
-    document.getElementById('gGo').addEventListener('click', function(){ reveal(parseFloat(gExp.value)); });
-    document.getElementById('gSkip').addEventListener('click', function(){ reveal(null); });
-    gExp.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ reveal(parseFloat(gExp.value)); } });
-  }
-  cSize.addEventListener('keydown', function(e){ if(e.key==='Enter') compute(); });
-  cUnit.addEventListener('change', compute);
-  var preset = document.querySelectorAll('.presets button');
-  for(var p=0;p<preset.length;p++){
-    preset[p].addEventListener('click', function(){
-      cSize.value = this.getAttribute('data-s');
-      cUnit.value = this.getAttribute('data-u');
-      // 防御：若单位值与任何选项都不匹配（select.value 会变空），补一个等价选项
-      if(!cUnit.value){
-        var uv = this.getAttribute('data-u');
-        var o = document.createElement('option');
-        o.value = uv; o.textContent = '自定义'; o.selected = true;
-        cUnit.appendChild(o);
-      }
-      compute();
+    var t0 = document.createElementNS(NS, 'text'), t1 = document.createElementNS(NS, 'text');
+    [[t0, x0, 'start', opts.left], [t1, x1, 'end', opts.right]].forEach(function (a) {
+      a[0].setAttribute('x', a[1]); a[0].setAttribute('y', y + 26);
+      a[0].setAttribute('text-anchor', a[2]);
+      a[0].setAttribute('font-family', 'monospace'); a[0].setAttribute('font-size', '12'); a[0].setAttribute('fill', '#5b646a');
+      a[0].textContent = a[3];
+      svg.appendChild(a[0]);
     });
-  }
-  // 首次进入：只给引导，不提前揭晓（先猜后验的起点）
-  predictBox.hidden = true;
-  cOut.innerHTML = '<span class="dim">选一个尺寸（或点下面的例子），再点「算一算」——先猜一个数量级，再验证。</span>';
 
-  // ---------- C. 拼图 ----------
-  var pcs = document.querySelectorAll('.pc');
-  var formula = document.getElementById('formula');
-  var lit = {};
-  for(var q=0;q<pcs.length;q++){
-    pcs[q].addEventListener('click', function(){
-      var k = this.getAttribute('data-k');
-      lit[k] = !lit[k];
-      this.classList.toggle('on', !!lit[k]);
-      var n = Object.keys(lit).filter(function(x){return lit[x];}).length;
-      if(n===3){
-        formula.classList.add('live');
-        formula.innerHTML = '√( ħ · G / c³ ) ≈ <span class="res">1.616 × 10⁻³⁵ 米</span>' +
-          '<div style="margin-top:10px;font-size:14.5px;color:var(--ink);">三个常数凑在一起，量纲相消，只剩「米」这一个单位。' +
-          '普朗克长度不是谁规定的，是宇宙自己长出来的。</div>' +
-          '<div style="margin-top:8px;font-size:14px;" class="dim">配套的还有普朗克时间：光走过这段距离只要 5.39 × 10⁻⁴⁴ 秒。</div>';
-      } else if(n===0){
-        formula.classList.remove('live');
-        formula.innerHTML = '√( ħ · G / c³ ) = ?<span class="res"> </span>' +
-          '<div class="dim" style="margin-top:8px;font-size:14px;">三块牌子全点亮，尺子就出来了。</div>';
-      } else {
-        formula.classList.remove('live');
-        formula.innerHTML = '已点亮 ' + n + ' / 3 块：还差 ' + (3-n) + ' 块。' +
-          '<div class="dim" style="margin-top:8px;font-size:14px;">三块牌子全点亮，尺子就出来了。</div>';
+    var val = opts.init;
+    function render() {
+      var f = (val - opts.min) / (opts.max - opts.min);
+      var x = x0 + f * (x1 - x0);
+      knob.setAttribute('cx', x.toFixed(1));
+      hit.setAttribute('cx', x.toFixed(1));
+      fill.setAttribute('x2', x.toFixed(1));
+      lab.setAttribute('x', x.toFixed(1));
+      lab.textContent = opts.format(val);
+      hit.setAttribute('aria-valuenow', val.toFixed(3));
+    }
+    function setFromClientX(cx) {
+      var r = svg.getBoundingClientRect();
+      var vb = svg.viewBox.baseVal;
+      var sx = vb.width / r.width;
+      var vx = (cx - r.left) * sx;
+      var f = clamp((vx - x0) / (x1 - x0), 0, 1);
+      val = opts.min + f * (opts.max - opts.min);
+      render();
+      if (opts.onChange) opts.onChange(val);
+    }
+    var dragging = false;
+    function startDrag(e) {
+      dragging = true;
+      setFromClientX(e.clientX);
+      try { svg.setPointerCapture(e.pointerId); } catch (err) { }
+      e.preventDefault();
+    }
+    svg.addEventListener('pointerdown', startDrag);
+    hit.addEventListener('pointerdown', startDrag);
+    svg.addEventListener('pointermove', function (e) { if (dragging) setFromClientX(e.clientX); });
+    svg.addEventListener('pointerup', function () { dragging = false; });
+    svg.addEventListener('pointercancel', function () { dragging = false; });
+    hit.addEventListener('keydown', function (e) {
+      var step = (opts.max - opts.min) / 20;
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') { val = clamp(val - step, opts.min, opts.max); }
+      else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') { val = clamp(val + step, opts.min, opts.max); }
+      else { return; }
+      e.preventDefault(); render();
+      if (opts.onChange) opts.onChange(val);
+    });
+    render();
+    if (opts.onChange) opts.onChange(val);
+    return { set: function (v) { val = clamp(v, opts.min, opts.max); render(); if (opts.onChange) opts.onChange(val); } };
+  }
+
+  /* ── 装置一：尺度滑轨（联动主脊） ─────────────────────────── */
+  (function () {
+    var svg = $('d0-svg');
+    if (!svg) return;
+    var OBJ = [
+      [-2.6, '人 · 桌子（1 米）'], [-3.6, '蚂蚁（3 毫米）'], [-6.6, '细胞（10 到 30 微米）'],
+      [-9.4, '可见光波长（400 到 700 纳米）'], [-12.4, '原子（0.1 纳米）'],
+      [-16.6, '原子核 · 质子（0.84 飞米）'], [-21.4, '电子尺寸上限（10⁻¹⁸ 到 10⁻¹⁹ 米）'],
+      [-27.5, '对撞机也够不到的区间'], [-99, '普朗克长度']
+    ];
+    function nearest(exp) {
+      for (var i = 0; i < OBJ.length; i++) { if (exp >= OBJ[i][0]) return OBJ[i][1]; }
+      return OBJ[OBJ.length - 1][1];
+    }
+    var track = makeTrack(svg, {
+      x0: 40, x1: 560, y: 52, min: 0, max: 35, init: 0,
+      label: '尺度轴位置（10 的负几次方米）',
+      left: '1 米', right: '普朗克长度', format: function (v) { return '10⁻' + Math.round(v) + ' 米'; },
+      onChange: function (v) {
+        var exp = -v;
+        var value = Math.pow(10, exp);
+        $('d0-v').textContent = sci(value, 3) + ' 米';
+        var ratio = value / LP;
+        $('d0-r').textContent = ratio < 1 ? '不到 1 倍' : sci(ratio, 3) + ' 倍';
+        $('d0-obj').textContent = nearest(exp);
+        moveSpine(value);
       }
     });
-  }
-
-  // ---------- E. 自己写（本地保存） ----------
-  var ta = document.getElementById('mySpeech');
-  var info = document.getElementById('speechInfo');
-  var KEY = 'planck-feynman-speech';
-  function refreshInfo(){
-    var n = (ta.value || '').trim().length;
-    info.textContent = n ? ('已写 ' + n + ' 个字。' + (n < 60 ? '再写长一点，看看能不能到 100 字。' : '很好，试着一口气念出来。')) : '写完后点保存（只存在你自己的设备上，不会上传）。';
-  }
-  try{
-    var saved = window.localStorage.getItem(KEY);
-    if(saved){ ta.value = saved; }
-  }catch(e){}
-  refreshInfo();
-  ta.addEventListener('input', refreshInfo);
-  document.getElementById('saveSpeech').addEventListener('click', function(){
-    try{
-      window.localStorage.setItem(KEY, ta.value);
-      var n = (ta.value || '').trim().length;
-      info.textContent = '已保存（' + n + ' 字）。下次打开这台设备还在。';
-    }catch(e){
-      info.textContent = '这台设备不允许本地保存，写完可以截图留给你自己。';
-    }
-  });
-
-  // ---------- 复述计时器：60 秒内讲完才算过关 ----------
-  (function(){
-    var show = document.getElementById('timerShow');
-    var btn = document.getElementById('timerBtn');
-    var hint = document.getElementById('timerHint');
-    if(!show || !btn) return;
-    var T0 = 60, left = T0, tid = null, running = false;
-    function paint(){
-      show.textContent = left.toFixed(1) + 's';
-      show.style.color = left <= 0 ? 'var(--penRed)' : 'var(--pen)';
-    }
-    function stop(msg){
-      if(tid){ clearInterval(tid); tid = null; }
-      running = false;
-      btn.textContent = '重新计时';
-      if(msg) hint.textContent = msg;
-    }
-    btn.addEventListener('click', function(){
-      if(running){ stop('已暂停，再点一次重新开始。'); return; }
-      left = T0; running = true; paint();
-      btn.textContent = '暂停';
-      hint.textContent = '开始讲——别停，卡住也继续往下说。';
-      tid = setInterval(function(){
-        left = Math.max(0, left - 0.1);
-        paint();
-        if(left <= 0){
-          stop('60 秒到了。能一口气讲完，就是真懂了。');
-          hint.textContent = '60 秒到了。能一口气讲完，就是真懂了。';
-        }
-      }, 100);
-    });
-    paint();
+    $('d0-reset').addEventListener('click', function () { track.set(0); });
   })();
 
-  // ---------- 主题切换 ----------
-  var htmlEl = document.documentElement;
-  var themeBtn = document.getElementById('themeBtn');
-  function paintBtn(){
-    var dark = htmlEl.getAttribute('data-theme') === 'dark';
-    themeBtn.textContent = dark ? '☀️' : '🌙';
-    themeBtn.setAttribute('aria-label', dark ? '切换到亮色主题' : '切换到暗色主题');
-  }
-  paintBtn();
-  themeBtn.addEventListener('click', function(){
-    var next = htmlEl.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    htmlEl.setAttribute('data-theme', next);
-    try{ window.localStorage.setItem('planck-theme', next); }catch(e){}
-    paintBtn();
-  });
-
-  // ---------- 入场动画（只给关键块） ----------
-  // ---------- 找错游戏：三句里挑出唯一正确/唯一错误的那句 ----------
-  var ROUNDS = [
-    {
-      kind: 'pick-true',
-      prompt: '下面三句话，只有一句是对的。点出那一句。',
-      cards: [
-        { t: '把质子放大到宇宙那么大，普朗克长度就有篮球那么大。', truth: false, why: '真实结果是 16,904 公里，比地球直径（12,742 公里）还长。而篮球只有 24 厘米——差了 7 个数量级。这句话在网上流传很广，但它是错的。' },
-        { t: '原子核的直径大约是 1 飞米。', truth: false, why: '1 飞米是质子的大小。原子核是 1.6 到 15 飞米，比质子大好几倍。很多科普图在这里也画错了。' },
-        { t: '普朗克长度不是量出来的，是光速、量子规则、引力强度三样拼出来的。', truth: true, why: '对。把 c、ħ、G 放在一起让量纲相消，剩下长度单位，就是普朗克长度。它是算出来的，不是测出来的。' }
-      ]
-    },
-    {
-      kind: 'pick-false',
-      prompt: '这一组反过来：下面三句话，只有一句是错的。点出那一句。',
-      cards: [
-        { t: '普朗克长度大约是 1.6 × 10⁻³⁵ 米。', truth: true, why: '对，CODATA 2018 的值是 1.616255 × 10⁻³⁵ 米。' },
-        { t: '普朗克时间大约是 5.4 × 10⁻⁴⁴ 秒。', truth: true, why: '对，普朗克时间 = 普朗克长度 ÷ 光速 ≈ 5.39 × 10⁻⁴⁴ 秒，是光走过一个普朗克长度所需的时间。' },
-        { t: '普朗克长度已经在实验室里被直接量出来了。', truth: false, why: '错。它比人类现在能探测的尺度还小很多个数量级，对撞机完全够不着，只能从理论推算。' }
-      ]
-    }
-  ];
-  var round = 0, score = { right: 0, wrong: 0 }, locked = false;
-  var gameCards = document.getElementById('gameCards');
-  var gameFb = document.getElementById('gameFb');
-  var gamePrompt = document.getElementById('gamePrompt');
-  var gameScore = document.getElementById('gameScore');
-  var gameNext = document.getElementById('gameNext');
-
-  function esc(s){ return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-
-  function renderRound(){
-    locked = false;
-    var R = ROUNDS[round];
-    gamePrompt.textContent = R.prompt;
-    var html = '';
-    for(var i = 0; i < R.cards.length; i++){
-      html += '<button type="button" class="game-card" data-i="' + i + '">' + esc(R.cards[i].t) +
-        '<span class="gc-badge"></span><span class="gc-why">' + esc(R.cards[i].why) + '</span></button>';
-    }
-    gameCards.innerHTML = html;
-    gameCards.querySelectorAll('.game-card').forEach(function(el){
-      el.addEventListener('click', function(){ pick(parseInt(this.getAttribute('data-i'), 10)); });
-    });
-    gameFb.textContent = '点卡片作答。';
-    gameFb.className = 'game-fb';
-    gameNext.disabled = true;
-    gameNext.textContent = (round === ROUNDS.length - 1) ? '重来一次' : '下一组';
-  }
-
-  function pick(idx){
-    if(locked) return;
-    locked = true;
-    var R = ROUNDS[round];
-    var wantTrue = R.kind === 'pick-true';
-    var chosen = R.cards[idx];
-    var ok = wantTrue ? (chosen.truth === true) : (chosen.truth === false);
-    if(ok){ score.right++; } else { score.wrong++; }
-    gameCards.querySelectorAll('.game-card').forEach(function(el, i){
-      var c = R.cards[i];
-      el.classList.add('revealed');
-      el.classList.add(c.truth ? 'true' : 'false');
-      var badge = el.querySelector('.gc-badge');
-      if(i === idx){
-        el.classList.add(ok ? 'true-reveal' : 'wrong-guess');
-        el.classList.add('picked');
-        badge.textContent = ok ? '✓ 选对了' : '✗ 选错了';
-      } else {
-        badge.textContent = c.truth ? '（这句是对的）' : '（这句是错的）';
-      }
-    });
-    gameFb.className = 'game-fb ' + (ok ? 'ok' : 'miss');
-    gameFb.textContent = (ok ? '✓ 对了。' : '✗ 不是这句。') + chosen.why;
-    gameScore.textContent = '答对 ' + score.right + ' · 答错 ' + score.wrong;
-    gameNext.disabled = false;
-  }
-
-  if(gameNext){
-    gameNext.addEventListener('click', function(){
-      if(round === ROUNDS.length - 1){ round = 0; score = { right: 0, wrong: 0 }; gameScore.textContent = '答对 0 · 答错 0'; }
-      else { round++; }
-      renderRound();
-      document.getElementById('quiz').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-    renderRound();
-  }
-
-  // ---------- 术语白话注解：点一下展开 ----------
-  document.querySelectorAll('.term').forEach(function(t){
-    t.addEventListener('click', function(){
-      var nx = t.nextElementSibling;
-      if(!nx || !nx.classList || !nx.classList.contains('term-def')){
-        nx = document.createElement('span');
-        nx.className = 'term-def';
-        nx.textContent = t.getAttribute('data-def') || '';
-        t.parentNode.insertBefore(nx, t.nextSibling);
-      }
-      nx.classList.toggle('show');
-    });
-  });
-
-  // ---------- 阅读进度线 + 章节高亮 ----------
-  var progBar = document.getElementById('progBar');
-  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav a[href^="#"]'));
-  var secEls = navLinks.map(function(a){ return document.querySelector(a.getAttribute('href')); });
-  function onScroll(){
-    var st = window.pageYOffset || document.documentElement.scrollTop || 0;
-    var total = document.documentElement.scrollHeight - window.innerHeight;
-    if(progBar) progBar.style.width = (total > 0 ? Math.min(100, (st / total) * 100) : 0) + '%';
-    var cur = -1;
-    for(var i = 0; i < secEls.length; i++){
-      var el = secEls[i];
-      if(el && el.getBoundingClientRect().top <= window.innerHeight * 0.35) cur = i;
-    }
-    navLinks.forEach(function(a, i){ a.classList.toggle('on', i === cur); });
-  }
-  var ticking = false;
-  window.addEventListener('scroll', function(){
-    if(ticking) return;
-    ticking = true;
-    requestAnimationFrame(function(){ onScroll(); ticking = false; });
-  }, {passive:true});
-  window.addEventListener('resize', onScroll);
-  onScroll();
-
-  // ---------- 打印前自动展开所有折叠（CSS 单打无法展开 details）----------
-  function openAllDetails(){ document.querySelectorAll('details').forEach(function(d){ d.open = true; }); }
-  window.addEventListener('beforeprint', openAllDetails);
-  if(/[?&]print=1/.test(location.search)) openAllDetails();
-
-  if('IntersectionObserver' in window){
-    var io = new IntersectionObserver(function(es){
-      es.forEach(function(e){
-        if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+  /* ── 装置二：三个常数拼 ℓ_P ───────────────────────────────── */
+  (function () {
+    var host = $('tracks');
+    if (!host) return;
+    var NS = 'http://www.w3.org/2000/svg';
+    var defs = [
+      { id: 'h', name: 'ħ（量子）', init: 1, color: '#16191c' },
+      { id: 'c', name: 'c（相对论）', init: 1, color: '#16191c' },
+      { id: 'g', name: 'G（引力）', init: 1, color: '#16191c' }
+    ];
+    var state = { h: 1, c: 1, g: 1 };
+    var tracks = {};
+    defs.forEach(function (d) {
+      var wrap = document.createElement('div');
+      wrap.style.marginTop = 'var(--s3)';
+      var lab = document.createElement('div');
+      lab.className = 'tickmarks';
+      lab.innerHTML = '<span>' + d.name + '</span><span>0.50× ｜ 1.00× ｜ 2.00×</span>';
+      wrap.appendChild(lab);
+      var svg = document.createElementNS(NS, 'svg');
+      svg.setAttribute('viewBox', '0 0 600 60');
+      svg.setAttribute('role', 'img');
+      svg.setAttribute('aria-label', d.name + ' 相对官方值的倍数');
+      wrap.appendChild(svg);
+      host.appendChild(wrap);
+      tracks[d.id] = makeTrack(svg, {
+        x0: 20, x1: 580, y: 30, min: 0.5, max: 2, init: 1,
+        label: d.name + ' 倍数', left: '0.50×', right: '2.00×',
+        format: function (v) { return v.toFixed(2) + '×'; },
+        onChange: function (v) { state[d.id] = v; update(); }
       });
-    }, {rootMargin:'0px 0px -40px 0px'});
-    document.querySelectorAll('.fadein').forEach(function(el){ io.observe(el); });
-  } else {
-    document.querySelectorAll('.fadein').forEach(function(el){ el.classList.add('in'); });
-  }
+    });
+    function update() {
+      var h = HBAR * state.h, c = C * state.c, g = G * state.g;
+      var lp = Math.sqrt(h * g / Math.pow(c, 3));
+      var err = (lp / LP - 1) * 100;
+      $('d1-val').textContent = sci(lp, 6) + ' m';
+      var errEl = $('d1-err');
+      errEl.textContent = (Math.abs(err) < 5e-4 ? '' : (err > 0 ? '+' : '')) + err.toFixed(3) + '%';
+      errEl.className = 'v' + (Math.abs(err) >= 5 ? ' warn' : '');
+      var parts = [
+        ['ħ', 0.5 * Math.log(state.h)],
+        ['c', -1.5 * Math.log(state.c)],
+        ['G', 0.5 * Math.log(state.g)]
+      ].sort(function (a, b) { return Math.abs(b[1]) - Math.abs(a[1]); });
+      $('d1-sens').textContent = Math.abs(parts[0][1]) < 1e-9 ? '三条都还没动' : parts[0][0] + '（' + (parts[0][1] > 0 ? '+' : '') + (parts[0][1] * 100).toFixed(2) + '%）';
+    }
+    $('d1-reset').addEventListener('click', function () {
+      tracks.h.set(1); tracks.c.set(1); tracks.g.set(1);
+    });
+  })();
+
+  /* ── 装置三：不确定度跷跷板 ──────────────────────────────── */
+  (function () {
+    var svg = $('d2-svg');
+    if (!svg) return;
+    var X0 = 60, X1 = 580, Y0 = 240, Y1 = 30;      // 画布框
+    var LX0 = -36, LX1 = -28;                       // δx 的 log10 范围（米）
+    var LY0 = -8, LY1 = 2;                          // δp 的 log10 范围（kg·m/s）
+    function px(lx) { return X0 + (lx - LX0) / (LX1 - LX0) * (X1 - X0); }
+    function py(ly) { return Y0 + (ly - LY0) / (LY1 - LY0) * (Y1 - Y0); }
+    function ix(x) { return LX0 + (x - X0) / (X1 - X0) * (LX1 - LX0); }
+    function iy(y) { return LY0 + (y - Y0) / (Y1 - Y0) * (LY1 - LY0); }
+
+    // 双曲线 δp = (ħ/2)/δx
+    var pts = [];
+    for (var lx = LX0; lx <= LX1 + 0.001; lx += 0.1) {
+      var ly = Math.log10(HALF_HBAR) - lx;
+      if (ly < LY0 || ly > LY1) continue;
+      pts.push(px(lx).toFixed(1) + ',' + py(ly).toFixed(1));
+    }
+    $('d2-curve').setAttribute('d', 'M' + pts.join(' L'));
+    // 禁止区 = δx·δp < ħ/2，即曲线下方那块（左下大片），不是左上角
+    var rev = pts.slice().reverse();
+    $('d2-forbid').setAttribute('points', X0 + ',' + Y0 + ' ' + X1 + ',' + Y0 + ' ' + rev.join(' '));
+
+    var knob = $('d2-knob'), gx = $('d2-gx'), gy = $('d2-gy');
+    var hit = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    hit.setAttribute('r', '27'); hit.setAttribute('fill', '#0e6f7a'); hit.setAttribute('fill-opacity', '0');
+    hit.setAttribute('style', 'cursor:grab');
+    hit.setAttribute('tabindex', '0'); hit.setAttribute('role', 'slider');
+    hit.setAttribute('aria-label', '位置与动量的不确定度取值点');
+    svg.appendChild(hit);
+    knob.setAttribute('style', 'cursor:grab;pointer-events:none');
+    function setPoint(sx, sy) {
+      var lx = ix(sx), ly = iy(sy);
+      var dx = Math.pow(10, lx), dp = Math.pow(10, ly);
+      var prod = dx * dp, ratio = prod / HALF_HBAR;
+      var forbidden = ratio < 1;
+      if (forbidden) { dp = HALF_HBAR / dx; ly = Math.log10(dp); sy = py(ly); ratio = 1; }
+      knob.setAttribute('cx', sx.toFixed(1));
+      knob.setAttribute('cy', sy.toFixed(1));
+      hit.setAttribute('cx', sx.toFixed(1));
+      hit.setAttribute('cy', sy.toFixed(1));
+      knob.setAttribute('fill', forbidden ? '#8c2f39' : '#0e6f7a');
+      gx.setAttribute('x1', sx.toFixed(1)); gx.setAttribute('x2', sx.toFixed(1));
+      gy.setAttribute('y1', sy.toFixed(1)); gy.setAttribute('y2', sy.toFixed(1));
+      $('d2-x').textContent = sci(Math.pow(10, ix(sx)), 3) + ' m';
+      $('d2-p').textContent = sci(Math.pow(10, iy(sy)), 3) + ' kg·m/s';
+      var rEl = $('d2-r');
+      rEl.textContent = ratio.toFixed(2);
+      rEl.className = 'v' + (forbidden ? ' warn' : '');
+    }
+    var dragging = false;
+    function startSeesaw(e) {
+      dragging = true;
+      var rr = svg.getBoundingClientRect(), vv = svg.viewBox.baseVal;
+      var sx0 = clamp((e.clientX - rr.left) * vv.width / rr.width, X0, X1);
+      var sy0 = clamp((e.clientY - rr.top) * vv.height / rr.height, Y1, Y0);
+      setPoint(sx0, sy0);
+      try { svg.setPointerCapture(e.pointerId); } catch (err) { }
+      e.preventDefault();
+    }
+    svg.addEventListener('pointerdown', startSeesaw);
+    hit.addEventListener('pointerdown', startSeesaw);
+    svg.addEventListener('pointermove', function (e) {
+      if (!dragging) return;
+      var r = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal;
+      var sx = clamp((e.clientX - r.left) * vb.width / r.width, X0, X1);
+      var sy = clamp((e.clientY - r.top) * vb.height / r.height, Y1, Y0);
+      setPoint(sx, sy);
+    });
+    svg.addEventListener('pointerup', function () { dragging = false; });
+    svg.addEventListener('pointercancel', function () { dragging = false; });
+    hit.addEventListener('keydown', function (e) {
+      var sx = parseFloat(hit.getAttribute('cx')), sy = parseFloat(hit.getAttribute('cy'));
+      if (e.key === 'ArrowLeft') sx -= 12; else if (e.key === 'ArrowRight') sx += 12;
+      else if (e.key === 'ArrowDown') sy += 10; else if (e.key === 'ArrowUp') sy -= 10;
+      else return;
+      e.preventDefault();
+      setPoint(clamp(sx, X0, X1), clamp(sy, Y1, Y0));
+    });
+    hit.addEventListener('focus', function () { knob.setAttribute('stroke-width', '4'); });
+    hit.addEventListener('blur', function () { knob.setAttribute('stroke-width', '2'); });
+    $('d2-reset').addEventListener('click', function () { setPoint(300, py(Math.log10(HALF_HBAR) - ix(300))); });
+    setPoint(300, py(Math.log10(HALF_HBAR) - ix(300)));
+  })();
+
+  /* ── 导航：滚动定位 + 移动端「看主脊」 ───────────────────── */
+  (function () {
+    var links = [].slice.call(document.querySelectorAll('.rail a'));
+    var secs = links.map(function (a) { return document.querySelector(a.getAttribute('href')); });
+    function sync() {
+      var y = window.scrollY + 140, idx = 0;
+      secs.forEach(function (s, i) { if (s && s.offsetTop <= y) idx = i; });
+      links.forEach(function (a, i) { a.className = i === idx ? 'on' : ''; });
+    }
+    window.addEventListener('scroll', sync, { passive: true });
+    sync();
+    var j = $('jump');
+    if (j) j.addEventListener('click', function () {
+      var sp = $('spine');
+      if (sp) window.scrollTo({ top: Math.max(0, sp.offsetTop - 120), behavior: 'smooth' });
+    });
+  })();
 })();
+
 </script>
 </body>
 </html>
