@@ -530,11 +530,17 @@ footer{border-top:1px solid var(--frame);margin-top:var(--s7);padding:var(--s5) 
     var hit = document.createElementNS(NS, 'circle');
     hit.setAttribute('r', '26'); hit.setAttribute('cy', y); hit.setAttribute('cx', 0);
     hit.setAttribute('fill', '#0e6f7a'); hit.setAttribute('fill-opacity', '0');
-    hit.setAttribute('style', 'cursor:grab');
-    hit.setAttribute('tabindex', '0');
-    hit.setAttribute('role', 'slider');
-    hit.setAttribute('aria-label', opts.label);
+    hit.setAttribute('style', 'cursor:grab;pointer-events:none');
     svg.appendChild(hit);
+
+    // 把可访问性与命中区放到 HTML 容器上：容器高度 44px、不随 SVG 缩放变化
+    var wrap = document.createElement('div');
+    wrap.className = 'track';
+    wrap.setAttribute('role', 'slider');
+    wrap.setAttribute('tabindex', '0');
+    wrap.setAttribute('aria-label', opts.label);
+    svg.parentNode.insertBefore(wrap, svg);
+    wrap.appendChild(svg);
 
     var lab = document.createElementNS(NS, 'text');
     lab.setAttribute('y', y - 20); lab.setAttribute('text-anchor', 'middle');
@@ -559,7 +565,7 @@ footer{border-top:1px solid var(--frame);margin-top:var(--s7);padding:var(--s5) 
       fill.setAttribute('x2', x.toFixed(1));
       lab.setAttribute('x', x.toFixed(1));
       lab.textContent = opts.format(val);
-      hit.setAttribute('aria-valuenow', val.toFixed(3));
+      wrap.setAttribute('aria-valuenow', val.toFixed(3));
     }
     function setFromClientX(cx) {
       var r = svg.getBoundingClientRect();
@@ -575,15 +581,14 @@ footer{border-top:1px solid var(--frame);margin-top:var(--s7);padding:var(--s5) 
     function startDrag(e) {
       dragging = true;
       setFromClientX(e.clientX);
-      try { svg.setPointerCapture(e.pointerId); } catch (err) { }
+      try { wrap.setPointerCapture(e.pointerId); } catch (err) { }
       e.preventDefault();
     }
-    svg.addEventListener('pointerdown', startDrag);
-    hit.addEventListener('pointerdown', startDrag);
-    svg.addEventListener('pointermove', function (e) { if (dragging) setFromClientX(e.clientX); });
-    svg.addEventListener('pointerup', function () { dragging = false; });
-    svg.addEventListener('pointercancel', function () { dragging = false; });
-    hit.addEventListener('keydown', function (e) {
+    wrap.addEventListener('pointerdown', startDrag);
+    wrap.addEventListener('pointermove', function (e) { if (dragging) setFromClientX(e.clientX); });
+    wrap.addEventListener('pointerup', function () { dragging = false; });
+    wrap.addEventListener('pointercancel', function () { dragging = false; });
+    wrap.addEventListener('keydown', function (e) {
       var step = (opts.max - opts.min) / 20;
       if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') { val = clamp(val - step, opts.min, opts.max); }
       else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') { val = clamp(val + step, opts.min, opts.max); }
@@ -706,10 +711,11 @@ footer{border-top:1px solid var(--frame);margin-top:var(--s7);padding:var(--s5) 
     var knob = $('d2-knob'), gx = $('d2-gx'), gy = $('d2-gy');
     var hit = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     hit.setAttribute('r', '27'); hit.setAttribute('fill', '#0e6f7a'); hit.setAttribute('fill-opacity', '0');
-    hit.setAttribute('style', 'cursor:grab');
-    hit.setAttribute('tabindex', '0'); hit.setAttribute('role', 'slider');
-    hit.setAttribute('aria-label', '位置与动量的不确定度取值点');
+    hit.setAttribute('style', 'cursor:grab;pointer-events:none');
     svg.appendChild(hit);
+    svg.setAttribute('tabindex', '0');
+    svg.setAttribute('role', 'slider');
+    svg.setAttribute('aria-label', '位置与动量的不确定度取值点，左右键调位置不确定度');
     knob.setAttribute('style', 'cursor:grab;pointer-events:none');
     function setPoint(sx, sy) {
       var lx = ix(sx), ly = iy(sy);
@@ -737,7 +743,7 @@ footer{border-top:1px solid var(--frame);margin-top:var(--s7);padding:var(--s5) 
       var sx0 = clamp((e.clientX - rr.left) * vv.width / rr.width, X0, X1);
       var sy0 = clamp((e.clientY - rr.top) * vv.height / rr.height, Y1, Y0);
       setPoint(sx0, sy0);
-      try { svg.setPointerCapture(e.pointerId); } catch (err) { }
+      try { wrap.setPointerCapture(e.pointerId); } catch (err) { }
       e.preventDefault();
     }
     svg.addEventListener('pointerdown', startSeesaw);
@@ -751,16 +757,16 @@ footer{border-top:1px solid var(--frame);margin-top:var(--s7);padding:var(--s5) 
     });
     svg.addEventListener('pointerup', function () { dragging = false; });
     svg.addEventListener('pointercancel', function () { dragging = false; });
-    hit.addEventListener('keydown', function (e) {
-      var sx = parseFloat(hit.getAttribute('cx')), sy = parseFloat(hit.getAttribute('cy'));
+    svg.addEventListener('keydown', function (e) {
+      var sx = parseFloat(knob.getAttribute('cx')), sy = parseFloat(knob.getAttribute('cy'));
       if (e.key === 'ArrowLeft') sx -= 12; else if (e.key === 'ArrowRight') sx += 12;
       else if (e.key === 'ArrowDown') sy += 10; else if (e.key === 'ArrowUp') sy -= 10;
       else return;
       e.preventDefault();
       setPoint(clamp(sx, X0, X1), clamp(sy, Y1, Y0));
     });
-    hit.addEventListener('focus', function () { knob.setAttribute('stroke-width', '4'); });
-    hit.addEventListener('blur', function () { knob.setAttribute('stroke-width', '2'); });
+    svg.addEventListener('focus', function () { knob.setAttribute('stroke-width', '4'); });
+    svg.addEventListener('blur', function () { knob.setAttribute('stroke-width', '2'); });
     $('d2-reset').addEventListener('click', function () { setPoint(300, py(Math.log10(HALF_HBAR) - ix(300))); });
     setPoint(300, py(Math.log10(HALF_HBAR) - ix(300)));
   })();
