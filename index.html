@@ -374,6 +374,28 @@
     .cc-res{font-size:20px;}
   }
 
+  /* ==== 深色展板（放 AI 生成的尺度直觉长图；浅色页里当「展品墙」）==== */
+  .plate{background:#111416;border:1px solid #2a2f33;border-radius:8px;padding:16px;margin-top:18px;}
+  .plate img{display:block;width:100%;height:auto;border-radius:4px;}
+  .plate .plate-cap{margin-top:12px;font-size:13.5px;line-height:1.7;color:#e9edec;}
+  .plate .plate-src{display:block;margin-top:6px;font-size:13px;color:#9aa4a8;line-height:1.6;}
+  .plate .plate-hd{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;}
+  .plate .plate-hd b{font-size:15.5px;color:#e9edec;font-weight:700;}
+  .plate .plate-hd span{font-size:13px;color:#9aa4a8;}
+  .plate a{display:block;cursor:zoom-in;text-decoration:none;}
+  .plate .plate-zoom-hint{display:block;margin-top:8px;font-size:12.5px;color:#9aa4a8;}
+  @media (max-width:640px){
+    .plate{margin-left:-15px;margin-right:-15px;border-radius:0;border-left:0;border-right:0;padding:10px;}
+    .plate .plate-cap{font-size:13px;}
+    .plate .plate-src{font-size:12.5px;}
+  }
+  @media (min-width:900px){
+    .plate{padding:22px;}
+    .plate .plate-cap{font-size:14.5px;}
+    .plate .plate-src{font-size:13.5px;}
+    .plate .plate-hd b{font-size:17px;}
+    .plate .plate-hd span{font-size:13.5px;}
+  }
   /* ==== 速查图（内联 SVG，跟随主题与打印）==== */
   .chart-svg{margin:18px 0 0;}
   .chart-svg svg{display:block;width:100%;height:auto;overflow:visible;}
@@ -902,6 +924,21 @@
 <text class="s-foot" x="176" y="547">头发丝 0.07 毫米 ÷ 普朗克长度 ≈ 4.3 × 10³⁰：切成 43 后面 29 个零那么多份，才切到一格。</text>
 </svg>
       <figcaption>九级尺度速查图 · 从人到普朗克长度（数值经 CODATA 2018 逐项验算）</figcaption>
+    </figure>
+    <figure class="plate">
+      <div class="plate-hd"><b>同一件事，画给你看</b><span>从人到普朗克长度，一次走完 35 个数量级</span></div>
+      <a href="assets/planck-scale-final.webp" target="_blank" rel="noopener" aria-label="点开看原尺寸长图">
+        <picture>
+          <source type="image/webp" srcset="assets/planck-scale-final.webp">
+          <img src="assets/planck-scale-final.jpg" width="1200" height="800" loading="lazy" decoding="async"
+               alt="深色尺度长图：人、头发、细胞、细菌、病毒、原子、原子核、普朗克长度依次缩小，标出 10⁰ 到 10⁻³⁵ 米">
+        </picture>
+        <span class="plate-zoom-hint">点图看原尺寸（手机上字才看得清）</span>
+      </a>
+      <figcaption class="plate-cap">
+        上面那张矢量阶梯表负责<b>准</b>，这张长图负责<b>好记</b>：它把九级尺度画成一条视觉路径，让你先有身体感，再回去看数字。
+        <span class="plate-src">图：AI 生成插图（seedream），只用来建立尺度直觉，不作数值依据。图里说的是「原子 ÷ 普朗克长度 ≈ 10²⁵」，与上方表里的「头发丝 ÷ 普朗克长度 = 4.3310 × 10³⁰」比较对象不同，别混。</span>
+      </figcaption>
     </figure>
     <div class="const-card">
       <div class="cc-head">
