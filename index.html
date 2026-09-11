@@ -88,22 +88,19 @@ details summary{cursor:pointer;font-size:var(--fs-16);font-weight:var(--wt-600);
 details[open] summary{border-bottom:1px solid var(--frame);margin-bottom:var(--s3)}
 details .body p:last-child{margin-bottom:var(--s1)}
 
-/* ── 主脊：竖直对数尺度轴 ───────────────────────────────── */
-.wrap{display:grid;grid-template-columns:384px minmax(0,1fr);gap:var(--s7);align-items:start}
-.spine{position:sticky;top:80px;height:calc(100vh - 112px);display:flex;flex-direction:column;gap:var(--s3)}
-.spine .cap{font-family:var(--mono);font-size:var(--fs-12);color:var(--inkDim);display:flex;
-  justify-content:space-between;margin-bottom:var(--s2)}
-.spine svg{display:block;width:100%;background:var(--paper);border:1px solid var(--frame);border-radius:var(--r2)}
-.spine svg.v{flex:1;min-height:0;height:100%}
-.spine svg.h{display:none;height:auto}
-.spine+.cap,.spine .cap{flex:none}
-.spine .note{font-size:var(--fs-12);line-height:var(--lh-s);color:var(--inkDim);margin-top:var(--s3);
-  border-top:1px solid var(--frame);padding-top:var(--s3)}
-
+/* ── 尺度轴：正文流里的独立章节（不再吸顶） ─────── */
 /* ── 装置 ───────────────────────────────────────────────── */
 .dev{margin:var(--s5) 0;border:1px solid var(--frame);border-radius:var(--r2);background:var(--paper);padding:var(--s4)}
 .dev h4{margin:0 0 var(--s2);font-size:var(--fs-16);font-weight:var(--wt-600);font-family:var(--body)}
 .dev .sub{font-size:var(--fs-12);color:var(--inkDim);line-height:var(--lh-s);margin:0 0 var(--s4)}
+/* ── 尺度轴：正文流里的独立章节（不再吸顶） ─────────────── */
+#axis .axisframe{margin:var(--s4) 0 var(--s3)}
+#axis svg.v{display:block;width:400px;max-width:100%;height:auto;max-height:640px;margin:0 auto;
+  background:var(--paper);border:1px solid var(--frame);border-radius:var(--r2)}
+#axis .cap{font-family:var(--mono);font-size:var(--fs-12);color:var(--inkDim);display:flex;
+  justify-content:space-between;gap:var(--s3);max-width:400px;margin:0 auto}
+#axis .note{font-size:var(--fs-12);line-height:var(--lh-s);color:var(--inkDim);max-width:400px;margin:var(--s3) auto 0}
+
 .dev svg{display:block;width:100%;height:auto}
 .readout{display:flex;flex-wrap:wrap;gap:var(--s6);margin-top:var(--s4)}
 .ro{min-width:132px}
@@ -136,13 +133,6 @@ footer{border-top:1px solid var(--frame);margin-top:var(--s7);padding:var(--s5) 
   font-size:var(--fs-12);color:var(--inkDim);line-height:var(--lh-s)}
 
 @media (max-width:900px){
-  .wrap{grid-template-columns:1fr;gap:var(--s5)}
-  .spine{position:sticky;top:64px;z-index:20;height:auto;background:var(--bgPage);padding-bottom:var(--s2)}
-  .spine svg.v{display:none}
-  .spine svg.h{display:block}
-  .axisFull{display:block;margin:var(--s5) 0 var(--s6)}
-  .spine svg{max-width:100%}
-  .spine .note{display:none}
   h1{font-size:var(--fs-26);margin-top:var(--s6)}
   h2{font-size:var(--fs-20)}
 }
@@ -155,10 +145,7 @@ footer{border-top:1px solid var(--frame);margin-top:var(--s7);padding:var(--s5) 
   tbody td{display:block;border:0;padding:var(--s1) 0}
   tbody td::before{content:attr(data-k) " ";font-family:var(--mono);font-size:var(--fs-12);color:var(--inkDim)}
 }
-.axisFull{display:none}
-.axisFull figcaption{font-size:var(--fs-12);line-height:var(--lh-s);color:var(--inkDim);margin-top:var(--s3)}
-.axisFull svg{display:block;width:100%;height:auto;background:var(--paper);border:1px solid var(--frame);border-radius:var(--r2)}
-@media print{.nav,.spine,.dev,.skip{display:none}.axisFull{display:block}}
+@media print{.nav,.dev,.skip{display:none}}
 </style>
 </head>
 <body>
@@ -168,6 +155,7 @@ footer{border-top:1px solid var(--frame);margin-top:var(--s7);padding:var(--s5) 
     <span class="brand">普朗克长度</span>
     <div class="rail">
       <a href="#s0">开场</a>
+      <a href="#axis">尺度轴</a>
       <a href="#s1">单位</a>
       <a href="#s2">往下走</a>
       <a href="#s3">怎么算</a>
@@ -181,19 +169,29 @@ footer{border-top:1px solid var(--frame);margin-top:var(--s7);padding:var(--s5) 
 <main>
 <div class="wrap">
 
-  <aside class="spine" id="spine" aria-label="尺度主脊">
-    <div class="cap"><span>尺度轴 · 对数</span><span>米</span></div>
-            <svg class="h" viewBox="0 0 360 74" role="img" aria-label="尺度轴横条：从 1 米到 10 的负 35 次方米">
-      <line x1="16.0" y1="34" x2="344.0" y2="34" stroke="#d7dad7" stroke-width="1"/>
-      <line x1="194.1" y1="34" x2="344.0" y2="34" stroke="#0e6f7a" stroke-width="1" stroke-dasharray="3 4"/>
-      <g stroke="#16191c" stroke-width="1"><line x1="16.0" y1="28" x2="16.0" y2="40"/><line x1="44.1" y1="28" x2="44.1" y2="40"/><line x1="62.9" y1="28" x2="62.9" y2="40"/><line x1="81.6" y1="28" x2="81.6" y2="40"/><line x1="109.7" y1="28" x2="109.7" y2="40"/><line x1="156.6" y1="28" x2="156.6" y2="40"/><line x1="184.7" y1="28" x2="184.7" y2="40"/><line x1="344.0" y1="28" x2="344.0" y2="40"/></g>
-      <g font-family="monospace" font-size="12" fill="#16191c"><text x="16.0" y="60" text-anchor="middle">10⁰</text><text x="62.9" y="60" text-anchor="middle">10⁻⁵</text><text x="109.7" y="60" text-anchor="middle">10⁻¹⁰</text><text x="156.6" y="60" text-anchor="middle">10⁻¹⁵</text><text x="344.0" y="60" text-anchor="end">10⁻³⁵</text></g>
-      <line id="spineHTip" x1="16.0" y1="22" x2="16.0" y2="46" stroke="#0e6f7a" stroke-width="2"/>
-      <circle id="spineHDot" cx="16.0" cy="34" r="5" fill="#0e6f7a"/>
-    </svg>
+
+  <div class="col">
+
+    <section id="s0">
+      <span class="sec-no">CH 00 · 开场</span>
+      <h1>一把尺的尽头</h1>
+      <p class="lede">我们能把空间量到多小？答案不是"你想多小就多小"，而是一个具体的数：<b>1.616255×10⁻³⁵ 米</b>。这个数不是量出来的，是算出来的。</p>
+      <p>先做一件桌上就能做的事。把一支铅笔分成两半，再分一半，再分一半。分到第 20 次左右，铅笔剩下一个原子那么粗；再往下分，你分的不再是"铅笔"，而是原子内部的空间。问题来了：<b>这个"再往下"能一直进行吗？</b></p>
+      <p>直觉会说不封顶。但物理的答案是有底。这一页从头讲这件事：先把"米"是怎么被钉住的讲清楚，再顺着尺度轴一路往下走到细胞、原子、质子，最后走到那个底。走到最后你会发现，那段路的后半程没有任何仪器，只有三个常数和一点量纲运算。</p>
+      <div class="callout">
+        <span class="tag">这一页要回答三件事</span>
+        <p>一，米、秒、千克是怎么被钉住的（为什么这跟下面的事有关）。二，普朗克长度是怎么被三个常数拼出来的（含公式）。三，为什么到了那里物理就塌了，以及哪些说法是真的、哪些只是流行段子。</p>
+      </div>
+    </section>
+
+
+    <section id="axis">
+      <span class="sec-no">CH 01 · 尺度轴</span>
+      <h2>先把尺子摆出来</h2>
+      <p>这一章只有一件事：把尺子画出来。下面这条轴从 <b>1 米</b>竖着往下走，走到 <b>1.616255×10⁻³⁵ 米</b>（普朗克长度）。每一格都是"再小 10 倍"，所以目测的距离不等于实际的倍数：从上到下只走了几屏，实际缩小了 35 个数量级。</p>
+    <div class="cap"><span>尺度轴 · 每格再小 10 倍</span><span>单位：米</span></div>
+      <div class="axisframe">
     <svg class="v" viewBox="0 0 320 660" role="img" aria-label="从 1 米到 10 的负 35 次方米的尺度轴，标注了人、蚂蚁、细胞、可见光、原子、质子、探测前沿与普朗克长度">
-      <text x="0" y="14" font-size="12" font-family="monospace" fill="#5b646a">10⁰</text>
-      <text x="316" y="14" text-anchor="end" font-size="12" font-family="monospace" fill="#5b646a">10⁻³⁵</text>
       <line x1="112" y1="36" x2="112" y2="612" stroke="#d7dad7" stroke-width="1"/>
       <line x1="112" y1="348" x2="112" y2="612" stroke="#0e6f7a" stroke-width="1" stroke-dasharray="3 4"/>
       <!-- 刻度 -->
@@ -238,76 +236,40 @@ footer{border-top:1px solid var(--frame);margin-top:var(--s7);padding:var(--s5) 
         <line id="spineTip" x1="112" y1="36" x2="112" y2="612" stroke="#0e6f7a" stroke-width="1"/>
       </g>
     </svg>
+      </div>
     <p class="note">竖轴按数量级等距（对数），所以每一格代表"缩小 10 倍"，不是"缩小同样多的米"。这一页从最上面往下走。</p>
-  </aside>
-
-  <div class="col">
-
-    <section id="s0">
-      <span class="sec-no">CH 00 · 开场</span>
-      <h1>一把尺的尽头</h1>
-      <p class="lede">我们能把空间量到多小？答案不是"你想多小就多小"，而是一个具体的数：<b>1.616255×10⁻³⁵ 米</b>。这个数不是量出来的，是算出来的。</p>
-      <p>先做一件桌上就能做的事。把一支铅笔分成两半，再分一半，再分一半。分到第 20 次左右，铅笔剩下一个原子那么粗；再往下分，你分的不再是"铅笔"，而是原子内部的空间。问题来了：<b>这个"再往下"能一直进行吗？</b></p>
-      <p>直觉会说不封顶。但物理的答案是有底。这一页从头讲这件事：先把"米"是怎么被钉住的讲清楚，再顺着尺度轴一路往下走到细胞、原子、质子，最后走到那个底。走到最后你会发现，那段路的后半程没有任何仪器，只有三个常数和一点量纲运算。</p>
-      <div class="callout">
-        <span class="tag">这一页要回答三件事</span>
-        <p>一，米、秒、千克是怎么被钉住的（为什么这跟下面的事有关）。二，普朗克长度是怎么被三个常数拼出来的（含公式）。三，为什么到了那里物理就塌了，以及哪些说法是真的、哪些只是流行段子。</p>
+      <p class="dim">这条轴是后面每一章的坐标系：讲单位的时候看它的起点，讲怎么算的时候看它的终点。</p>
+      <div class="dev" id="dev0">
+        <h4>装置一 · 拉一遍这条轴</h4>
+        <p class="sub">拖动滑轨，上面这条轴上的标记会跟着走。读数里的“倍数”是这个尺度除以普朗克长度，用来看清一共缩了多少量级。</p>
+        <svg viewBox="0 0 600 96" id="d0-svg" role="img" aria-label="从 1 米到普朗克长度的对数滑轨">
+          <line x1="40" y1="52" x2="560" y2="52" stroke="#d7dad7" stroke-width="2"/>
+          <g stroke="#16191c" stroke-width="1">
+            <line x1="40" y1="46" x2="40" y2="58"/>
+            <line x1="188" y1="46" x2="188" y2="58"/>
+            <line x1="337" y1="46" x2="337" y2="58"/>
+            <line x1="560" y1="46" x2="560" y2="58"/>
+          </g>
+          <g font-family="monospace" font-size="12" fill="#5b646a">
+            <text x="40" y="78" text-anchor="middle">10⁰</text>
+            <text x="188" y="78" text-anchor="middle">10⁻¹⁰</text>
+            <text x="337" y="78" text-anchor="middle">10⁻²⁰</text>
+            <text x="560" y="78" text-anchor="middle">10⁻³⁵</text>
+          </g>
+          <circle id="d0-knob" cx="120" cy="52" r="11" fill="#0e6f7a" stroke="#ffffff" stroke-width="2" style="cursor:grab"/>
+        </svg>
+        <div class="readout">
+          <div class="ro"><div class="k">你选的尺度</div><div class="v" id="d0-v">待选</div></div>
+          <div class="ro"><div class="k">相当于几分之一个普朗克长度</div><div class="v" id="d0-r">待算</div></div>
+          <div class="ro"><div class="k">这个量级上有什么</div><div class="v" id="d0-obj">待选</div></div>
+        </div>
+        <div class="row"><button class="btn" type="button" id="d0-reset">回到 1 米</button></div>
+        <noscript><p class="sub">这条滑轨需要 JavaScript。没有脚本时，直接看上面那条轴：轴上的八个刻度就是这条滑轨的全部内容。</p></noscript>
       </div>
     </section>
-    <figure class="axisFull">
-      <svg class="v" viewBox="0 0 320 660" role="img" aria-label="从 1 米到 10 的负 35 次方米的尺度轴，标注了人、蚂蚁、细胞、可见光、原子、质子、探测前沿与普朗克长度">
-      <text x="0" y="14" font-size="12" font-family="monospace" fill="#5b646a">10⁰</text>
-      <text x="316" y="14" text-anchor="end" font-size="12" font-family="monospace" fill="#5b646a">10⁻³⁵</text>
-      <line x1="112" y1="36" x2="112" y2="612" stroke="#d7dad7" stroke-width="1"/>
-      <line x1="112" y1="348" x2="112" y2="612" stroke="#0e6f7a" stroke-width="1" stroke-dasharray="3 4"/>
-      <!-- 刻度 -->
-      <g stroke="#16191c" stroke-width="1">
-        <line x1="104" y1="36" x2="112" y2="36"/>
-        <line x1="104" y1="85" x2="112" y2="85"/>
-        <line x1="104" y1="118" x2="112" y2="118"/>
-        <line x1="104" y1="151" x2="112" y2="151"/>
-        <line x1="104" y1="201" x2="112" y2="201"/>
-        <line x1="104" y1="283" x2="112" y2="283"/>
-        <line x1="104" y1="332" x2="112" y2="332"/>
-        <line x1="100" y1="612" x2="112" y2="612" stroke-width="2"/>
-      </g>
-      <g font-family="monospace" font-size="12" fill="#16191c" text-anchor="end">
-        <text x="98" y="40">10⁰</text>
-        <text x="98" y="89">10⁻³</text>
-        <text x="98" y="122">10⁻⁵</text>
-        <text x="98" y="155">10⁻⁷</text>
-        <text x="98" y="205">10⁻¹⁰</text>
-        <text x="98" y="287">10⁻¹⁵</text>
-        <text x="98" y="336">10⁻¹⁸</text>
-        <text x="98" y="616">10⁻³⁵</text>
-      </g>
-      <g font-size="12" fill="#16191c">
-        <text x="120" y="40">人 · 桌子（1 米）</text>
-        <text x="120" y="89">蚂蚁（约 3 毫米）</text>
-        <text x="120" y="122">细胞（10 到 30 微米）</text>
-        <text x="120" y="155">可见光波长（400 到 700 纳米）</text>
-        <text x="120" y="205">原子（约 0.1 纳米）</text>
-        <text x="120" y="287">原子核 · 质子（0.8414 飞米）</text>
-        <text x="120" y="336">电子的尺寸上限</text>
-      </g>
-      <text x="120" y="392" font-size="12" fill="#0e6f7a">探测前沿：大型强子对撞机</text>
-      <text x="120" y="408" font-size="12" fill="#0e6f7a">能直接分辨的约 10⁻¹⁹ 米</text>
-      <text x="120" y="470" font-size="12" fill="#5b646a">往下 16 个数量级</text>
-      <text x="120" y="486" font-size="12" fill="#5b646a">没有任何测量，全是推算</text>
-      <g font-size="12" fill="#16191c">
-        <text x="120" y="616" font-weight="600">普朗克长度（1.616255×10⁻³⁵ 米）</text>
-      </g>
-      <g>
-        <circle cx="112" cy="36" r="4" fill="#0e6f7a"/>
-        <line x1="112" y1="36" x2="112" y2="612" stroke="#0e6f7a" stroke-width="1"/>
-      </g>
-    </svg>
-<figcaption>完整尺度轴：从 1 米到 10 的负 35 次方米。竖线越长代表越小；虚线以下（10⁻¹⁹ 米到 10⁻³⁵ 米）的 16 个数量级，没有任何直接测量，全部是推算。</figcaption>
-    </figure>
-
 
     <section id="s1">
-      <span class="sec-no">CH 01 · 单位是怎么被钉住的</span>
+      <span class="sec-no">CH 02 · 单位是怎么被钉住的</span>
       <h2>米不是一把尺，是一条约定</h2>
       <p>要谈"最小的长度"，先得知道我们手里的"米"是怎么来的。这件事在 <b>2019 年 5 月 20 日</b>发生过一次彻底的更换：那一天起，国际单位制（SI）里最后一个靠实物定义的单位也退场了。</p>
       <p>在那之前，"一千克"的定义是巴黎郊外保险柜里的一块铂铱合金圆柱，叫国际千克原器，1889 年造好。它的问题不是不够准，而是<b>它会变</b>：一百多年里，它的质量和各国复制品的质量之间漂了大约 50 微克。一块金属在原子尺度上偷偷喘了口气，全世界所有称重就跟着一起漂。</p>
@@ -330,7 +292,7 @@ footer{border-top:1px solid var(--frame);margin-top:var(--s7);padding:var(--s5) 
     </section>
 
     <section id="s2">
-      <span class="sec-no">CH 02 · 往下走</span>
+      <span class="sec-no">CH 03 · 往下走</span>
       <h2>从人到质子：九个台阶</h2>
       <p>下面每一步都比上一步小三个到七个数量级。别只记数字，注意每个台阶上"看得见的方法"是什么，以及它在哪一步开始失效。</p>
 
@@ -361,36 +323,9 @@ footer{border-top:1px solid var(--frame);margin-top:var(--s7);padding:var(--s5) 
       <p>从 10⁻¹⁹ 到 10⁻³⁵，中间隔了 <b>16 个数量级</b>。这一段没有任何测量数据，全部是理论推算。这也解释了为什么普通科普里这个数总被写得神神秘秘：它确实离得远，远到它的名字更像是"我们这套物理的边界线"，而不是一个可以拿尺子去够的东西。</p>
       <p class="dim">换个说法感受这个距离：一根头发丝约 7×10⁻⁵ 米，把它除以普朗克长度，得到 4.331×10³⁰。也就是说，普朗克长度在头发丝面前，比头发丝在你面前还要小得多得多。</p>
 
-      <div class="dev" id="dev0">
-        <h4>装置一 · 拉一遍这条轴</h4>
-        <p class="sub">在滑轨上拖动，左边主脊上的标记会跟着走。读数里的“倍数”是这个尺度除以普朗克长度，用来看清一共缩了多少量级。</p>
-        <svg viewBox="0 0 600 96" id="d0-svg" role="img" aria-label="从 1 米到普朗克长度的对数滑轨">
-          <line x1="40" y1="52" x2="560" y2="52" stroke="#d7dad7" stroke-width="2"/>
-          <g stroke="#16191c" stroke-width="1">
-            <line x1="40" y1="46" x2="40" y2="58"/>
-            <line x1="188" y1="46" x2="188" y2="58"/>
-            <line x1="337" y1="46" x2="337" y2="58"/>
-            <line x1="560" y1="46" x2="560" y2="58"/>
-          </g>
-          <g font-family="monospace" font-size="12" fill="#5b646a">
-            <text x="40" y="78" text-anchor="middle">10⁰</text>
-            <text x="188" y="78" text-anchor="middle">10⁻¹⁰</text>
-            <text x="337" y="78" text-anchor="middle">10⁻²⁰</text>
-            <text x="560" y="78" text-anchor="middle">10⁻³⁵</text>
-          </g>
-          <circle id="d0-knob" cx="120" cy="52" r="11" fill="#0e6f7a" stroke="#ffffff" stroke-width="2" style="cursor:grab"/>
-        </svg>
-        <div class="readout">
-          <div class="ro"><div class="k">你选的尺度</div><div class="v" id="d0-v">待选</div></div>
-          <div class="ro"><div class="k">相当于几分之一个普朗克长度</div><div class="v" id="d0-r">待算</div></div>
-          <div class="ro"><div class="k">这个量级上有什么</div><div class="v" id="d0-obj">待选</div></div>
-        </div>
-        <div class="row"><button class="btn" type="button" id="d0-reset">回到 1 米</button></div>
-        <noscript><p class="sub">这条滑轨需要 JavaScript。没有脚本时，请直接看左边的主脊：上面的八个刻度就是这条滑轨的全部内容。</p></noscript>
-      </div>
     </section>
     <section id="s3">
-      <span class="sec-no">CH 03 · 怎么算出来的</span>
+      <span class="sec-no">CH 04 · 怎么算出来的</span>
       <h2>三个常数，拼出唯一一把尺</h2>
       <p>现在进入这一页的核心。普朗克长度不是测出来的，它是<b>三个常数的唯一组合</b>。这三个常数各自负责一件事：</p>
       <table>
@@ -455,7 +390,7 @@ footer{border-top:1px solid var(--frame);margin-top:var(--s7);padding:var(--s5) 
     </section>
 
     <section id="s4">
-      <span class="sec-no">CH 04 · 为什么到那里就塌</span>
+      <span class="sec-no">CH 05 · 为什么到那里就塌</span>
       <h2>两种长度撞在一起的地方</h2>
       <p>要理解这个"底"，看两个数就够了。它们都在量子力学和相对论里出现过，而且走向正好相反。</p>
       <table>
@@ -512,7 +447,7 @@ footer{border-top:1px solid var(--frame);margin-top:var(--s7);padding:var(--s5) 
     </section>
 
     <section id="s5">
-      <span class="sec-no">CH 05 · 回头看</span>
+      <span class="sec-no">CH 06 · 回头看</span>
       <h2>把它压成一张表</h2>
       <p>三个常数钉住单位，一个组合给出尺度，两种长度相撞划出边界。整页的内容就是这些。</p>
       <table>
@@ -892,7 +827,7 @@ footer{border-top:1px solid var(--frame);margin-top:var(--s7);padding:var(--s5) 
     railHint();
     var j = $('jump');
     if (j) j.addEventListener('click', function () {
-      var sp = $('spine');
+      var sp = $('axis');
       if (sp) window.scrollTo({ top: Math.max(0, sp.offsetTop - 120), behavior: 'smooth' });
     });
   })();
