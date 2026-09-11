@@ -316,6 +316,7 @@ footer{border-top:1px solid var(--frame);margin-top:var(--s7);padding:var(--s5) 
           <div class="ro"><div class="k">这个量级上有什么</div><div class="v" id="d0-obj">待选</div></div>
         </div>
         <div class="row"><button class="btn" type="button" id="d0-reset">回到 1 米</button></div>
+        <noscript><p class="sub">这条滑轨需要 JavaScript。没有脚本时，请直接看左边的主脊：上面的八个刻度就是这条滑轨的全部内容。</p></noscript>
       </div>
     </section>
     <section id="s3">
@@ -363,6 +364,18 @@ footer{border-top:1px solid var(--frame);margin-top:var(--s7);padding:var(--s5) 
         </div>
         <p class="sub" id="d1-why" style="margin-top:var(--s3)">ℓ<sub>P</sub> 对三个常数的依赖：ħ 与 G 各是 1/2 次方，c 是 −3/2 次方。所以 c 变大，ℓ<sub>P</sub> 变小，而且变得最快；把 G 调成 1.01 倍（多 1%），ℓ<sub>P</sub> 只多约 0.5%。</p>
         <div class="row"><button class="btn" type="button" id="d1-reset">复位到官方值</button></div>
+        <noscript>
+          <table>
+            <caption>这个装置需要 JavaScript。没有脚本时，三条轨只可能停在 1.00×，对应的换算在这里：</caption>
+            <thead><tr><th>改动</th><th>ℓ<sub>P</sub> 变成</th><th>相对误差</th></tr></thead>
+            <tbody>
+              <tr><td data-k="改动">ħ 或 G 翻倍（2.00×）</td><td data-k="ℓP 变成" class="n">2.285730×10⁻³⁵ m</td><td data-k="相对误差" class="n">+41.421%</td></tr>
+              <tr><td data-k="改动">ħ 或 G 减半（0.50×）</td><td data-k="ℓP 变成" class="n">1.142865×10⁻³⁵ m</td><td data-k="相对误差" class="n">−29.289%</td></tr>
+              <tr><td data-k="改动">c 翻倍（2.00×）</td><td data-k="ℓP 变成" class="n">5.714324×10⁻³⁶ m</td><td data-k="相对误差" class="n">−64.645%</td></tr>
+              <tr><td data-k="改动">c 减半（0.50×）</td><td data-k="ℓP 变成" class="n">4.571460×10⁻³⁵ m</td><td data-k="相对误差" class="n">+182.842%</td></tr>
+            </tbody>
+          </table>
+        </noscript>
       </div>
 
       <div class="callout">
@@ -409,8 +422,8 @@ footer{border-top:1px solid var(--frame);margin-top:var(--s7);padding:var(--s5) 
             <text x="560" y="262" text-anchor="end">δx（位置越不确定 →）</text>
             <text x="66" y="26">δp（动量）</text>
           </g>
-          <polygon id="d2-forbid" points="60,240 580,240 300,240" fill="url(#hatch)"/>
-          <path id="d2-curve" d="" fill="none" stroke="#0e6f7a" stroke-width="2"/>
+          <polygon id="d2-forbid" points="60,240 580,240 580.0,203.8 573.5,201.7 567.0,199.6 560.5,197.5 554.0,195.4 547.5,193.3 541.0,191.2 534.5,189.1 528.0,187.0 521.5,184.9 515.0,182.8 508.5,180.7 502.0,178.6 495.5,176.5 489.0,174.4 482.5,172.3 476.0,170.2 469.5,168.1 463.0,166.0 456.5,163.9 450.0,161.8 443.5,159.7 437.0,157.6 430.5,155.5 424.0,153.4 417.5,151.3 411.0,149.2 404.5,147.1 398.0,145.0 391.5,142.9 385.0,140.8 378.5,138.7 372.0,136.6 365.5,134.5 359.0,132.4 352.5,130.3 346.0,128.2 339.5,126.1 333.0,124.0 326.5,121.9 320.0,119.8 313.5,117.7 307.0,115.6 300.5,113.5 294.0,111.4 287.5,109.3 281.0,107.2 274.5,105.1 268.0,103.0 261.5,100.9 255.0,98.8 248.5,96.7 242.0,94.6 235.5,92.5 229.0,90.4 222.5,88.3 216.0,86.2 209.5,84.1 203.0,82.0 196.5,79.9 190.0,77.8 183.5,75.7 177.0,73.6 170.5,71.5 164.0,69.4 157.5,67.3 151.0,65.2 144.5,63.1 138.0,61.0 131.5,58.9 125.0,56.8 118.5,54.7 112.0,52.6 105.5,50.5 99.0,48.4 92.5,46.3 86.0,44.2 79.5,42.1 73.0,40.0 66.5,37.9 60.0,35.8" fill="url(#hatch)"/>
+          <path id="d2-curve" d="M60.0,35.8 L66.5,37.9 L73.0,40.0 L79.5,42.1 L86.0,44.2 L92.5,46.3 L99.0,48.4 L105.5,50.5 L112.0,52.6 L118.5,54.7 L125.0,56.8 L131.5,58.9 L138.0,61.0 L144.5,63.1 L151.0,65.2 L157.5,67.3 L164.0,69.4 L170.5,71.5 L177.0,73.6 L183.5,75.7 L190.0,77.8 L196.5,79.9 L203.0,82.0 L209.5,84.1 L216.0,86.2 L222.5,88.3 L229.0,90.4 L235.5,92.5 L242.0,94.6 L248.5,96.7 L255.0,98.8 L261.5,100.9 L268.0,103.0 L274.5,105.1 L281.0,107.2 L287.5,109.3 L294.0,111.4 L300.5,113.5 L307.0,115.6 L313.5,117.7 L320.0,119.8 L326.5,121.9 L333.0,124.0 L339.5,126.1 L346.0,128.2 L352.5,130.3 L359.0,132.4 L365.5,134.5 L372.0,136.6 L378.5,138.7 L385.0,140.8 L391.5,142.9 L398.0,145.0 L404.5,147.1 L411.0,149.2 L417.5,151.3 L424.0,153.4 L430.5,155.5 L437.0,157.6 L443.5,159.7 L450.0,161.8 L456.5,163.9 L463.0,166.0 L469.5,168.1 L476.0,170.2 L482.5,172.3 L489.0,174.4 L495.5,176.5 L502.0,178.6 L508.5,180.7 L515.0,182.8 L521.5,184.9 L528.0,187.0 L534.5,189.1 L541.0,191.2 L547.5,193.3 L554.0,195.4 L560.5,197.5 L567.0,199.6 L573.5,201.7 L580.0,203.8" fill="none" stroke="#0e6f7a" stroke-width="2"/>
           <line id="d2-gx" x1="0" y1="240" x2="0" y2="240" stroke="#0e6f7a" stroke-width="1" stroke-dasharray="3 3"/>
           <line id="d2-gy" x1="60" y1="0" x2="60" y2="0" stroke="#0e6f7a" stroke-width="1" stroke-dasharray="3 3"/>
           <circle id="d2-knob" cx="300" cy="120" r="9" fill="#0e6f7a" stroke="#ffffff" stroke-width="2" style="cursor:grab"/>
@@ -424,6 +437,7 @@ footer{border-top:1px solid var(--frame);margin-top:var(--s7);padding:var(--s5) 
           <div class="ro"><div class="k">δx·δp ÷ (ħ/2)</div><div class="v" id="d2-r">1.00</div></div>
         </div>
         <div class="row"><button class="btn" type="button" id="d2-reset">复位</button></div>
+        <noscript><p class="sub">这个装置需要 JavaScript。上面的曲线与斜纹区是静态画好的：曲线上的每一点都满足 δx·δp = ħ/2，斜纹区里的点则违反这条关系，物理上不存在。</p></noscript>
       </div>
     </section>
 
