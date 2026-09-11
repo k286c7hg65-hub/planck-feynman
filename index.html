@@ -34,6 +34,8 @@ body{margin:0;background:var(--bgPage);color:var(--ink);font-family:var(--body);
   padding:var(--s2) var(--s4);min-height:44px}
 .brand{font-family:var(--mono);font-size:var(--fs-14);font-weight:var(--wt-600);letter-spacing:.04em;white-space:nowrap}
 .rail{display:flex;gap:var(--s3);overflow-x:auto;flex:1;scrollbar-width:none}
+.rail.more{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 34px),rgba(0,0,0,.12));mask-image:linear-gradient(90deg,#000 calc(100% - 34px),rgba(0,0,0,.12))}
+.rail.more.atend{-webkit-mask-image:none;mask-image:none}
 .rail::-webkit-scrollbar{display:none}
 .rail a{font-size:var(--fs-14);color:var(--inkDim);text-decoration:none;white-space:nowrap;
   display:inline-flex;align-items:center;min-height:44px;padding:0 var(--s2);border-bottom:2px solid transparent}
@@ -876,6 +878,18 @@ footer{border-top:1px solid var(--frame);margin-top:var(--s7);padding:var(--s5) 
     }
     window.addEventListener('scroll', sync, { passive: true });
     sync();
+
+    /* 右端渐隐：只在真的还能横向滚动、且没滚到头时出现（避免装饰化） */
+    var rail = document.querySelector('.rail');
+    function railHint() {
+      if (!rail) return;
+      var more = rail.scrollWidth - rail.clientWidth > 2;
+      rail.classList.toggle('more', more);
+      rail.classList.toggle('atend', !more || rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - 2);
+    }
+    if (rail) { rail.addEventListener('scroll', railHint, { passive: true }); }
+    window.addEventListener('resize', railHint);
+    railHint();
     var j = $('jump');
     if (j) j.addEventListener('click', function () {
       var sp = $('spine');
